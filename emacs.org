@@ -1,0 +1,189 @@
+#+OPTIONS: p:t author:Kun
+#+Title: Emacs
+#+SETUPFILE: /Users/iceonfire/.emacs.d/org-themes/src/imagine_light/imagine_light.theme
+* system
+  - sudo pmset -a disablesleep 1
+  - open -n /Applications/
+  - sudo codesign --force --deep --sign - /~
+  - /Applications/Emacs.app/Contents/MacOS/Emacs --debug-init
+  - export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+  - mac kill process  ps -ax | grep , killall
+  - mac package source [[https://www.macports.org/install.php][link]]
+  - fix app damaged：
+    #+begin_src 
+    sudo xattr -rd com.apple.quarantine ~
+    #+end_src
+* ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
+** ~/.bash_profile
+* mtr(asn) trace
+** asn
+   [[https://github.com/nitefood/asn#installation]]
+   #+begin_src 
+   brew install bash coreutils curl whois mtr jq ipcalc grepcidr nmap aha && brew link mtr
+   #+end_src
+** [[https://github.com/nitefood/asn#installation]]
+** touch asn file from curl.
+** https://www.ipqualityscore.com/user/dashboard
+   #+begin_src zsh
+   TOKEN="M1Jvm88NU6UKjPQ417S9Ttsi6SxBUPsq"; mkdir "$HOME/.asn/" && echo "$TOKEN" > "$HOME/.asn/iqs_token" && chmod -R 600 "$HOME/.asn/"   
+   #+end_src
+** usage
+   - asn <ASnumber>: to lookup matching ASN data. Supports “as123” and “123” formats (case insensitive)
+   - asn <IP.AD.DR.ESS>: to lookup matching route and ASN data
+   - asn <ROUTE>: to lookup matching ASN data
+   - asn <host.name.tld>: to lookup matching IP, route and ASN data (supports multiple IPs - e.g. DNS RR)
+* windows system
+** remote control lid closed lost connection
+   [[https://community.spiceworks.com/topic/2234833-closing-laptop-lid-breaks-remote-control-program]]
+* Jitouch
+  [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
+* emacs
+  - eval-buffer ;;macs
+  - C-h f function RET ( describe-function ) displays the documentation of Lisp function
+  - CLM/command-  global-command-mode ;;
+  - counsel-find-file
+  - C-x-1 ;;close other windows
+  - counsel-switch-buffer
+  - C-x LEFT and C-x RIGHT . C-x LEFT ( previous-buffer ) C-x o ( other-window ).
+  - C-x 1 close other windows, C-x 2 open window under, C-x 3 open window right, C-x 0 close current window
+  - C-x C-f	Open/Create File, C-x k	Close File,,C-x C-s	Save File
+  - C-x C-e eval current function
+  - C-x C-q to turn dired into editing mode.use M-% to replace foo with bar in the dired buffer. ...
+  - use C-c C-c to save
+  - C-h f describe function
+  - counsel load theme
+  - buffer menu -> d -> x to delete marked buffers
+  - *copy multiple pathnames* right click + option 
+* paredit
+  #+ATTR_ORG: :width 1200
+  [[/Users/iceonfire/github/Scheme/paredit_command.png]]
+* dired
+  - ^ drill up, j search, g refresh, d mark, x excute, 0 w copy file path,
+  - cant access icloud folder -> emacs full disk access-> open any file by "open file"
+* consult
+  - consult-yank-from-kill-ring
+* org-mode
+  - C-c C-x C-v (org-toggle-inline-images), custom group -> org faces.
+  - C-c C-t todo/done;
+  - C-C C-q set tags
+  - C-c C-s schedule; d deadline;
+  - C-c C-c eval code block to result
+  - using graphviz by babel dot file [[https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/][link]]
+  - *org store link* insert all links
+  - C-c - convert paragragh to lists
+  - terminal C-c C-j line-mode; C-c C-k char-mode
+  - [[internal link]] <<internal link>>
+  - external link, org-store-link ; org-insert-link
+  #+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
+    graph graphname {
+	node [shape=box, fontname="Microsoft Yahei"];
+	rankdir=LR;
+	a [label="用户提交申请"]
+	b [label="直接领导（主/备）"]
+	c [label="高级总监"]
+	d [label="IT负责人（主/备）"]
+	e [label="IT高级总监"]
+	a -- b
+	b -- c
+	c -- d
+	d -- e
+    }
+     #+end_src
+** exprot settings [[https://orgmode.org/manual/Export-Settings.html#Export-Settings][link]]
+   - Paragraphs are separated by at least one empty line. If you need to enforce a line break within a paragraph, use ‘\\’ at the end of a line.
+   #+BEGIN_VERSE
+   this is verse
+   #+END_VERSE
+
+   #+BEGIN_QUOTE
+   this is quote
+   #+END_QUOTE
+
+   #+BEGIN_CENTER
+   Everything should be made as simple as possible, \\
+   but not any simpler
+   #+END_CENTER
+
+   in the [[https://gitlab.com/OlMon/org-themes/-/tree/master/src][src]] directory, there is a folders for every theme. There is at least a .theme file. Download it and just add to your org file
+   #+SETUPFILE: <path to .theme file> 
+   This will embed the css into the html.
+   If you download the .css file of a theme, you can add it by adding
+   #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="<path to css>" />
+   export-with-todo&theme
+   #+OPTIONS: p:t pri:t
+   ;;#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup#+end_src
+** logging mode
+*** C-c C-x
+    - C-i clock-in
+    - C-o clock-out
+    - C-d display time
+    - C-q cancel
+*** repeater task
+    - [[https://orgmode.org/manual/Repeated-tasks.html]]
+    #+begin_src 
+    DEADLINE: <2005-10-01 Sat +1m +1w -3d -10h>
+    #+end_src
+** color text
+   #+begin_src 
+   (org-add-link-type
+ "color"
+ (lambda (path)
+   (message (concat "color "
+                    (progn (add-text-properties
+                            0 (length path)
+                            (list 'face `((t (:foreground ,path))))
+                            path) path))))
+ (lambda (path desc format)
+   (cond
+    ((eq format 'html)
+     (format "<span style=\"color:%s;\">%s</span>" path desc))
+    ((eq format 'latex)
+     (format "{\\color{%s}%s}" path desc)))))
+
+
+
+    - This is [[color:green][green text]]
+    - This is [[color:red][red]]
+   #+end_src
+* counsel-projectil
+  - C-c C-o open file window, o action to the file.
+* magit
+  - s stage, u unstage, c comit, c-c c-c which comment, P -f p, force push, 
+* git
+** git init
+   - git init
+   - git remote add origin https://gitlab.rd.inceptioglobal.ai/iceonfirek/emacs.git
+   - git add .
+   - git commit -m "Initial commit"
+   - git push -u origin master
+** git reset
+   - git merge --abort
+   - git reset --hard HEAD~~~~
+   - git log -5
+** git remote
+   - *change remote* git remote set-url origin ~.git
+   - [[https://devconnected.com/how-to-change-git-remote-origin/]]
+** git account
+   - Change username and email global
+
+   - git config --global user.name "<username>"
+   - git config --global user.email "<email>"
+   - Change username and email for current repo  
+
+   - git config  user.name "<username>" --replace-all
+   - git config  user.email "<email>" --replace-all
+** git ssh connect
+   #+begin_src shell 
+     ssh-keygen -t rsa
+     cat ~/.ssh/id_rsa.pub
+     #+end_src
+* mark ring
+  - C-u C-spc mark pop,
+* term mode
+  - C-c C-j, line mode. /use shell/
+* web browser
+  - widget-webkit-browse-url
+* Meow mode 
+  - j,k,h,l,i + shift.
+
+
