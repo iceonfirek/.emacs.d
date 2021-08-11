@@ -17,8 +17,7 @@
 (load-theme 'wombat)
 (setq-default cursor-type 'bar)
 (global-prettify-symbols-mode 1)
-(setq exec-path-from-shell-arguments nil)
-(exec-path-from-shell-initialize)
+(setq explicit-shell-file-name "/bin/zsh")
 
 
 ;;Global 优化
@@ -51,7 +50,7 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 
 ;;Global binding keys
@@ -207,17 +206,17 @@
 
 ;;Packages-use
 
-(use-package geiser
-  :bind (
-	 ("s-b" . geiser-eval-definition)
-         ("s-B" . geiser-eval-buffer))
-  :init
-  (geiser-mode 1))
-(add-to-list 'load-path "~/lisp/geiser-gambit")
-(setq scheme-program-name "scheme")
-(setq geiser-chez-binary "scheme")
-(setq geiser-active-implementations '(chez))
-(setq geiser-mode-start-repl-p nil)
+;; (use-package geiser
+;;   :bind (
+;; 	 ("s-b" . geiser-eval-definition)
+;;          ("s-B" . geiser-eval-buffer))
+;;   :init
+;;   (geiser-mode 1))
+;; (add-to-list 'load-path "~/lisp/geiser-gambit")
+;; (setq scheme-program-name "scheme")
+;; (setq geiser-chez-binary "scheme")
+;; (setq geiser-active-implementations '(chez))
+;; (setq geiser-mode-start-repl-p nil)
 
 
 (use-package paredit
@@ -440,6 +439,15 @@
      (format "<span style=\"color:%s;\">%s</span>" path desc))
     ((eq format 'latex)
      (format "{\\color{%s}%s}" path desc)))))
+
+;;SHELL
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :config
+  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+;;  (exec-path-from-shell-initialize)
+  )
 
 ;;defun
 
