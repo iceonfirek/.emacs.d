@@ -449,6 +449,9 @@
 ;;  (exec-path-from-shell-initialize)
   )
 
+(use-package vterm
+  :load-path  "/usr/local/Cellar/emacs-libvterm")
+
 ;;defun
 
 (defun keyboard-escape-quit ()

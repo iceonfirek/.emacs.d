@@ -13,6 +13,16 @@
     #+begin_src 
     sudo xattr -rd com.apple.quarantine ~
     #+end_src
+* linux
+** disable lid sleep
+     - 编辑下列文件：/etc/systemd/logind.conf
+     - #HandlePowerKey 按下电源键后的行为，默认 power off
+     - #HandleSleepKey 按下挂起键后的行为，默认 suspend
+     - #HandleHibernateKey 按下休眠键后的行为，默认 hibernate
+     - #HandleLidSwitch 合上笔记本盖后的行为，默认 suspend（改为 lock；即合盖不休眠）在原文件中，还要去掉前面的#
+     - 运行：systemctl restart systemd-logind就会生效。
+** ubuntu test 
+   - ssh test@10.8.19.95
 * ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
 ** ~/.bash_profile
 * mtr(asn) trace
