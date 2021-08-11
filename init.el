@@ -38,6 +38,7 @@
  '(blink-cursor-mode t)
  '(debug-on-error t)
  '(doom-modeline-mode t)
+ '(geiser-chez-binary "/usr/local/bin/scheme")
  '(org-agenda-files '("~/inceptio/Emacs/agenda.org"))
  '(org-babel-load-languages
    '((calc . t)
@@ -50,7 +51,7 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 
 ;;Global binding keys
@@ -171,7 +172,7 @@
 (add-hook 'foo-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-;; (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme" t)
+(autoload 'run-scheme "cmuscheme" "Run an inferior Scheme" t)
 
 ;; (custom-theme-set-faces
 ;;  'wombat
@@ -209,18 +210,19 @@
 
 ;;Packages-use
 
-;; (use-package geiser
-;;   :bind (
-;; 	 ("s-b" . geiser-eval-definition)
-;;          ("s-B" . geiser-eval-buffer))
-;;   :init
-;;   (geiser-mode 1))
-;; (add-to-list 'load-path "~/lisp/geiser-gambit")
-;; (setq scheme-program-name "scheme")
-;; (setq geiser-chez-binary "scheme")
-;; (setq geiser-active-implementations '(chez))
-;; (setq geiser-mode-start-repl-p nil)
-
+;;(add-to-list 'load-path "~/lisp/geiser-gambit")
+(setq scheme-program-name "chez")
+;;(setq geiser-chez-binary "chez")
+(setq geiser-active-implementations '(chez))
+(setq geiser-mode-start-repl-p nil)
+(setq geiser-default-implementation 'scheme)
+(use-package geiser
+  :bind (
+	 ("s-b" . geiser-eval-definition)
+         ("s-B" . geiser-eval-buffer))
+  :init
+  (geiser-mode 1))
+(use-package geiser-chez)
 
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
@@ -452,10 +454,9 @@
 ;;  (exec-path-from-shell-initialize)
   )
 
-(use-package vterm
-  :load-path  "/usr/local/Cellar/emacs-libvterm"
-  :background vterm-color-white
-  (setq vterm-kill-buffer-on-exit t))
+(use-package vterm)
+;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
+;;  (setq vterm-kill-buffer-on-exit t))
 
 ;;defun
 
