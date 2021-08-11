@@ -202,6 +202,9 @@
  '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :foreground "tomato"))))
  '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground "green yellow"))))
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "PaleVioletRed3"))))
+ '(term-default-bg-color ((t (:inherit term-color-black))))
+ '(term-default-fg-color ((t (:inherit term-color-black))))
+ '(vterm-color-black ((t (:inherit term-color-black :background "gray100"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
 
 ;;Packages-use
@@ -450,7 +453,9 @@
   )
 
 (use-package vterm
-  :load-path  "/usr/local/Cellar/emacs-libvterm")
+  :load-path  "/usr/local/Cellar/emacs-libvterm"
+  :background vterm-color-white
+  (setq vterm-kill-buffer-on-exit t))
 
 ;;defun
 

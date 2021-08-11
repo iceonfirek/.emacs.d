@@ -13,6 +13,7 @@
     #+begin_src 
     sudo xattr -rd com.apple.quarantine ~
     #+end_src
+  - emacsclient -n filename
 * linux
 ** disable lid sleep
      - 编辑下列文件：/etc/systemd/logind.conf
@@ -115,7 +116,7 @@
    #+END_CENTER
 
    in the [[https://gitlab.com/OlMon/org-themes/-/tree/master/src][src]] directory, there is a folders for every theme. There is at least a .theme file. Download it and just add to your org file
-   #+SETUPFILE: <path to .theme file> 
+;;   #+SETUPFILE: <path to .theme file> 
    This will embed the css into the html.
    If you download the .css file of a theme, you can add it by adding
    #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="<path to css>" />
