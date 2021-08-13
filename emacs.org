@@ -24,6 +24,32 @@
      - 运行：systemctl restart systemd-logind就会生效。
 ** ubuntu test 
    - ssh test@10.8.19.95
+** recovery mode
+   #+begin_quote
+   Messed up the /etc/environment file in my Ubuntu 12.04 LTS vm today. Here's how I boot into Ubuntu recovery mode and access the file system as root in write mode.
+
+   Hold 'Shift' while the machine is starting up to load up GNU GRUB
+   Start up Ubuntu in recovery mode
+   Choose "Drop To Root Shell Prompt'
+   By default, this will allow you to access the file system in read-only mode
+   Switch to read/write mode by executing
+   This:
+
+   $ mount -o remount,rw /
+   Now I can fix whatever files I messed up earlier
+   #+end_quote
+** shell theme
+   #+begin_src 
+为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
+如果你要重新恢复到 bash：chsh -s /bin/bash root
+   #+end_src
+*** change theme
+[[https://www.jianshu.com/p/0849ef24ffc6]]
+** remove package/dpkg
+   #+begin_src shell
+   sudo dpkg --get-selections | grep emacs
+   sudo apt-get remove emacsen-common
+   #+end_src
 * ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
 ** ~/.bash_profile
 * mtr(asn) trace
@@ -196,5 +222,40 @@
   - widget-webkit-browse-url
 * Meow mode 
   - j,k,h,l,i + shift.
+* geiser scheme
+  #+begin_quote
+How Geiser associates a REPL to your Scheme buffer
 
+To determine what Scheme implementation corresponds to a given source file, Geiser uses the following algorithm:
+
+If the file-local variable geiser-scheme-implementation is defined, its value is used. A common way of setting buffer-local variables is to put them in a comment near the beginning of the file, surrounded by -*- marks, as in:
+ 	
+;; -*- geiser-scheme-implementation: guile -*-
+If you’ve customized geiser-active-implementations so that it’s a single-element list (as explained in here), that element is used as the chosen implementation.
+The contents of the file is scanned for hints on its associated implementation. For instance, files that contain a #lang directive will be considered Racket source code, while those with a define-module form in them will be assigned to a Guile REPL.
+The current buffer’s file name is checked against the rules given in geiser-implementations-alist, and the first match is applied. You can provide your own rules by customizing this variable, as explained below.
+If we haven’t been lucky this far and you have customized geiser-default-implementation to the name of a supported implementation, we’ll follow your lead.
+See? That’s the problem of being a smart aleck: one’s always outsmarted by people around. At this point, geiser-mode will humbly give up and ask you to explicitly choose the Scheme implementation.
+As you can see in the list above, there are several ways to influence Geiser’s guessing by means of customizable variables. The most direct (and most impoverishing) is probably limiting the active implementations to a single one, while customizing geiser-implementations-alist is the most flexible (and, unsurprisingly, also the most complex). Here’s the default value for the latter variable:
+
+ 	
+(((regexp "\\.scm$") guile)
+ ((regexp "\\.ss$") racket)
+ ((regexp "\\.rkt$") racket))
+which describes the simple heuristic that files with ‘.scm’ as extension are by default associated to a Guile REPL while those ending in ‘.ss’ or ‘.rkt’ correspond to Racket’s implementation (with the caveat that these rules are applied only if the previous heuristics have failed to detect the correct implementation, and that they’ll match only if the corresponding implementation is active). You can add rules to geiser-implementations-alist (or replace all of them) by customizing it. Besides regular expressions, you can also use a directory name; for instance, the following snippet:
+
+ 	
+(eval-after-load "geiser-impl"
+  '(add-to-list 'geiser-implementations-alist
+                '((dir "/home/jao/prj/frob") guile)))
+will add a new rule that says that any file inside my ‘/home/jao/prj/frob’ directory (or, recursively, any of its children) is to be assigned to Guile. Since rules are first matched, first served, this new rule will take precedence over the default ones.
+
+A final tip: if you want Geiser to start automatically a REPL for you if it notices that there’s no one active when it enters geiser-mode, you can customize geiser-mode-start-repl-p to t.
+
+
+  #+end_quote 
+** commands
+   #+begin_src 
+   C-c C-s chez
+   #+end_src
 
