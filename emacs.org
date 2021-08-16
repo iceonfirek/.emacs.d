@@ -200,6 +200,10 @@
 ** git remote
    - *change remote* git remote set-url origin ~.git
    - [[https://devconnected.com/how-to-change-git-remote-origin/]]
+** git status, remote, branch
+   - git remote -v
+   - git branch -a
+   - git show
 ** git account
    - Change username and email global
 
@@ -259,3 +263,17 @@ A final tip: if you want Geiser to start automatically a REPL for you if it noti
    C-c C-s chez
    #+end_src
 
+* Go-Mode
+
+** .bashrc .bash_profile .zshrc
+   - 环境变量添加到.bash_profile&.zshrc中
+   #+begin_src shell
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/go
+    export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+   #+end_src
+
+* yasnippet
+
+** yasnippet description table
+   

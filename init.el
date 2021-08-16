@@ -51,7 +51,7 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 
 ;;Global binding keys
@@ -186,8 +186,13 @@
  '(default ((t (:height 134 :family "Fira Code"))))
  '(auto-dim-other-buffers-face ((t (:background "gray22"))))
  '(centaur-tabs-unselected ((t (:background "#3D3C3D" :foreground "grey50" :height 120 :family "Fira Code"))))
+ '(company-echo ((t nil)) t)
+ '(company-scrollbar-bg ((t (:background "orange1"))))
+ '(company-scrollbar-fg ((t (:background "dark gray"))))
+ '(company-tooltip-selection ((t (:background "orange3"))))
  '(cursor ((t (:background "OliveDrab1"))))
  '(mode-line-inactive ((t (:background "gray22" :foreground "#bebebe" :height 1.0))))
+ '(org-block ((t (:inherit shadow :extend t :width extra-condensed))))
  '(org-date ((t (:foreground "dim gray" :underline t))))
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :weight normal :height 1.1 :width extra-expanded))))
  '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3" :height 1.1))))
@@ -211,18 +216,18 @@
 ;;Packages-use
 
 ;;(add-to-list 'load-path "~/lisp/geiser-gambit")
-(setq scheme-program-name "chez")
-;;(setq geiser-chez-binary "chez")
-(setq geiser-active-implementations '(chez))
-(setq geiser-mode-start-repl-p nil)
-(setq geiser-default-implementation 'scheme)
-(use-package geiser
-  :bind (
-	 ("s-b" . geiser-eval-definition)
-         ("s-B" . geiser-eval-buffer))
-  :init
-  (geiser-mode 1))
-(use-package geiser-chez)
+;; (setq scheme-program-name "chez")
+;; ;;(setq geiser-chez-binary "chez")
+;; (setq geiser-active-implementations '(chez))
+;; (setq geiser-mode-start-repl-p nil)
+;; (setq geiser-default-implementation 'scheme)
+;; (use-package geiser
+;;   :bind (
+;; 	 ("s-b" . geiser-eval-definition)
+;;          ("s-B" . geiser-eval-buffer))
+;;   :init
+;;   (geiser-mode 1))
+;; (use-package geiser-chez)
 
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
@@ -387,20 +392,54 @@
   (magit-display-bufferp-function #'magit-display-buffer-same-window-except-diff-v1))
 ;;(add-to-list 'exec-path "c:/Program Files/Git/bin")
 
-(use-package company
-  :after scheme-mode
-  :hook (scheme-mode . company-mode)
-  :bind (:map company-active-map
-	      ("<tab>" . company-complete-selection))
-        (:map scheme-mode-map
-              ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
-(setq company-mode t)
+;;
+;; yasnippet
+;;
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+(use-package yasnippet
+  :ensure t
+  :init
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  :config
+  (yas-reload-all)
+  (use-package yasnippet-snippets
+    :ensure t)
+  )
+
+
+;;
+;; company mode
+;;
+
+(use-package company
+;;  :after ((scheme-mode . go-mode))
+;;  :hook (scheme-mode . company-mode)
+  :ensure t
+  :config
+  (global-company-mode t)
+  ;; :bind (:map company-active-map
+  ;; 	      ("<tab>" . company-complete-selection))
+  ;;       (:map scheme-mode-map
+  ;;             ("<tab>" . company-indent-or-complete-common))
+  (setq company-minimum-prefix-length 3)
+  (setq company-idle-delay 0.0)
+  (setq company-backends
+	'((company-files company-yasnippet company-keywords company-capf)
+	  (company-abbrev company-dabbrev))))
+
+(add-hook 'emacs-lisp-mode-hook (lambda ()
+				  (add-to-list (make-local-variable 'company-backends)
+					       'company-elisp)))
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "s-k") #'company-select-next)
+  (define-key company-active-map (kbd "s-i") #'company-select-previous)
+  )
+
+(advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
+(advice-add 'company-complete-common :after (lambda () (when (equal my-company-point (point))
+						    (yas-expand))))
 
 ;; (use-package term
 ;;   :commands term
@@ -450,8 +489,9 @@
   :ensure t
   :if (memq window-system '(mac ns x))
   :config
-  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
-;;  (exec-path-from-shell-initialize)
+ (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH") ;;very important to go mode
   )
 
 (use-package vterm)
@@ -491,3 +531,34 @@
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 (put 'downcase-region 'disabled nil)
+
+
+;;
+;; go
+;;
+(use-package go-mode
+  :ensure t
+  :mode (("\\.go\\'" . go-mode))
+  :hook ((before-save . gofmt-before-save))
+  :config
+  (setq gofmt-command "goimports")
+  (setq exec-path (append exec-path '("/usr/local/bin")))
+  (setq exec-path (append exec-path '("/Users/iceonfire/go/bin:/Users/iceonfire/go")))
+  (use-package company-go
+    :ensure t
+    :config
+    (add-hook 'go-mode-hook (lambda ()
+			      (add-to-list (make-local-variable 'company-backends)
+					   '(company-go company-files company-capf))))
+    )
+  (use-package go-eldoc
+    :ensure t
+    :hook (go-mode . go-eldoc-setup)
+    )
+  (use-package go-guru
+    :ensure t
+    :hook (go-mode . go-guru-hl-identifier-mode)
+    )
+  (use-package go-rename
+    :ensure t)
+)
