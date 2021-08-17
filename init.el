@@ -18,6 +18,7 @@
 (setq-default cursor-type 'bar)
 (global-prettify-symbols-mode 1)
 (setq explicit-shell-file-name "/bin/zsh")
+(server-start)
 
 
 ;;Global 优化
@@ -38,8 +39,8 @@
  '(blink-cursor-mode t)
  '(debug-on-error t)
  '(doom-modeline-mode t)
- '(geiser-chez-binary "/usr/local/bin/scheme")
- '(org-agenda-files '("~/inceptio/Emacs/agenda.org"))
+ '(geiser-chez-binary "/usr/local/bin/scheme" t)
+ '(org-agenda-files '("~/inceptio/Agenda/agenda.org"))
  '(org-babel-load-languages
    '((calc . t)
      (dot . t)
@@ -51,8 +52,13 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(page-break-lines dashboard load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
+;;
+;;Vterm theme
+;;
+
+;;(add-hook 'vterm-mode-hook #'vterm-faces)
 
 ;;Global binding keys
 
@@ -97,6 +103,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  (use-package page-break-lines
+    :ensure t))
 
 (use-package auto-dim-other-buffers
   :init
@@ -561,4 +573,7 @@
     )
   (use-package go-rename
     :ensure t)
-)
+  (use-package gotest
+    :defer 2
+    :after go-mode)
+  )

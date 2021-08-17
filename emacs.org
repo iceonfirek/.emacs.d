@@ -273,7 +273,16 @@ A final tip: if you want Geiser to start automatically a REPL for you if it noti
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
    #+end_src
 
+** go code
+   https://github.com/mdempsky/gocode
+
+** go build
+   main go build > project
+   util go build > mod pkg
+
 * yasnippet
 
 ** yasnippet description table
    
+
+ 
