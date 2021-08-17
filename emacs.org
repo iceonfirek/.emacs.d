@@ -72,6 +72,11 @@
 * windows system
 ** remote control lid closed lost connection
    [[https://community.spiceworks.com/topic/2234833-closing-laptop-lid-breaks-remote-control-program]]
+* yank
+** c-w king region between cusor to mark
+** c-y yank 
+** m-y kill ring
+** s-y ?
 * Jitouch
   [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
 * emacs
