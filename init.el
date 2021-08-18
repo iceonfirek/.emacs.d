@@ -40,6 +40,7 @@
  '(debug-on-error t)
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme" t)
+ '(global-smart-tab-mode t)
  '(org-agenda-files '("~/inceptio/Agenda/agenda.org"))
  '(org-babel-load-languages
    '((calc . t)
@@ -52,7 +53,7 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(page-break-lines dashboard load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(smart-tab org ox-confluence page-break-lines dashboard load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
@@ -92,12 +93,13 @@
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
 
+
 ;;Package install
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("elpa" . "https://elpa.gnu.org/packages/")			 ))
 
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
@@ -513,6 +515,20 @@
 ;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
 ;;  (setq vterm-kill-buffer-on-exit t))
 
+(use-package smart-tab
+  :ensure t
+  :config
+  (global-smart-tab-mode t))
+
+;; k8S
+;; (use-package kubernetes
+;;   :ensure t
+;;   :commands (kubernetes-overview)
+;;   :config
+;;   (setq kubernetes-poll-frequency 3600
+;;         kubernetes-redraw-frequency 3600))
+
+
 ;;defun
 
 (defun keyboard-escape-quit ()
@@ -580,3 +596,6 @@
     :defer 2
     :after go-mode)
   )
+
+;;ox-confluece (install org)
+(require 'ox-confluence)
