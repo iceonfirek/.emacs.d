@@ -207,6 +207,7 @@
  '(company-scrollbar-bg ((t (:background "orange1"))))
  '(company-scrollbar-fg ((t (:background "dark gray"))))
  '(company-tooltip-selection ((t (:background "orange3"))))
+ '(consult-preview-line ((t (:inherit consult-preview-insertion :extend t :background "Orange" :foreground "gray100"))))
  '(cursor ((t (:background "OliveDrab1"))))
  '(mode-line-inactive ((t (:background "gray22" :foreground "#bebebe" :height 1.0))))
  '(org-block ((t (:inherit shadow :extend t :width extra-condensed))))
@@ -450,6 +451,7 @@
 (with-eval-after-load 'company
   (define-key company-active-map (kbd "M-n") nil)
   (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "SPC") nil)
   (define-key company-active-map (kbd "s-k") #'company-select-next)
   (define-key company-active-map (kbd "s-i") #'company-select-previous)
   )

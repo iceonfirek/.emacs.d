@@ -322,3 +322,17 @@ minikube delete --all
    #+begin_quote
      https://minikube.sigs.k8s.io/docs/start/
    #+end_quote
+
+* general key binding
+** karabiner  
+   #+begin_src bash
+   cd ~/.config/karabiner/assets/complex_modifications
+   curl -O "url of jason"
+   #+end_src
+** apple keyboard binding
+   systeme-preferences-keyboard-shorcuts
+
+* confluence replacement
+  [/Users/iceonfire/inceptio/IP-Guard/images/ 
+  [file:/Users/iceonfire/inceptio/IP-Guard/images/
+  png]
