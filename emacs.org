@@ -38,6 +38,16 @@
    $ mount -o remount,rw /
    Now I can fix whatever files I messed up earlier
    #+end_quote
+** linux migration
+*** package migration
+    #+begin_src shell //source to destiny
+      sudo dpkg --get-selections | sed "s/.*deinstall//" | sed "s/install$//g" > ~/pkglist
+      sudo aptitude update && cat pkglist | xargs sudo aptitude install -y
+    #+end_src
+*** home file migration
+    #+begin_quote
+    ~/, /etc/apt, /opt,
+    #+end_quote
 ** shell theme
    #+begin_src 
 为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
@@ -45,6 +55,13 @@
    #+end_src
 *** change theme
 [[https://www.jianshu.com/p/0849ef24ffc6]]
+** check core
+   #+begin_src shell
+     *降级* 5.0.42内 开机第二个画面esc 选择内核
+     dkpg -l|grep kern|grep 77
+     apt remove ~（其他内核）
+     apt-mark hold ~（可用内核）
+   #+end_src
 ** remove package/dpkg
    #+begin_src shell
    sudo dpkg --get-selections | grep emacs
@@ -115,6 +132,7 @@
   - C-c - convert paragragh to lists
   - terminal C-c C-j line-mode; C-c C-k char-mode
   - [[internal link]] <<internal link>>
+  - global-visual-line-mode 自动断行
   - external link, org-store-link ; org-insert-link
   #+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
     graph graphname {
@@ -336,3 +354,6 @@ minikube delete --all
   [/Users/iceonfire/inceptio/IP-Guard/images/ 
   [file:/Users/iceonfire/inceptio/IP-Guard/images/
   png]
+  #+begin_src emacs-lisp
+    org-reload
+  #+end_src

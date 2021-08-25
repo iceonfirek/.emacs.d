@@ -39,9 +39,10 @@
  '(blink-cursor-mode t)
  '(debug-on-error t)
  '(doom-modeline-mode t)
- '(geiser-chez-binary "/usr/local/bin/scheme" t)
+ '(geiser-chez-binary "/usr/local/bin/scheme")
  '(global-smart-tab-mode t)
- '(org-agenda-files '("~/inceptio/Agenda/agenda.org"))
+ '(org-agenda-files
+   '("~/inceptio/Agenda/confluence.org" "~/inceptio/Agenda/agenda.org"))
  '(org-babel-load-languages
    '((calc . t)
      (dot . t)
@@ -53,7 +54,7 @@
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
  '(package-selected-packages
-   '(smart-tab org ox-confluence page-break-lines dashboard load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
@@ -62,7 +63,7 @@
 ;;(add-hook 'vterm-mode-hook #'vterm-faces)
 
 ;;Global binding keys
-
+(global-set-key (kbd "C-SPC") 'execute-extended-command)
 (global-set-key (kbd "<f5>") 'eval-buffer)
 (global-set-key (kbd "s-M-i") 'scroll-down-command)
 (global-set-key (kbd "s-I") 'beginning-of-buffer)
@@ -87,12 +88,14 @@
 (global-set-key (kbd "s-d") 'delete-char)
 (global-set-key (kbd "s-p") 'org-export-dispatch)
 (global-set-key (kbd "s-g") 'magit-status)
+(global-set-key (kbd "s-s") 'save-buffer)
 (global-set-key (kbd "<s-return>") (lambda () (interactive) (end-of-line) (newline-and-indent)))
 (global-set-key (kbd "s-:") 'comment-or-uncomment-region)
 (global-set-key (kbd "s-1") 'centaur-tabs-backward)
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
-
+(global-set-key (kbd "C-x C-r") 'recentf-open-files)
+(global-set-key (kbd "s-x") 'kill-region)
 
 ;;Package install
 (require
@@ -107,13 +110,6 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook)
-  (use-package page-break-lines
-    :ensure t))
 
 (use-package auto-dim-other-buffers
   :init
@@ -214,8 +210,8 @@
  '(org-date ((t (:foreground "dim gray" :underline t))))
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :weight normal :height 1.1 :width extra-expanded))))
  '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3" :height 1.1))))
- '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "brown1" :weight normal :height 1.1))))
- '(org-level-4 ((t (:inherit outline-4 :extend nil :foreground "green3"))))
+ '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "tomato2" :weight normal :height 1.1))))
+ '(org-level-4 ((t (:inherit outline-4 :extend nil :foreground "medium sea green"))))
  '(rainbow-delimiters-base-face ((t (:inherit nil))))
  '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground "dark cyan"))))
  '(rainbow-delimiters-depth-2-face ((t (:inherit rainbow-delimiters-base-face :foreground "brown3"))))
@@ -248,12 +244,12 @@
 ;; (use-package geiser-chez)
 
 (use-package paredit
-  :hook (scheme-mode . paredit-mode)
+  :hook (global-mode . paredit-mode)
   :bind (
 	 ("s-)" . paredit-forward-slurp-sexp)
 	 ("s-(" . paredit-backward-slurp-sexp)
 	 ("M-)" . paredit-join-sexps)
-	 ("M-(" . paredit-split-sexp)))
+	 ("M-(" . paredit-split-sexp))) 
 
 
 ;;Vertico, Consult
@@ -417,12 +413,20 @@
 (use-package yasnippet
   :ensure t
   :init
+  (add-hook 'org-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   :config
   (yas-reload-all)
   (use-package yasnippet-snippets
-    :ensure t)
-  )
+    :ensure t))
+;;
+;; recent files
+;;
+
+(use-package recentf
+  :ensure t)
+;;  ((dashboard-setup-startup-hook))
+
 
 
 ;;
@@ -483,6 +487,10 @@
   (setq org-ellipsis " ▾"))
 
 ;(setenv "PATH" (concat "/opt/local/bin/:" (getenv "PATH")))
+
+;;always show image inline automatically after src code
+(eval-after-load 'org
+  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 
 ;;org babel
 (setq org-confirm-babel-evaluate nil)
