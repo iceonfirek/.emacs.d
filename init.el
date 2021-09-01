@@ -5,6 +5,7 @@
 
 ;;Theme
 (setq inhibit-startup-message t)
+(setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -17,6 +18,8 @@
 (load-theme 'wombat)
 (setq-default cursor-type 'bar)
 (global-prettify-symbols-mode 1)
+;;(global-visual-line-mode 1)
+(paredit-mode 1)
 (setq explicit-shell-file-name "/bin/zsh")
 (server-start)
 
@@ -52,9 +55,19 @@
      (emacs-lisp . t)
      (shell . t)))
  '(org-export-backends '(ascii html icalendar latex md odt))
- '(org-todo-keywords '((sequence "TODO" "Inprogress" "DONE")))
+ '(org-log-note-headings
+   '((done . "CLOSING NOTE %t")
+     (state . "State %-12s from %-12S %t")
+     (note . "%t")
+     (reschedule . "Rescheduled from %S on %t")
+     (delschedule . "Not scheduled, was %S on %t")
+     (redeadline . "New deadline from %S on %t")
+     (deldeadline . "Removed deadline, was %S on %t")
+     (refile . "Refiled on %t")
+     (clock-out . "")))
+ '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
@@ -94,7 +107,6 @@
 (global-set-key (kbd "s-1") 'centaur-tabs-backward)
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
-(global-set-key (kbd "C-x C-r") 'recentf-open-files)
 (global-set-key (kbd "s-x") 'kill-region)
 
 ;;Package install
@@ -116,6 +128,26 @@
   (add-hook 'after-init-hook (lambda ()
   (when (fboundp 'auto-dim-other-buffers-mode)
     (auto-dim-other-buffers-mode t)))))
+;;dashboard
+(use-package dashboard
+  :ensure t
+  :config
+  (setq dashboard-center-content nil)
+  ;(setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
+  (add-to-list 'dashboard-items '(agenda) t)
+  (setq dashboard-week-agenda t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-items '((recents  . 10)
+					;(bookmarks . 5)
+			  (agenda . 8)
+			  ;(projects . 5)
+					;(registers . 5)
+			  ))
+  (image-type-available-p 'png)
+  (setq dashboard-banner-logo-title nil)
+  (setq dashboard-startup-banner "/Users/iceonfire/.emacs.d/elpa/dashboard-20210815.445/banners/5.png")
+  (dashboard-setup-startup-hook))
 
 ;;Dired
 (use-package dired-sidebar
@@ -244,7 +276,7 @@
 ;; (use-package geiser-chez)
 
 (use-package paredit
-  :hook (global-mode . paredit-mode)
+  :hook (scheme-mode . paredit-mode)
   :bind (
 	 ("s-)" . paredit-forward-slurp-sexp)
 	 ("s-(" . paredit-backward-slurp-sexp)
@@ -419,14 +451,6 @@
   (yas-reload-all)
   (use-package yasnippet-snippets
     :ensure t))
-;;
-;; recent files
-;;
-
-(use-package recentf
-  :ensure t)
-;;  ((dashboard-setup-startup-hook))
-
 
 
 ;;
@@ -480,7 +504,7 @@
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
   :custom
-  (org-bullets-bullet-list '("*" "*" "*" "*" "*" "*" "*")))
+  (org-bullets-bullet-list '("✥" "⚫" "◉" "○" "◈" "◇")))
 
 (use-package org
   :config

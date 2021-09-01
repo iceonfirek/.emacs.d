@@ -14,6 +14,12 @@
     sudo xattr -rd com.apple.quarantine ~
     #+end_src
   - emacsclient -n filename
+  - netstat
+    #+begin_src shell
+      sudo lsof -i -n -P | grep TCP    
+      sudo lsof -i -n -P | grep LAgent 
+    #+end_src
+  - http://127.0.0.1:3000 ~/Downloads/sharetool
 * linux
 ** disable lid sleep
      - 编辑下列文件：/etc/systemd/logind.conf
@@ -121,34 +127,37 @@
   - cant access icloud folder -> emacs full disk access-> open any file by "open file"
 * consult
   - consult-yank-from-kill-ring
+* graphviz
+  - [2021-08-31 Tue 13:12] \\
+    using graphviz by babel dot file [[https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/][link]]
+      #+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
+        graph graphname {
+    	node [shape=box, fontname="Microsoft Yahei"];
+    	rankdir=LR;
+    	a [label="用户提交申请"]
+    	b [label="直接领导（主/备）"]
+    	c [label="高级总监"]
+    	d [label="IT负责人（主/备）"]
+    	e [label="IT高级总监"]
+    	a -- b
+    	b -- c
+    	c -- d
+    	d -- e
+        }
+         #+end_src
+    [[https://graphviz.org/Gallery/]]
 * org-mode
   - C-c C-x C-v (org-toggle-inline-images), custom group -> org faces.
   - C-c C-t todo/done;
   - C-C C-q set tags
   - C-c C-s schedule; d deadline;
   - C-c C-c eval code block to result
-  - using graphviz by babel dot file [[https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/][link]]
   - *org store link* insert all links
   - C-c - convert paragragh to lists
   - terminal C-c C-j line-mode; C-c C-k char-mode
   - [[internal link]] <<internal link>>
   - global-visual-line-mode 自动断行
   - external link, org-store-link ; org-insert-link
-  #+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
-    graph graphname {
-	node [shape=box, fontname="Microsoft Yahei"];
-	rankdir=LR;
-	a [label="用户提交申请"]
-	b [label="直接领导（主/备）"]
-	c [label="高级总监"]
-	d [label="IT负责人（主/备）"]
-	e [label="IT高级总监"]
-	a -- b
-	b -- c
-	c -- d
-	d -- e
-    }
-     #+end_src
 ** exprot settings [[https://orgmode.org/manual/Export-Settings.html#Export-Settings][link]]
    - Paragraphs are separated by at least one empty line. If you need to enforce a line break within a paragraph, use ‘\\’ at the end of a line.
    #+BEGIN_VERSE
@@ -205,6 +214,8 @@
     - This is [[color:green][green text]]
     - This is [[color:red][red]]
    #+end_src
+** bullet symbol
+   [[https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/]]
 * counsel-projectil
   - C-c C-o open file window, o action to the file.
 * magit
@@ -287,7 +298,6 @@ A final tip: if you want Geiser to start automatically a REPL for you if it noti
    #+end_src
 
 * Go-Mode
-
 ** .bashrc .bash_profile .zshrc
    - 环境变量添加到.bash_profile&.zshrc中
    #+begin_src shell
@@ -302,13 +312,13 @@ A final tip: if you want Geiser to start automatically a REPL for you if it noti
 ** go build
    main go build > project
    util go build > mod pkg
+   go run . >go mod init ../> go build . > go install
 
 * yasnippet
 
 ** yasnippet description table
 
 * k8s
-
 ** minikube
    #+begin_src 
 kubectl get po -A
