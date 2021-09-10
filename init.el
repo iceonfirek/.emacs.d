@@ -1,9 +1,12 @@
+;;; package --- Summary
+;;; Commentary:
 ;; (setq url-proxy-services
 ;;   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
 ;;    ("http" . "127.0.0.1:7890")
 ;;     ("https" . "127.0.0.1:7890")))
 
-;;Theme
+;;; Code:
+;;; Theme
 (setq inhibit-startup-message t)
 (setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
 (scroll-bar-mode -1)
@@ -19,7 +22,7 @@
 (setq-default cursor-type 'bar)
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
-(paredit-mode 1)
+(paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
 (server-start)
 
@@ -28,7 +31,7 @@
 (setq auto-save-default t)
 (setq make-backup-files nil)
 (setq ring-bell-function nil)
-(setq system-time-locale "C") 
+(setq system-time-locale "C")
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; (setq ns-pop-up-frames nil)
 ;; (setq tab-line-mode 1)
@@ -55,6 +58,7 @@
      (emacs-lisp . t)
      (shell . t)))
  '(org-export-backends '(ascii html icalendar latex md odt))
+ '(org-list-allow-alphabetical t)
  '(org-log-note-headings
    '((done . "CLOSING NOTE %t")
      (state . "State %-12s from %-12S %t")
@@ -67,13 +71,12 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
 ;;
 
-;;(add-hook 'vterm-mode-hook #'vterm-faces)
 
 ;;Global binding keys
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
@@ -150,23 +153,23 @@
   (dashboard-setup-startup-hook))
 
 ;;Dired
-(use-package dired-sidebar
-  :bind (("C-c C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
-  :commands (dired-sidebar-toggle-sidebar)
-  :init
-  (add-hook 'dired-sidebar-mode-hook
-            (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
-  :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-  (setq dired-sidebar-width 30)
-  (setq dired-sidebar-subtree-line-prefix "__")
-  (setq dired-sidebar-theme 'wombat)
-  (setq dired-sidebar-use-term-integration t)
-  (setq dired-sidebar-use-custom-font t))
+;; (use-package dired-sidebar
+;;   :bind (("C-c C-n" . dired-sidebar-toggle-sidebar))
+;;   :ensure t
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :init
+;; (add-hook 'dired-sidebar-mode-hook
+;;           (lambda ()
+;;             (unless (file-remote-p default-directory)
+;;               (auto-revert-mode)))))
+;; :config
+;; (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+;; (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+;; (setq dired-sidebar-width 30)
+;; (setq dired-sidebar-subtree-line-prefix "__")
+;; (setq dired-sidebar-theme 'wombat)
+;; (setq dired-sidebar-use-term-integration t)
+;; (setq dired-sidebar-use-custom-font t)
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
@@ -178,7 +181,7 @@
   (centaur-tabs-mode t)
   (setq centaur-tabs-style "bar"
 	centaur-tabs-height 25
-	centaur-tabs-width 40
+	;;centaur-tabs-width 40
 	centaur-tabs-set-icons t
 	centaur-tabs-set-bar 'left
 	centaur-tabs-label-fixed-length 20
@@ -240,9 +243,9 @@
  '(mode-line-inactive ((t (:background "gray22" :foreground "#bebebe" :height 1.0))))
  '(org-block ((t (:inherit shadow :extend t :width extra-condensed))))
  '(org-date ((t (:foreground "dim gray" :underline t))))
- '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :weight normal :height 1.1 :width extra-expanded))))
- '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3" :height 1.1))))
- '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "tomato2" :weight normal :height 1.1))))
+ '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :height 1.1))))
+ '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3" ))))
+ '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "tomato2" ))))
  '(org-level-4 ((t (:inherit outline-4 :extend nil :foreground "medium sea green"))))
  '(rainbow-delimiters-base-face ((t (:inherit nil))))
  '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground "dark cyan"))))
@@ -281,8 +284,7 @@
 	 ("s-)" . paredit-forward-slurp-sexp)
 	 ("s-(" . paredit-backward-slurp-sexp)
 	 ("M-)" . paredit-join-sexps)
-	 ("M-(" . paredit-split-sexp))) 
-
+	 ("M-(" . paredit-split-sexp)))
 
 ;;Vertico, Consult
 (use-package vertico
@@ -310,49 +312,49 @@
 
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings (mode-specific-map)
-         ("C-c h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c b" . consult-bookmark)
-         ("C-c k" . consult-kmacro)
-         ;; C-x bindings (ctl-x-map)
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ("<help> a" . consult-apropos)            ;; orig. apropos-command
-         ;; M-g bindings (goto-map)
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-project-imenu)
-         ;; M-s bindings (search-map)
-         ("M-s f" . consult-find)
-         ("M-s L" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s m" . consult-multi-occur)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
-         ("M-s l" . consult-line))                 ;; needed by consult-line to detect isearch
+  :bind ;; C-c bindings (mode-specific-map)
+  ("C-c h" . consult-history)
+  ("C-c m" . consult-mode-command)
+  ("C-c b" . consult-bookmark)
+  ("C-c k" . consult-kmacro)
+  ;; C-x bindings (ctl-x-map)
+  ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+  ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+  ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+  ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+  ;; Custom M-# bindings for fast register access
+  ("M-#" . consult-register-load)
+  ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+  ("C-M-#" . consult-register)
+  ;; Other custom bindings
+  ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+  ("<help> a" . consult-apropos)            ;; orig. apropos-command
+  ;; M-g bindings (goto-map)
+  ("M-g e" . consult-compile-error)
+  ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+  ("M-g g" . consult-goto-line)             ;; orig. goto-line
+  ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+  ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+  ("M-g m" . consult-mark)
+  ("M-g k" . consult-global-mark)
+  ("M-g i" . consult-imenu)
+  ("M-g I" . consult-project-imenu)
+  ;; M-s bindings (search-map)
+  ("M-s f" . consult-find)
+  ("M-s L" . consult-locate)
+  ("M-s g" . consult-grep)
+  ("M-s G" . consult-git-grep)
+  ("M-s r" . consult-ripgrep)
+  ("M-s l" . consult-line)
+  ("M-s m" . consult-multi-occur)
+  ("M-s k" . consult-keep-lines)
+  ("M-s u" . consult-focus-lines)
+  ;; Isearch integration
+  ("M-s e" . consult-isearch)
+;;  :map isearch-mode-map
+  ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+  ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+  ("M-s l" . consult-line)                 ;; needed by consult-line to detect isearch
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
   (setq register-preview-delay 0
@@ -458,7 +460,7 @@
 ;;
 
 (use-package company
-;;  :after ((scheme-mode . go-mode))
+  ;;  :after ((scheme-mode . go-mode))
 ;;  :hook (scheme-mode . company-mode)
   :ensure t
   :config
@@ -470,8 +472,9 @@
   (setq company-minimum-prefix-length 3)
   (setq company-idle-delay 0.0)
   (setq company-backends
-	'((company-files company-yasnippet company-keywords company-capf)
-	  (company-abbrev company-dabbrev))))
+	'((company-files company-yasnippet ;;company-ispell
+			 company-keywords company-capf)
+	  (company-abbrev company-dabbrev)))) 
 
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (add-to-list (make-local-variable 'company-backends)
@@ -479,7 +482,8 @@
 (with-eval-after-load 'company
   (define-key company-active-map (kbd "M-n") nil)
   (define-key company-active-map (kbd "M-p") nil)
-  (define-key company-active-map (kbd "SPC") nil)
+  (define-key company-active-map (kbd "e") nil)
+  (define-key company-active-map (kbd "SPC") #'company-abort)
   (define-key company-active-map (kbd "s-k") #'company-select-next)
   (define-key company-active-map (kbd "s-i") #'company-select-previous)
   )
@@ -520,8 +524,7 @@
 (setq org-confirm-babel-evaluate nil)
 
 ;;org text highlight
-(org-add-link-type
- "color"
+(org-add-link-type "color"
  (lambda (path)
    (message (concat "color "
                     (progn (add-text-properties
@@ -535,6 +538,13 @@
     ((eq format 'latex)
      (format "{\\color{%s}%s}" path desc)))))
 
+
+;;flycheck
+(use-package flycheck
+  :ensure t)
+
+;; (dolist (hook '(org-mode-hook))
+;;   (add-hook hook (lambda () (flyspell-mode 1) (flycheck-mode 1) (flyspell-auto-correct-previous-hook 1))))
 ;;SHELL
 (use-package exec-path-from-shell
   :ensure t
@@ -580,7 +590,7 @@
          (funcall buffer-quit-function))
         ;((not (one-window-p t))
          ;(delete-other-windows))
-        ((string-match "^ \\*" (buffer-name (current-buffer)))x
+        ((string-match "^ \\*" (buffer-name (current-buffer)))
          (bury-buffer))))
 
 (prefer-coding-system 'utf-8)
@@ -590,8 +600,7 @@
 ;; backwards compatibility as default-buffer-file-coding-system
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
-    (setq-default buffer-file-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8))
+    (setq-default buffer-file-coding-system 'utf-8))
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
@@ -633,3 +642,5 @@
 
 ;;ox-confluece (install org)
 (require 'ox-confluence)
+
+;;; init.el ends here

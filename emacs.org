@@ -10,16 +10,68 @@
   - mac kill process  ps -ax | grep , killall
   - mac package source [[https://www.macports.org/install.php][link]]
   - fix app damaged：
-    #+begin_src 
+    #+begin_src
     sudo xattr -rd com.apple.quarantine ~
     #+end_src
   - emacsclient -n filename
   - netstat
-    #+begin_src shell
-      sudo lsof -i -n -P | grep TCP    
-      sudo lsof -i -n -P | grep LAgent 
+    #+begin_src shell 
+      sudo lsof -i -n -P | grep TCP
+      sudo lsof -i -n -P | grep LAgent
     #+end_src
+
   - http://127.0.0.1:3000 ~/Downloads/sharetool
+** crontab定时任务 chech jitouch
+   https://ole.michelsen.dk/blog/schedule-jobs-with-crontab-on-mac-osx/
+   #+begin_src shell
+     crontab -l
+     EDITOR=/usr/local/bin/emacsclient crontab -e
+     sudo /usr/sbin/cron restart
+   #+end_src
+   #+begin_src shell
+     -eq
+     is equal to
+     if [ "$a" -eq "$b" ]
+	-ne
+	is not equal to
+	if [ "$a" -ne "$b" ]
+	   -gt
+	   is greater than
+	   if [ "$a" -gt "$b" ]
+	      -ge
+	      is greater than or equal to
+	      if [ "$a" -ge "$b" ]
+		 -lt
+		 is less than
+		 if [ "$a" -lt "$b" ]
+		    -le
+		    is less than or equal to
+		    if [ "$a" -le "$b" ]
+   #+end_src
+   #+begin_src shell
+     #! /bin/bash
+     
+     PROCESS=jitouch
+     number=$(ps aux | grep -v grep | grep -ci $PROCESS)
+     
+     if [ $number -eq 1 ]
+     then
+	 #  echo hello
+	 nohup sleep 1800 2>&1 
+	 nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
+     else
+	 nohup /Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS/Jitouch.app/Contents/MacOS/Jitouch 2>&1 
+	 # echo open jitouch again!!
+	 nohup sleep 1800 2>&1 
+	 nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
+     fi
+   #+end_src
+   #+begin_src shell
+     C-z //suspend job;
+     bg %1 //后台运行1号;
+     job -l //list jobs
+   #+end_src
+   -  curl myip.ipip.net
 * linux
 ** disable lid sleep
      - 编辑下列文件：/etc/systemd/logind.conf
@@ -28,7 +80,7 @@
      - #HandleHibernateKey 按下休眠键后的行为，默认 hibernate
      - #HandleLidSwitch 合上笔记本盖后的行为，默认 suspend（改为 lock；即合盖不休眠）在原文件中，还要去掉前面的#
      - 运行：systemctl restart systemd-logind就会生效。
-** ubuntu test 
+** ubuntu test
    - ssh test@10.8.19.95
 ** recovery mode
    #+begin_quote
@@ -55,7 +107,7 @@
     ~/, /etc/apt, /opt,
     #+end_quote
 ** shell theme
-   #+begin_src 
+   #+begin_src
 为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
 如果你要重新恢复到 bash：chsh -s /bin/bash root
    #+end_src
@@ -64,28 +116,33 @@
 ** check core
    #+begin_src shell
      *降级* 5.0.42内 开机第二个画面esc 选择内核
-     dkpg -l|grep kern|grep 77
+     dpkg -l|grep kern|grep 77
      apt remove ~（其他内核）
      apt-mark hold ~（可用内核）
+     uname -sr
    #+end_src
 ** remove package/dpkg
    #+begin_src shell
    sudo dpkg --get-selections | grep emacs
    sudo apt-get remove emacsen-common
    #+end_src
+** restart network
+   #+begin_quote shell
+   sudo ifdown wlan0 && sudo ifup -v wlan0
+   #+end_quote
 * ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
 ** ~/.bash_profile
 * mtr(asn) trace
 ** asn
    [[https://github.com/nitefood/asn#installation]]
-   #+begin_src 
+   #+begin_src
    brew install bash coreutils curl whois mtr jq ipcalc grepcidr nmap aha && brew link mtr
    #+end_src
 ** [[https://github.com/nitefood/asn#installation]]
 ** touch asn file from curl.
 ** https://www.ipqualityscore.com/user/dashboard
    #+begin_src zsh
-   TOKEN="M1Jvm88NU6UKjPQ417S9Ttsi6SxBUPsq"; mkdir "$HOME/.asn/" && echo "$TOKEN" > "$HOME/.asn/iqs_token" && chmod -R 600 "$HOME/.asn/"   
+   TOKEN="M1Jvm88NU6UKjPQ417S9Ttsi6SxBUPsq"; mkdir "$HOME/.asn/" && echo "$TOKEN" > "$HOME/.asn/iqs_token" && chmod -R 600 "$HOME/.asn/"
    #+end_src
 ** usage
    - asn <ASnumber>: to lookup matching ASN data. Supports “as123” and “123” formats (case insensitive)
@@ -97,10 +154,11 @@
    [[https://community.spiceworks.com/topic/2234833-closing-laptop-lid-breaks-remote-control-program]]
 * yank
 ** c-w king region between cusor to mark
-** c-y yank 
+** c-y yank
 ** m-y kill ring
 ** s-y ?
 * Jitouch
+  I copied the jitouch app file from Library/PreferencePanes/Jitouch.prefPane/Contents/Resources and pasted it into its sibling folder Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS and it works like a charm now!
   [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
 * emacs
   - eval-buffer ;;macs
@@ -118,7 +176,7 @@
   - C-h f describe function
   - counsel load theme
   - buffer menu -> d -> x to delete marked buffers
-  - *copy multiple pathnames* right click + option 
+  - *copy multiple pathnames* right click + option
 * paredit
   #+ATTR_ORG: :width 1200
   [[/Users/iceonfire/github/Scheme/paredit_command.png]]
@@ -174,7 +232,7 @@
    #+END_CENTER
 
    in the [[https://gitlab.com/OlMon/org-themes/-/tree/master/src][src]] directory, there is a folders for every theme. There is at least a .theme file. Download it and just add to your org file
-;;   #+SETUPFILE: <path to .theme file> 
+;;   #+SETUPFILE: <path to .theme file>
    This will embed the css into the html.
    If you download the .css file of a theme, you can add it by adding
    #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="<path to css>" />
@@ -189,11 +247,11 @@
     - C-q cancel
 *** repeater task
     - [[https://orgmode.org/manual/Repeated-tasks.html]]
-    #+begin_src 
+    #+begin_src
     DEADLINE: <2005-10-01 Sat +1m +1w -3d -10h>
     #+end_src
 ** color text
-   #+begin_src 
+   #+begin_src
    (org-add-link-type
  "color"
  (lambda (path)
@@ -219,7 +277,7 @@
 * counsel-projectil
   - C-c C-o open file window, o action to the file.
 * magit
-  - s stage, u unstage, c comit, c-c c-c which comment, P -f p, force push, 
+  - s stage, u unstage, c comit, c-c c-c which comment, P -f p, force push,
 * git
 ** git init
    - git init
@@ -243,12 +301,12 @@
 
    - git config --global user.name "<username>"
    - git config --global user.email "<email>"
-   - Change username and email for current repo  
+   - Change username and email for current repo
 
    - git config  user.name "<username>" --replace-all
    - git config  user.email "<email>" --replace-all
 ** git ssh connect
-   #+begin_src shell 
+   #+begin_src shell
      ssh-keygen -t rsa
      cat ~/.ssh/id_rsa.pub
      #+end_src
@@ -258,42 +316,40 @@
   - C-c C-j, line mode. /use shell/
 * web browser
   - widget-webkit-browse-url
-* Meow mode 
+* Meow mode
   - j,k,h,l,i + shift.
 * geiser scheme
   #+begin_quote
-How Geiser associates a REPL to your Scheme buffer
+  How Geiser associates a REPL to your Scheme buffer
 
-To determine what Scheme implementation corresponds to a given source file, Geiser uses the following algorithm:
+  To determine what Scheme implementation corresponds to a given source file, Geiser uses the following algorithm:
 
-If the file-local variable geiser-scheme-implementation is defined, its value is used. A common way of setting buffer-local variables is to put them in a comment near the beginning of the file, surrounded by -*- marks, as in:
- 	
-;; -*- geiser-scheme-implementation: guile -*-
-If you’ve customized geiser-active-implementations so that it’s a single-element list (as explained in here), that element is used as the chosen implementation.
-The contents of the file is scanned for hints on its associated implementation. For instance, files that contain a #lang directive will be considered Racket source code, while those with a define-module form in them will be assigned to a Guile REPL.
-The current buffer’s file name is checked against the rules given in geiser-implementations-alist, and the first match is applied. You can provide your own rules by customizing this variable, as explained below.
-If we haven’t been lucky this far and you have customized geiser-default-implementation to the name of a supported implementation, we’ll follow your lead.
-See? That’s the problem of being a smart aleck: one’s always outsmarted by people around. At this point, geiser-mode will humbly give up and ask you to explicitly choose the Scheme implementation.
-As you can see in the list above, there are several ways to influence Geiser’s guessing by means of customizable variables. The most direct (and most impoverishing) is probably limiting the active implementations to a single one, while customizing geiser-implementations-alist is the most flexible (and, unsurprisingly, also the most complex). Here’s the default value for the latter variable:
+  If the file-local variable geiser-scheme-implementation is defined, its value is used. A common way of setting buffer-local variables is to put them in a comment near the beginning of the file, surrounded by -*- marks, as in:
 
- 	
-(((regexp "\\.scm$") guile)
- ((regexp "\\.ss$") racket)
- ((regexp "\\.rkt$") racket))
-which describes the simple heuristic that files with ‘.scm’ as extension are by default associated to a Guile REPL while those ending in ‘.ss’ or ‘.rkt’ correspond to Racket’s implementation (with the caveat that these rules are applied only if the previous heuristics have failed to detect the correct implementation, and that they’ll match only if the corresponding implementation is active). You can add rules to geiser-implementations-alist (or replace all of them) by customizing it. Besides regular expressions, you can also use a directory name; for instance, the following snippet:
+  ;; -*- geiser-scheme-implementation: guile -*-
+  If you’ve customized geiser-active-implementations so that it’s a single-element list (as explained in here), that element is used as the chosen implementation.
+  The contents of the file is scanned for hints on its associated implementation. For instance, files that contain a #lang directive will be considered Racket source code, while those with a define-module form in them will be assigned to a Guile REPL.
+  The current buffer’s file name is checked against the rules given in geiser-implementations-alist, and the first match is applied. You can provide your own rules by customizing this variable, as explained below.
+  If we haven’t been lucky this far and you have customized geiser-default-implementation to the name of a supported implementation, we’ll follow your lead.
+  See? That’s the problem of being a smart aleck: one’s always outsmarted by people around. At this point, geiser-mode will humbly give up and ask you to explicitly choose the Scheme implementation.
+  As you can see in the list above, there are several ways to influence Geiser’s guessing by means of customizable variables. The most direct (and most impoverishing) is probably limiting the active implementations to a single one, while customizing geiser-implementations-alist is the most flexible (and, unsurprisingly, also the most complex). Here’s the default value for the latter variable:
 
- 	
-(eval-after-load "geiser-impl"
+
+  (((regexp "\\.scm$") guile)
+  ((regexp "\\.ss$") racket)
+  ((regexp "\\.rkt$") racket))
+  which describes the simple heuristic that files with ‘.scm’ as extension are by default associated to a Guile REPL while those ending in ‘.ss’ or ‘.rkt’ correspond to Racket’s implementation (with the caveat that these rules are applied only if the previous heuristics have failed to detect the correct implementation, and that they’ll match only if the corresponding implementation is active). You can add rules to geiser-implementations-alist (or replace all of them) by customizing it. Besides regular expressions, you can also use a directory name; for instance, the following snippet:
+
+
+  (eval-after-load "geiser-impl"
   '(add-to-list 'geiser-implementations-alist
-                '((dir "/home/jao/prj/frob") guile)))
-will add a new rule that says that any file inside my ‘/home/jao/prj/frob’ directory (or, recursively, any of its children) is to be assigned to Guile. Since rules are first matched, first served, this new rule will take precedence over the default ones.
+  '((dir "/home/jao/prj/frob") guile)))
+  will add a new rule that says that any file inside my ‘/home/jao/prj/frob’ directory (or, recursively, any of its children) is to be assigned to Guile. Since rules are first matched, first served, this new rule will take precedence over the default ones.
 
-A final tip: if you want Geiser to start automatically a REPL for you if it notices that there’s no one active when it enters geiser-mode, you can customize geiser-mode-start-repl-p to t.
-
-
-  #+end_quote 
+  A final tip: if you want Geiser to start automatically a REPL for you if it notices that there’s no one active when it enters geiser-mode, you can customize geiser-mode-start-repl-p to t.
+  #+end_quote
 ** commands
-   #+begin_src 
+   #+begin_src
    C-c C-s chez
    #+end_src
 
@@ -320,39 +376,39 @@ A final tip: if you want Geiser to start automatically a REPL for you if it noti
 
 * k8s
 ** minikube
-   #+begin_src 
-kubectl get po -A
-minikube dashboard
+   #+begin_src
+   kubectl get po -A
+   minikube dashboard
 
-//hello-minikube deployment
-kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4  
-kubectl expose deployment hello-minikube --type=NodePort --port=8080
-kubectl get services hello-minikube
-minikube service hello-minikube
-kubectl port-forward service/hello-minikube 7080:8080
+   //hello-minikube deployment
+   kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4
+   kubectl expose deployment hello-minikube --type=NodePort --port=8080
+   kubectl get services hello-minikube
+   minikube service hello-minikube
+   kubectl port-forward service/hello-minikube 7080:8080
 
 
-//loadbalancer deployment
-kubectl create deployment balanced --image=k8s.gcr.io/echoserver:1.4  
-kubectl expose deployment balanced --type=LoadBalancer --port=8080
-minikube tunnel
-kubectl get services balanced
+   //loadbalancer deployment
+   kubectl create deployment balanced --image=k8s.gcr.io/echoserver:1.4
+   kubectl expose deployment balanced --type=LoadBalancer --port=8080
+   minikube tunnel
+   kubectl get services balanced
 
-//manage cluster
-minikube pause
-minikube unpause
-minikube stop
-minikube config set memory 16384
-minikube addons list
-minikube start -p aged --kubernetes-version=v1.16.1
-minikube delete --all
+   //manage cluster
+   minikube pause
+   minikube unpause
+   minikube stop
+   minikube config set memory 16384
+   minikube addons list
+   minikube start -p aged --kubernetes-version=v1.16.1
+   minikube delete --all
    #+end_src
    #+begin_quote
      https://minikube.sigs.k8s.io/docs/start/
    #+end_quote
 
 * general key binding
-** karabiner  
+** karabiner
    #+begin_src bash
    cd ~/.config/karabiner/assets/complex_modifications
    curl -O "url of jason"
@@ -360,10 +416,26 @@ minikube delete --all
 ** apple keyboard binding
    systeme-preferences-keyboard-shorcuts
 
-* confluence replacement
-  [/Users/iceonfire/inceptio/IP-Guard/images/ 
-  [file:/Users/iceonfire/inceptio/IP-Guard/images/
-  png]
+* confluence replacement Regexp
   #+begin_src emacs-lisp
     org-reload
   #+end_src
+  regexp:
+  #+begin_src regexp
+  \(\[.*images/\)\(.*.[png]\)\(]\)
+  !\2!
+  #+end_src
+  [[https://www.youtube.com/watch?v=TxYGHjKBMUg]]
+  [[https://www.emacswiki.org/emacs/RegularExpression]]
+
+* code-server
+  nohup code-server 2>&1 &
+  安全组添加192.168.0.0/16 到 端口58080
+* chrome
+  - [2021-09-07 Tue 17:11] \\
+    frameless
+    #+begin_src shell
+
+      /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window --app=https://jms.inceptio.tech/luna/\?login_to\=b7eef7e3-ad23-4e58-8c69-43cc44e0c397
+
+    #+end_src
