@@ -5,6 +5,7 @@
   - sudo pmset -a disablesleep 1
   - open -n /Applications/
   - sudo codesign --force --deep --sign - /~
+  - xattr -r -d com.apple.quarantine ~
   - /Applications/Emacs.app/Contents/MacOS/Emacs --debug-init
   - export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
   - mac kill process  ps -ax | grep , killall
@@ -439,3 +440,10 @@
       /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window --app=https://jms.inceptio.tech/luna/\?login_to\=b7eef7e3-ad23-4e58-8c69-43cc44e0c397
 
     #+end_src
+* eaf
+  - m-u focus-out
+  - i focus input
+  - m-s open url
+  - m-D
+  - c-c b eaf bookmarks
+

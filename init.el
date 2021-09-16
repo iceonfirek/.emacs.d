@@ -1,9 +1,9 @@
 ;;; package --- Summary
 ;;; Commentary:
-;; (setq url-proxy-services
-;;   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-;;    ("http" . "127.0.0.1:7890")
-;;     ("https" . "127.0.0.1:7890")))
+(setq url-proxy-services
+  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+   ("http" . "127.0.0.1:7890")
+    ("https" . "127.0.0.1:7890")))
 
 ;;; Code:
 ;;; Theme
@@ -43,6 +43,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
+ '(centaur-tabs-gray-out-icons 'buffer)
+ '(centaur-tabs-hide-tabs-hooks nil)
+ '(centaur-tabs-mode t nil (centaur-tabs))
+ '(centaur-tabs-modified-marker "*")
+ '(centaur-tabs-set-bar 'left)
+ '(centaur-tabs-set-close-button nil)
+ '(centaur-tabs-set-icons t)
+ '(centaur-tabs-set-modified-marker t)
  '(debug-on-error t)
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
@@ -71,7 +79,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
@@ -87,8 +95,9 @@
 (global-set-key (kbd "s-K") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(global-set-key (kbd "s-w") 'delete-window)
-(global-set-key (kbd "s-w") 'kill-buffer-and-window)
+;(global-set-key (kbd "s-w") 'delete-window)
+;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
+(global-set-key (kbd "s-w") 'kill-current-buffer)
 (global-set-key (kbd "s-u") 'kill-whole-line)
 (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-M-l") 'forward-word)
@@ -196,7 +205,8 @@
       (cond
 	;; ((not (eq (file-remote-p (buffer-file-name)) nil))
        ;; "Remote")
-       ((or (string-equal "*" (substring (buffer-name) 0 1))
+       ((or (and (string-equal "*" (substring (buffer-name) 0 1))
+		 (not (string-equal "*dashboard*" (substring (buffer-name)))))
 	     (memq major-mode '(magit-process-mode
 				magit-status-mode
 				magit-diff-mode
@@ -208,6 +218,9 @@
 	"Emacs")
 	((derived-mode-p 'dired-mode)
 	 "Dired")
+	((or (derived-mode-p 'eaf-mode)
+	     (string-equal "*dashboard*" (substring (buffer-name))))
+	 "eap")
 	(t "Edit"))))
   :bind
   ;; ("m-1" . centaur-tabs-backward)
@@ -244,8 +257,8 @@
  '(org-block ((t (:inherit shadow :extend t :width extra-condensed))))
  '(org-date ((t (:foreground "dim gray" :underline t))))
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :height 1.1))))
- '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3" ))))
- '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "tomato2" ))))
+ '(org-level-2 ((t (:inherit outline-2 :extend nil :foreground "green3"))))
+ '(org-level-3 ((t (:inherit outline-3 :extend nil :foreground "tomato2"))))
  '(org-level-4 ((t (:inherit outline-4 :extend nil :foreground "medium sea green"))))
  '(rainbow-delimiters-base-face ((t (:inherit nil))))
  '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground "dark cyan"))))
@@ -642,5 +655,36 @@
 
 ;;ox-confluece (install org)
 (require 'ox-confluence)
+;;(require 'ov-highlight)
 
+;;EAF
+(use-package quelpa-use-package)
+;; Don't forget to run M-x eaf-install-dependencies
+(use-package eaf
+  :load-path "~/.emacs.d/site-lisp/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+  :custom
+  ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+  (eaf-browser-continue-where-left-off t)
+  (eaf-browser-enable-adblocker t)
+  (browse-url-browser-function 'eaf-open-browser) ;Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+  :init
+  (use-package epc      :defer t :ensure t)
+  (use-package ctable   :defer t :ensure t)
+  (use-package deferred :defer t :ensure t)
+  (use-package s        :defer t :ensure t)
+  (setq browse-url-browser-function 'eaf-open-browser)
+   :config
+   (defalias 'browse-web #'eaf-open-browser)
+   ;; (eaf-bind-key eaf-send-down-key "s-k" eaf-app-keybiding)
+   ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
+   ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)					;
+   ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  ;(eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+  ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
+					;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
+  )
+(require 'eaf-browser)
+(require 'eaf-pdf-viewer)
+;(require 'eaf-terminal)
+;(require 'eaf-org-previewer)
 ;;; init.el ends here
