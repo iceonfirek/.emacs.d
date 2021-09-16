@@ -1,9 +1,9 @@
 ;;; package --- Summary
 ;;; Commentary:
-(setq url-proxy-services
-  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-   ("http" . "127.0.0.1:7890")
-    ("https" . "127.0.0.1:7890")))
+;; (setq url-proxy-services
+;;   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+;;    ("http" . "127.0.0.1:7890")
+;;     ("https" . "127.0.0.1:7890")))
 
 ;;; Code:
 ;;; Theme
@@ -79,7 +79,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
+   '(posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 
 ;;
 ;;Vterm theme
@@ -679,7 +679,10 @@
    ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
    ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)					;
    ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-  ;(eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+   (eaf-bind-key scroll_down "s-i" eaf-pdf-viewer-keybinding)
+   (eaf-bind-key scroll_up "s-k" eaf-pdf-viewer-keybinding)
+   (eaf-bind-key page_down "s-K" eaf-pdf-viewer-keybinding)
+     (eaf-bind-key scroll_up "s-I" eaf-pdf-viewer-keybinding)
   ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
 					;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
   )
@@ -687,4 +690,16 @@
 (require 'eaf-pdf-viewer)
 ;(require 'eaf-terminal)
 ;(require 'eaf-org-previewer)
+
+;;google translate
+(require 'go-translate)
+(setq go-translate-base-url "https://translate.google.cn")
+(setq go-translate-target-language "en")
+(setq go-translate-local-language "zh-CN")
+(defun go-translate-token--extract-tkk ()
+  (cons 430675 2721866130))
+(global-set-key "\C-cT" 'go-translate)
+(global-set-key "\C-ct" 'go-translate-popup)
+(setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
+(setq go-translate-buffer-follow-p t)
 ;;; init.el ends here
