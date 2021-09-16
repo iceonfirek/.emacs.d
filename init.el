@@ -568,7 +568,11 @@
   (exec-path-from-shell-copy-env "GOPATH") ;;very important to go mode
   )
 
-(use-package vterm)
+(use-package vterm
+ :bind
+  (("s-j" . vterm-send-left)         ;; pick some comfortable binding
+   ("s-l" . vterm-send-right))        ;; good alternative: M-.
+  )
 ;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
 ;;  (setq vterm-kill-buffer-on-exit t))
 

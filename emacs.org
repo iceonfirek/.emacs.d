@@ -446,4 +446,7 @@
   - m-s open url
   - m-D
   - c-c b eaf bookmarks
+* nushell
+  - starship-prompt
+  - firecode fonts
 
