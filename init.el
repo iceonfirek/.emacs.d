@@ -36,7 +36,7 @@
 ;; (show-paren-mode 1)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; If you edit it by hand, you could mess it up, so be careful.s
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
@@ -455,8 +455,16 @@
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (add-to-list (make-local-variable 'company-backends)
 					       'company-elisp)))
+;; (add-hook 'org-mode-hook (lambda ()
+;; 			  (add-to-list (make-local-variable 'company-backends)
+;; 				       '(company-yasnippet company-ispell
+;; 			 company-keywords company-capf company-files))))
+
+;; (add-hook 'org-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
+(add-hook 'rst-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
+(add-hook 'markdown-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
 (with-eval-after-load 'company
-  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-n") nil) 
   (define-key company-active-map (kbd "M-p") nil)
   (define-key company-active-map (kbd "e") nil)
   ;; (define-key company-active-map (kbd "SPC") #'company-abort)
@@ -662,63 +670,59 @@
 (require 'org-inlinetask)
 ;;Emacs Predictive Completion
 ;; predictive install location
-(add-to-list 'load-path "~/.emacs.d/predictive/")
-;; dictionary locations
-(add-to-list 'load-path "~/.emacs.d/predictive/latex/")
-(add-to-list 'load-path "~/.emacs.d/predictive/texinfo/")
-(add-to-list 'load-path "~/.emacs.d/predictive/html/")
-;; load predictive package
-(autoload 'predictive-mode "~/.emacs.d/predictive/predictive"
-  "Turn on Predictive Completion Mode." t)
+;; (add-to-list 'load-path "~/.emacs.d/predictive/")
+;; ;; dictionary locations
+;; (add-to-list 'load-path "~/.emacs.d/predictive/latex/")
+;; (add-to-list 'load-path "~/.emacs.d/predictive/texinfo/")
+;; (add-to-list 'load-path "~/.emacs.d/predictive/html/")
+;; ;; load predictive package
+;; (autoload 'predictive-mode "~/.emacs.d/predictive/predictive"
+;;   "Turn on Predictive Completion Mode." t)
 
 (setq ispell-program-name "aspell")
 (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together" "--run-together-limit=16"))
 (setq ispell-complete-word-dict
   (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
 
-(defun my-generic-ispell-company-complete-setup ()
-  ;; Only apply this locally.
-  (make-local-variable 'company-backends)
-  (setq company-backends (list 'company-ispell))
+;; (defun my-generic-ispell-company-complete-setup ()
+;;   ;; Only apply this locally.
+;;   (make-local-variable 'company-backends)
+;;   (setq company-backends (list '(company-ispell company-files company-yasnippet company-ispell company-keywords company-capf)))
 
-  (when ispell-complete-word-dict
-    (let*
-      (
-        (has-dict-complete
-          (and ispell-complete-word-dict (file-exists-p ispell-complete-word-dict)))
-        (has-dict-personal
-          (and ispell-personal-dictionary (file-exists-p ispell-personal-dictionary)))
-        (is-dict-outdated
-          (and
-            has-dict-complete has-dict-personal
-            (time-less-p
-              (nth 5 (file-attributes ispell-complete-word-dict))
-              (nth 5 (file-attributes ispell-personal-dictionary))))))
+;;   (when ispell-complete-word-dict
+;;     (let*
+;;       (
+;;         (has-dict-complete
+;;           (and ispell-complete-word-dict (file-exists-p ispell-complete-word-dict)))
+;;         (has-dict-personal
+;;           (and ispell-personal-dictionary (file-exists-p ispell-personal-dictionary)))
+;;         (is-dict-outdated
+;;           (and
+;;             has-dict-complete has-dict-personal
+;;             (time-less-p
+;;               (nth 5 (file-attributes ispell-complete-word-dict))
+;;               (nth 5 (file-attributes ispell-personal-dictionary))))))
 
-      (when (or (not has-dict-complete) is-dict-outdated)
-        (with-temp-buffer
+;;       (when (or (not has-dict-complete) is-dict-outdated)
+;;         (with-temp-buffer
+;;           ;; Optional: insert personal dictionary, stripping header and inserting a newline.
+;;           (when has-dict-personal
+;;             (insert-file-contents ispell-personal-dictionary)
+;;             (goto-char (point-min))
+;;             (when (looking-at "personal_ws\-")
+;;               (delete-region (line-beginning-position) (1+ (line-end-position))))
+;;             (goto-char (point-max))
+;;             (unless (eq ?\n (char-after))
+;;               (insert "\n")))
 
-          ;; Optional: insert personal dictionary, stripping header and inserting a newline.
-          (when has-dict-personal
-            (insert-file-contents ispell-personal-dictionary)
-            (goto-char (point-min))
-            (when (looking-at "personal_ws\-")
-              (delete-region (line-beginning-position) (1+ (line-end-position))))
-            (goto-char (point-max))
-            (unless (eq ?\n (char-after))
-              (insert "\n")))
-
-          (call-process "aspell" nil t nil "-d" "en_US" "dump" "master")
-          ;; Case insensitive sort is important for the lookup.
-          (let ((sort-fold-case t))
-            (sort-lines nil (point-min) (point-max)))
-          (write-region nil nil ispell-complete-word-dict))))))
+;;           (call-process "aspell" nil t nil "-d" "en_US" "dump" "master")
+;;           ;; Case insensitive sort is important for the lookup.
+;;           (let ((sort-fold-case t))
+;;             (sort-lines nil (point-min) (point-max)))
+;;           (write-region nil nil ispell-complete-word-dict))))))
 
 ;; Enable this in appropriate modes.
 
-(add-hook 'org-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
-(add-hook 'rst-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
-(add-hook 'markdown-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
 ;;spell-fu
 ;; (use-package spell-fu)
 ;; (global-spell-fu-mode)
