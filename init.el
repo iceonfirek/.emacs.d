@@ -4,7 +4,6 @@
 ;;   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
 ;;    ("http" . "127.0.0.1:7890")
 ;;     ("https" . "127.0.0.1:7890")))
-
 ;;; Code:
 ;;; Theme
 (setq inhibit-startup-message t)
@@ -25,8 +24,6 @@
 (paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
 (server-start)
-
-
 ;;Global 优化
 (setq auto-save-default t)
 (setq make-backup-files nil)
@@ -51,6 +48,8 @@
  '(centaur-tabs-set-close-button nil)
  '(centaur-tabs-set-icons t)
  '(centaur-tabs-set-modified-marker t)
+ '(custom-safe-themes
+   '("97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
@@ -79,23 +78,20 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
-
+   '(flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired)))
 ;;
 ;;Vterm theme
 ;;
-
-
 ;;Global binding keys
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
-(global-set-key (kbd "<f5>") 'eval-buffer)
+(global-set-key (kbd "<f5>") 'eval-region)
 (global-set-key (kbd "s-M-i") 'scroll-down-command)
 (global-set-key (kbd "s-I") 'beginning-of-buffer)
 (global-set-key (kbd "s-M-k") 'scroll-up-command)
 (global-set-key (kbd "s-K") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;(global-set-key (kbd "s-w") 'delete-window)
+(global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
 (global-set-key (kbd "s-w") 'kill-current-buffer)
 (global-set-key (kbd "s-u") 'kill-whole-line)
@@ -120,21 +116,17 @@
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
 (global-set-key (kbd "s-x") 'kill-region)
-
 ;;Package install
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")			 ))
-
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
 (unless (package-installed-p 'use-package) (package-install 'use-package))
-
 (require 'use-package)
 (setq use-package-always-ensure t)
-
 (use-package auto-dim-other-buffers
   :init
   (add-hook 'after-init-hook (lambda ()
@@ -160,7 +152,6 @@
   (setq dashboard-banner-logo-title nil)
   (setq dashboard-startup-banner "/Users/iceonfire/.emacs.d/elpa/dashboard-20210815.445/banners/5.png")
   (dashboard-setup-startup-hook))
-
 ;;Dired
 ;; (use-package dired-sidebar
 ;;   :bind (("C-c C-n" . dired-sidebar-toggle-sidebar))
@@ -179,10 +170,8 @@
 ;; (setq dired-sidebar-theme 'wombat)
 ;; (setq dired-sidebar-use-term-integration t)
 ;; (setq dired-sidebar-use-custom-font t)
-
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
-
 ;;Centaur-tabs
 (use-package centaur-tabs
   :demand
@@ -199,7 +188,7 @@
 	centaur-tabs-set-modified-marker t
 	centaur-tabs-modified-marker "*")
   (centaur-tabs-headline-match)
-  (centaur-tabs-change-fonts "Fira Code" 120)
+  (centaur-tabs-change-fonts "FiraCode NF" 120)
   (defun centaur-tabs-buffer-groups ()
      (list
       (cond
@@ -227,26 +216,22 @@
   ;; ("m-2" . centaur-tabs-forward)
   ;; ("m-`" . centaur-tabs-backward-group)
   )
-
 (use-package rainbow-delimiters
   :ensure t)
 (add-hook 'foo-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme" t)
-
 ;; (custom-theme-set-faces
 ;;  'wombat
 ;;  '(default ((t (:background "gray8")))))
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 134 :family "Fira Code"))))
+ '(default ((t (:height 134 :family "FiraCode NF"))))
  '(auto-dim-other-buffers-face ((t (:background "gray22"))))
- '(centaur-tabs-unselected ((t (:background "#3D3C3D" :foreground "grey50" :height 120 :family "Fira Code"))))
+ '(centaur-tabs-unselected ((t (:background "#3D3C3D" :foreground "grey50" :height 120 :family "FiraCode NF"))))
  '(company-echo ((t nil)) t)
  '(company-scrollbar-bg ((t (:background "orange1"))))
  '(company-scrollbar-fg ((t (:background "dark gray"))))
@@ -274,9 +259,7 @@
  '(term-default-fg-color ((t (:inherit term-color-black))))
  '(vterm-color-black ((t (:inherit term-color-black :background "gray100"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
-
 ;;Packages-use
-
 ;;(add-to-list 'load-path "~/lisp/geiser-gambit")
 ;; (setq scheme-program-name "chez")
 ;; ;;(setq geiser-chez-binary "chez")
@@ -290,7 +273,6 @@
 ;;   :init
 ;;   (geiser-mode 1))
 ;; (use-package geiser-chez)
-
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
   :bind (
@@ -298,7 +280,6 @@
 	 ("s-(" . paredit-backward-slurp-sexp)
 	 ("M-)" . paredit-join-sexps)
 	 ("M-(" . paredit-split-sexp)))
-
 ;;Vertico, Consult
 (use-package vertico
   :init
@@ -307,22 +288,18 @@
   (
    ("M-j" . vertico-next)
    ("M-k" . vertico-previous)))
-
 (use-package orderless
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
-
 (use-package savehist
   :init
   (savehist-mode))
-
 (use-package marginalia
   :ensure t
   :config
   (marginalia-mode))
-
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind ;; C-c bindings (mode-specific-map)
@@ -388,7 +365,6 @@
         (lambda ()
           (when-let (project (project-current))
             (car (project-roots project))))))
-
 (use-package embark
   :ensure t
   :bind
@@ -410,14 +386,11 @@
   :demand t ; only necessary if you have the hook below
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
-
-
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-moden
   :config
   (setq which-key-idle-delay 0.3))
-
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key)
   :bind
@@ -425,15 +398,11 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key] . helpful-key))
-
 (use-package all-the-icons)
-
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15) ))
-
 (use-package general)
-
 ;;projectile, magit
 (use-package projectile
   :diminish projectile-mode
@@ -446,17 +415,14 @@
     (setq projectile-project-search-path '("/Users/iceonfire/inceptio")))
   (setq projectile-switch-project-action #'projectile-dired)
   (setq projectile-enable-caching t))
-
 (use-package magit
   :commands magit-status
   :custom
   (magit-display-bufferp-function #'magit-display-buffer-same-window-except-diff-v1))
 ;;(add-to-list 'exec-path "c:/Program Files/Git/bin")
-
 ;;
 ;; yasnippet
 ;;
-
 (use-package yasnippet
   :ensure t
   :init
@@ -466,15 +432,13 @@
   (yas-reload-all)
   (use-package yasnippet-snippets
     :ensure t))
-
-
 ;;
 ;; company mode
 ;;
-
+(setq company-require-match nil)
 (use-package company
   ;;  :after ((scheme-mode . go-mode))
-;;  :hook (scheme-mode . company-mode)
+  ;;  :hook (scheme-mode . company-mode)
   :ensure t
   :config
   (global-company-mode t)
@@ -485,10 +449,9 @@
   (setq company-minimum-prefix-length 3)
   (setq company-idle-delay 0.0)
   (setq company-backends
-	'((company-files company-yasnippet ;;company-ispell
+	'((company-files company-yasnippet company-ispell
 			 company-keywords company-capf)
 	  (company-abbrev company-dabbrev)))) 
-
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (add-to-list (make-local-variable 'company-backends)
 					       'company-elisp)))
@@ -496,15 +459,13 @@
   (define-key company-active-map (kbd "M-n") nil)
   (define-key company-active-map (kbd "M-p") nil)
   (define-key company-active-map (kbd "e") nil)
-  (define-key company-active-map (kbd "SPC") #'company-abort)
+  ;; (define-key company-active-map (kbd "SPC") #'company-abort)
   (define-key company-active-map (kbd "s-k") #'company-select-next)
   (define-key company-active-map (kbd "s-i") #'company-select-previous)
   )
-
 (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
 (advice-add 'company-complete-common :after (lambda () (when (equal my-company-point (point))
 						    (yas-expand))))
-
 ;; (use-package term
 ;;   :commands term
 ;;   :hook (term-line-mode)
@@ -512,30 +473,22 @@
 ;;   (setq explicit-shell-file-name "zsh") ;; Change this to zsh, etc
 ;;   (setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific
 ;;   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
-
-
 ;; org-mode
 (setq org-image-actual-width nil)
 (require 'org-tempo)
-
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("✥" "⚫" "◉" "○" "◈" "◇")))
-
 (use-package org
   :config
   (setq org-ellipsis " ▾"))
-
 ;(setenv "PATH" (concat "/opt/local/bin/:" (getenv "PATH")))
-
 ;;always show image inline automatically after src code
 (eval-after-load 'org
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
-
 ;;org babel
 (setq org-confirm-babel-evaluate nil)
-
 ;;org text highlight
 (org-add-link-type "color"
  (lambda (path)
@@ -550,12 +503,9 @@
      (format "<span style=\"color:%s;\">%s</span>" path desc))
     ((eq format 'latex)
      (format "{\\color{%s}%s}" path desc)))))
-
-
 ;;flycheck
 (use-package flycheck
   :ensure t)
-
 ;; (dolist (hook '(org-mode-hook))
 ;;   (add-hook hook (lambda () (flyspell-mode 1) (flycheck-mode 1) (flyspell-auto-correct-previous-hook 1))))
 ;;SHELL
@@ -567,20 +517,15 @@
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH") ;;very important to go mode
   )
-
-(use-package vterm
- :bind
-  (("s-j" . vterm-send-left)         ;; pick some comfortable binding
-   ("s-l" . vterm-send-right))        ;; good alternative: M-.
-  )
+(use-package vterm)
+(define-key vterm-mode-map (kbd "s-j") 'vterm-send-left)
+(define-key vterm-mode-map (kbd "s-l") 'vterm-send-right)
 ;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
 ;;  (setq vterm-kill-buffer-on-exit t))
-
 (use-package smart-tab
   :ensure t
   :config
   (global-smart-tab-mode t))
-
 ;; k8S
 ;; (use-package kubernetes
 ;;   :ensure t
@@ -588,10 +533,7 @@
 ;;   :config
 ;;   (setq kubernetes-poll-frequency 3600
 ;;         kubernetes-redraw-frequency 3600))
-
-
 ;;defun
-
 (defun keyboard-escape-quit ()
   (interactive)
   (cond ((eq last-command 'mode-exited) nil)
@@ -609,7 +551,6 @@
          ;(delete-other-windows))
         ((string-match "^ \\*" (buffer-name (current-buffer)))
          (bury-buffer))))
-
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -618,12 +559,9 @@
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8))
-
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 (put 'downcase-region 'disabled nil)
-
-
 ;;
 ;; go
 ;;
@@ -656,54 +594,132 @@
     :defer 2
     :after go-mode)
   )
-
 ;;ox-confluece (install org)
 (require 'ox-confluence)
 ;;(require 'ov-highlight)
-
 ;;EAF
-(use-package quelpa-use-package)
+;(use-package quelpa-use-package)
 ;; Don't forget to run M-x eaf-install-dependencies
-(use-package eaf
-  :load-path "~/.emacs.d/site-lisp/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
-  :custom
-  ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-  (eaf-browser-continue-where-left-off t)
-  (eaf-browser-enable-adblocker t)
-  (browse-url-browser-function 'eaf-open-browser) ;Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
-  :init
-  (use-package epc      :defer t :ensure t)
-  (use-package ctable   :defer t :ensure t)
-  (use-package deferred :defer t :ensure t)
-  (use-package s        :defer t :ensure t)
-  (setq browse-url-browser-function 'eaf-open-browser)
-   :config
-   (defalias 'browse-web #'eaf-open-browser)
-   ;; (eaf-bind-key eaf-send-down-key "s-k" eaf-app-keybiding)
-   ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
-   ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)					;
-   ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-   (eaf-bind-key scroll_down "s-i" eaf-pdf-viewer-keybinding)
-   (eaf-bind-key scroll_up "s-k" eaf-pdf-viewer-keybinding)
-   (eaf-bind-key page_down "s-K" eaf-pdf-viewer-keybinding)
-     (eaf-bind-key scroll_up "s-I" eaf-pdf-viewer-keybinding)
-  ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
-					;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
-  )
-(require 'eaf-browser)
-(require 'eaf-pdf-viewer)
-;(require 'eaf-terminal)
-;(require 'eaf-org-previewer)
-
+;(use-package eaf 
+;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+;;   :custom
+;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+;;   (eaf-browser-continue-where-left-off t)
+;;   (eaf-browser-enable-adblocker t)
+;;   (browse-url-browser-function 'eaf-open-browser) ;Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+;;   :init
+;;   (use-package epc      :defer t :ensure t)
+;;   (use-package ctable   :defer t :ensure t)
+;;   (use-package deferred :defer t :ensure t)
+;;   (use-package s        :defer t :ensure t)
+;;   (setq browse-url-browser-function 'eaf-open-browser)
+;;    :config
+;;    (defalias 'browse-web #'eaf-open-browser)
+;;    ;; (eaf-bind-key eaf-send-down-key "s-k" eaf-app-keybiding)
+;;    ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
+;;    ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)					;
+;;    ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+;;    ;; (eaf-bind-key scroll_down "s-i" eaf-pdf-viewer-keybinding)
+;;    ;; (eaf-bind-key scroll_up "s-k" eaf-pdf-viewer-keybinding)
+;;   ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
+;; 					;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
+;;   )
+;;(require 'eaf-browser)
+;(require 'eaf-pdf`-viewer)
 ;;google translate
 (require 'go-translate)
 (setq go-translate-base-url "https://translate.google.cn")
 (setq go-translate-target-language "en")
 (setq go-translate-local-language "zh-CN")
 (defun go-translate-token--extract-tkk ()
-  (cons 430675 2721866130))
+  (cons 430675 2721866133))
 (global-set-key "\C-cT" 'go-translate)
 (global-set-key "\C-ct" 'go-translate-popup)
 (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
 (setq go-translate-buffer-follow-p t)
+;;doom-themes
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   ;; Global settings (defaults)
+;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;;   (load-theme 'doom-one t)
+;;   ;; Enable flashing mode-line on errors
+;;   (doom-themes-visual-bell-config)
+;;   ;; Enable custom neotree theme (all-the-icons must be installed!)
+;;   (doom-themes-neotree-config)
+;;   ;; or for treemacs users
+;;   (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+;;   (doom-themes-treemacs-config)
+;;   ;; Corrects (and improves) org-mode's native fontification.
+;;   (doom-themes-org-config))
+;;epa key
+(setq-local epa-file-encrypt-to '("iceonfirekun@163.com"))
+(setq epa-file-select-keys 1)
+
+;;inline todo list
+(require 'org-inlinetask)
+;;Emacs Predictive Completion
+;; predictive install location
+(add-to-list 'load-path "~/.emacs.d/predictive/")
+;; dictionary locations
+(add-to-list 'load-path "~/.emacs.d/predictive/latex/")
+(add-to-list 'load-path "~/.emacs.d/predictive/texinfo/")
+(add-to-list 'load-path "~/.emacs.d/predictive/html/")
+;; load predictive package
+(autoload 'predictive-mode "~/.emacs.d/predictive/predictive"
+  "Turn on Predictive Completion Mode." t)
+
+(setq ispell-program-name "aspell")
+(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together" "--run-together-limit=16"))
+(setq ispell-complete-word-dict
+  (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
+
+(defun my-generic-ispell-company-complete-setup ()
+  ;; Only apply this locally.
+  (make-local-variable 'company-backends)
+  (setq company-backends (list 'company-ispell))
+
+  (when ispell-complete-word-dict
+    (let*
+      (
+        (has-dict-complete
+          (and ispell-complete-word-dict (file-exists-p ispell-complete-word-dict)))
+        (has-dict-personal
+          (and ispell-personal-dictionary (file-exists-p ispell-personal-dictionary)))
+        (is-dict-outdated
+          (and
+            has-dict-complete has-dict-personal
+            (time-less-p
+              (nth 5 (file-attributes ispell-complete-word-dict))
+              (nth 5 (file-attributes ispell-personal-dictionary))))))
+
+      (when (or (not has-dict-complete) is-dict-outdated)
+        (with-temp-buffer
+
+          ;; Optional: insert personal dictionary, stripping header and inserting a newline.
+          (when has-dict-personal
+            (insert-file-contents ispell-personal-dictionary)
+            (goto-char (point-min))
+            (when (looking-at "personal_ws\-")
+              (delete-region (line-beginning-position) (1+ (line-end-position))))
+            (goto-char (point-max))
+            (unless (eq ?\n (char-after))
+              (insert "\n")))
+
+          (call-process "aspell" nil t nil "-d" "en_US" "dump" "master")
+          ;; Case insensitive sort is important for the lookup.
+          (let ((sort-fold-case t))
+            (sort-lines nil (point-min) (point-max)))
+          (write-region nil nil ispell-complete-word-dict))))))
+
+;; Enable this in appropriate modes.
+
+(add-hook 'org-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
+(add-hook 'rst-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
+(add-hook 'markdown-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
+;;spell-fu
+;; (use-package spell-fu)
+;; (global-spell-fu-mode)
 ;;; init.el ends here
