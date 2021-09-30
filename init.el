@@ -116,6 +116,7 @@
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
 (global-set-key (kbd "s-x") 'kill-region)
+(global-set-key (kbd "<f12>") 'company-mode)
 ;;Package install
 (require
  'package)
@@ -441,7 +442,7 @@
   ;;  :hook (scheme-mode . company-mode)
   :ensure t
   :config
-  (global-company-mode t)
+  ;; (global-company-mode t)
   ;; :bind (:map company-active-map
   ;; 	      ("<tab>" . company-complete-selection))
   ;;       (:map scheme-mode-map
@@ -460,9 +461,6 @@
 ;; 				       '(company-yasnippet company-ispell
 ;; 			 company-keywords company-capf company-files))))
 
-;; (add-hook 'org-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
-(add-hook 'rst-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
-(add-hook 'markdown-mode-hook (lambda () (my-generic-ispell-company-complete-setup)))
 (with-eval-after-load 'company
   (define-key company-active-map (kbd "M-n") nil) 
   (define-key company-active-map (kbd "M-p") nil)
@@ -635,7 +633,7 @@
 ;;(require 'eaf-browser)
 ;(require 'eaf-pdf`-viewer)
 ;;google translate
-(require 'go-translate)
+(require 'go-translate) 
 (setq go-translate-base-url "https://translate.google.cn")
 (setq go-translate-target-language "en")
 (setq go-translate-local-language "zh-CN")
@@ -665,6 +663,7 @@
 ;;epa key
 (setq-local epa-file-encrypt-to '("iceonfirekun@163.com"))
 (setq epa-file-select-keys 1)
+(setf epa-pinentry-mode 'loopback)
 
 ;;inline todo list
 (require 'org-inlinetask)
@@ -678,50 +677,10 @@
 ;; ;; load predictive package
 ;; (autoload 'predictive-mode "~/.emacs.d/predictive/predictive"
 ;;   "Turn on Predictive Completion Mode." t)
-
 (setq ispell-program-name "aspell")
 (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together" "--run-together-limit=16"))
 (setq ispell-complete-word-dict
   (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
-
-;; (defun my-generic-ispell-company-complete-setup ()
-;;   ;; Only apply this locally.
-;;   (make-local-variable 'company-backends)
-;;   (setq company-backends (list '(company-ispell company-files company-yasnippet company-ispell company-keywords company-capf)))
-
-;;   (when ispell-complete-word-dict
-;;     (let*
-;;       (
-;;         (has-dict-complete
-;;           (and ispell-complete-word-dict (file-exists-p ispell-complete-word-dict)))
-;;         (has-dict-personal
-;;           (and ispell-personal-dictionary (file-exists-p ispell-personal-dictionary)))
-;;         (is-dict-outdated
-;;           (and
-;;             has-dict-complete has-dict-personal
-;;             (time-less-p
-;;               (nth 5 (file-attributes ispell-complete-word-dict))
-;;               (nth 5 (file-attributes ispell-personal-dictionary))))))
-
-;;       (when (or (not has-dict-complete) is-dict-outdated)
-;;         (with-temp-buffer
-;;           ;; Optional: insert personal dictionary, stripping header and inserting a newline.
-;;           (when has-dict-personal
-;;             (insert-file-contents ispell-personal-dictionary)
-;;             (goto-char (point-min))
-;;             (when (looking-at "personal_ws\-")
-;;               (delete-region (line-beginning-position) (1+ (line-end-position))))
-;;             (goto-char (point-max))
-;;             (unless (eq ?\n (char-after))
-;;               (insert "\n")))
-
-;;           (call-process "aspell" nil t nil "-d" "en_US" "dump" "master")
-;;           ;; Case insensitive sort is important for the lookup.
-;;           (let ((sort-fold-case t))
-;;             (sort-lines nil (point-min) (point-max)))
-;;           (write-region nil nil ispell-complete-word-dict))))))
-
-;; Enable this in appropriate modes.
 
 ;;spell-fu
 ;; (use-package spell-fu)
