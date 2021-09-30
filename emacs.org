@@ -164,6 +164,15 @@
 * Jitouch
   I copied the jitouch app file from Library/PreferencePanes/Jitouch.prefPane/Contents/Resources and pasted it into its sibling folder Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS and it works like a charm now!
   [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
+  #+begin_src bash
+    pkill -f "Jitouch"
+    sleep 5
+    nohup ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS/Jitouch > /dev/null 2>&1 &
+  #+end_src
+  #+begin_src bash
+    cd ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS
+    nohup ./jitouch &
+  #+end_src
 * emacs
   - eval-buffer ;;macs
   - C-h f function RET ( describe-function ) displays the documentation of Lisp function
