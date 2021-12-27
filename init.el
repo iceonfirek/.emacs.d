@@ -54,8 +54,7 @@
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
  '(global-smart-tab-mode t)
- '(org-agenda-files
-   '("~/inceptio/Agenda/confluence.org" "~/inceptio/Agenda/agenda.org"))
+ '(org-agenda-files '("/Users/iceonfire/inceptio/Agenda/agenda.org"))
  '(org-babel-load-languages
    '((calc . t)
      (dot . t)
@@ -78,7 +77,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(python-mode company-jedi py-autopep8 multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi py-autopep8 multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -148,7 +147,7 @@
   (setq dashboard-week-agenda t)
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
-  (setq dashboard-items '((recents  . 10)
+  (setq dashboard-items '((recents  . 20)
 					;(bookmarks . 5)
 			  (agenda . 8)
 			  ;(projects . 5)
@@ -447,7 +446,7 @@
   ;;  :hook (scheme-mode . company-mode)
   :ensure t
   :config
-  ;; (global-company-mode t)
+  (global-company-mode t)
   ;; :bind (:map company-active-map
   ;; 	      ("<tab>" . company-complete-selection))
   ;;       (:map scheme-mode-map
@@ -456,14 +455,15 @@
   (setq company-idle-delay 0.0)
   (setq company-backends
 	'((company-files company-yasnippet
-			 company-keywords company-capf)
+			 company-keywords
+			 company-capf)
 	  (company-abbrev company-dabbrev)))) 
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (add-to-list (make-local-variable 'company-backends)
 					       'company-elisp)))
-(add-hook 'org-mode-hook (lambda ()
-			  (add-to-list (make-local-variable 'company-backends)
-				       'company-ispell)))
+;; (add-hook 'org-mode-hook (lambda ()
+;; 			  (add-to-list (make-local-variable 'company-backends)
+;; 				       'company-ispell)))
 
 (with-eval-after-load 'company
   (define-key company-active-map (kbd "M-n") nil) 
@@ -630,8 +630,9 @@
   )
 (use-package elpy
   :ensure t
-  :commands (elpy-enable)
-  :config
+  :init
+  (elpy-enable)
+  ;; :config
 ;;  (setq elpy-rpc-backend "jedi")
   )
 
@@ -717,6 +718,8 @@
 (setq ispell-complete-word-dict
   (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
 ;; load-file ox-reveal.el
+(require 'ox-reveal)
+(setq org-reveal-root "file:////Users/iceonfire/reveal.js")
 ;;spell-fu
 ;; (use-package spell-fu)
 ;; (global-spell-fu-mode)
@@ -724,4 +727,17 @@
 (defun copy-isearch-match ()
     (interactive)
     (copy-region-as-kill isearch-other-end (point)))
+(setenv "CHEZSCHEMELIBDIRS" "/Users/iceonfire/scheme/lib:")
+(setenv "CHEZSCHEMELIBEXTS" ".sc::.so:")
+
+;;taskjuggler.
+(setenv "LC_ALL" "zh_CN.UTF-8")
+(setenv "LANG" "zh_CN.UTF-8")
+(setenv "LANGUAGE" "zh_CN.UTF-8")
+(setenv "LC_COLLATE" "zh_CN.UTF-8")
+(setenv "LC_CTYPE" "zh_CN.UTF-8")
+(setenv "LC_MESSAGES" "zh_CN.UTF-8")
+(setenv "LC_MONETARY" "zh_CN.UTF-8")
+(setenv "LC_NUMERIC" "zh_CN.UTF-8")
+(setenv "LC_TIME" "zh_CN.UTF-8")
 

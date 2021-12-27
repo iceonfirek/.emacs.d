@@ -6,6 +6,7 @@
   - open -n /Applications/
   - sudo codesign --force --deep --sign - /~
   - xattr -r -d com.apple.quarantine ~
+  - sudo dd if=/Users/iceonfire/Downloads/pop-os_20.04_amd64_intel_35.iso of=/dev/disk4 bs=1m
   - /Applications/Emacs.app/Contents/MacOS/Emacs --debug-init
   - export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
   - mac kill process  ps -ax | grep , killall
@@ -76,6 +77,11 @@
    - brew install http-server
    - cd ~/inceptio && ./http-serve
    - browse http://10.8.25.229:8080
+** echo
+   #+begin_src shell
+     echo 1.1.1.1 255.255.255.0 >> /etc/hosts
+     sudo chmod 777 ~
+   #+end_src
 * linux
 ** disable lid sleep
      - 编辑下列文件：/etc/systemd/logind.conf
@@ -84,10 +90,19 @@
      - #HandleHibernateKey 按下休眠键后的行为，默认 hibernate
      - #HandleLidSwitch 合上笔记本盖后的行为，默认 suspend（改为 lock；即合盖不休眠）在原文件中，还要去掉前面的#
      - 运行：systemctl restart systemd-logind就会生效。
+** boot grub
+   #+begin_src shell
+     sudo gedit /etc/default/grub
+     sudo update-grub
+     su root
+     cd /boot/efi/loader
+     "oldkern"
+   #+end_src
 ** ubuntu test
    - ssh test@10.8.19.95
 ** ssh app
    sudo apt install openssh-server
+** gsettings set org.gnome.desktop.interface scaling-factor 2
 ** recovery mode
    #+begin_quote
    Messed up the /etc/environment file in my Ubuntu 12.04 LTS vm today. Here's how I boot into Ubuntu recovery mode and access the file system as root in write mode.
@@ -117,13 +132,14 @@
    #+end_src
 *** change theme
     [[https://www.jianshu.com/p/0849ef24ffc6]]
-** check core
+** check kernel
    #+begin_src shell
-     *降级* 5.0.42内 开机第二个画面esc 选择内核
+     ,*降级* 5.0.42内 开机第二个画面esc 选择内核
      dpkg -l|grep kern|grep 77
      apt remove ~（其他内核）
      apt-mark hold ~（可用内核）
      uname -sr
+     sudo dpkg --purge linux-image-unsigned-5.15.0-051500
    #+end_src
 ** remove package/dpkg
    #+begin_src shell
@@ -140,6 +156,116 @@
      $ sudo passwd vivek
    #+end_src
    [[https://www.cyberciti.biz/faq/create-a-user-account-on-ubuntu-linux/]]
+** package manager
+   sudo apt install synaptic
+   sudo apt --fix-broken install
+   sudo apt update
+   sudo apt list --upgradable
+   sudo apt-get update
+   sudo apt-get install aptitude
+   sudo aptitude safe-upgrade
+   sudo aptitude upgrade
+   sudo aptitude dist-upgrade
+   sudo apt-get upgrade
+   sudo apt-get dist-upgrade
+** dpkg management
+   #+begin_src shell
+     sudo dpkg --configure -a
+     sudo rm /var/lib/dpkg/info/sunloginclient.*
+     sudo dpkg --configure -D 777 sunloginclient
+     sudo dpkg --get-selections | grep emacs
+     sudo apt-get remove emacsen-common
+   #+end_src
+** python default version
+   #+begin_src shell
+     sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+     sudo update-alternatives --config python3 
+   #+end_src
+** rebuild deb
+   https://www.163.com/dy/article/FQBUDF120531MQYJ.html
+   https://www.codeleading.com/article/17784463674/ //修改系统信息
+** nfs
+   #+begin_src shell  //for server
+     sudo apt install nfs-kernel-server
+     sudo systemctl start nfs-kernel-server.service
+     sudo systemctl start rpc-statd
+     vim /etc/exports
+     /        *(rw,sync,fsid=0,no_root_squash,no_subtree_check,insecure)
+     /srv     *(ro,sync,subtree_check)
+     /home    *.hostname.com(rw,sync,no_subtree_check)
+     /scratch *(rw,async,no_subtree_check,no_root_squash,noexec)
+     sudo systemctl start rpc-statd
+     sudo exportfs -a
+   #+end_src
+   #+begin_src shell //for client
+     sudo apt install nfs-common
+     sudo mkdir /mnt/nfs
+     sudo mount example.hostname.com:/src /mnt/nfs
+   #+end_src
+   #+begin_src shell //for mac
+     showmount -e 10.211.55.15
+     sudo mount -o vers=4 10.211.55.15:/ nfs
+   #+end_src
+** smb
+   #+begin_src shell
+     sudo apt install samba
+     sudo smbpasswd  -a sydney
+     sudo vim /etc/samba/smb.conf
+     # [NASShare]
+     comment = anything_will_do
+     path = /media/sydney/Storage/
+     read only = no
+     guest ok = yes
+     public = yes
+     browseable = yes
+     sudo systemctl restart smbd
+     sudo  chmod o+rx /media/sydney/Storage
+     sudo systemctl restart smbd
+   #+end_src
+** input
+   #+begin_src shell
+     $ sudo apt install fcitx fcitx-frontend-all fcitx-rime
+     $ im-config -n fcitx
+     $ sudo tee /etc/profile.d/z-pop-os-fcitx.sh <<'EOF'
+     export GTK_IM_MODULE=""
+     export QT_IM_MODULE=""
+     export XMODIFIERS=""
+     EOF
+   #+end_src
+   文件 ~/.config/fcitx/conf/fcitx-classic-ui.config：
+   #+begin_src shell
+     [ClassicUI]
+     FontSize=14
+     Font=Noto Sans CJK SC
+     MenuFont=Noto Sans CJK SC
+     SkinType=dark
+   #+end_src
+** key modifier
+   #+begin_src shell
+     $xev
+     $sudo apt install xcape
+     $vim ~/.xmodmap
+     keycode 133 = Mode_switch
+     keysym a = a A Left
+     keysym d = d D Right
+     keysym w = w W Up
+     keysym s = s S Down
+     $vim ~/xmodmap.sh
+     xmodmap ~/.xmodmap
+     xcape -r 'Mode_switch=Escape'
+     $chmod +x ~/xmodmap.sh
+     $vim ~/.config/autostart/xmodmap.desktop
+     [Desktop Entry]
+     Type=Application
+     Exec=sh -c "$HOME/xmodmap.sh"
+     Hidden=false
+     X-GNOME-Autostart-enabled=true
+     Name=xmodmap
+     Comment=xmodmap script
+   #+end_src
+   Go to the folder "~/.config/autostart/" and directly set the "xmodmap.desktop" file:
+** things to do after installation
+   https://mutschler.eu/linux/install-guides/pop-os-post-install/
 * ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
 ** ~/.bash_profile
 * mtr(asn) trace
@@ -462,8 +588,46 @@
 * pd网卡无法启动
   sudo -b /Applications/Parallels\ Desktop.app/Contents/MacOS/prl_client_app
 * zsh fzf
+  zsh-syntax-highlighting zsh-autosuggestions fzf 
   c-t, c-r
   [[https://medium.com/@ivanaugustobd/your-terminal-can-be-much-much-more-productive-5256424658e8]]
+  #+begin_src shell
+    sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+    git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+  #+end_src
+
+  #+RESULTS:
+  | Downloading | bin/fzf                                                   | ...          |             |                                 |                    |        |             |      |                |
+  | -           | Found                                                     | in           | $PATH       |                                 |                    |        |             |      |                |
+  | -           | Creating                                                  | symlink:     | bin/fzf     | ->                              | /usr/local/bin/fzf |        |             |      |                |
+  | -           | Checking                                                  | fzf          | executable  | ...                             | 0.27.2             | !=     | 0.28.0      |      |                |
+  | Archive:    | /var/folders/p8/fv723px131l93kgpm08xd8g80000gq/T//fzf.zip |              |             |                                 |                    |        |             |      |                |
+  | inflating:  | fzf                                                       |              |             |                                 |                    |        |             |      |                |
+  | -           | Checking                                                  | fzf          | executable  | ...                             | 0.28.0             |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | Generate    | /Users/iceonfire/.fzf.bash                                | ...          | OK          |                                 |                    |        |             |      |                |
+  | Generate    | /Users/iceonfire/.fzf.zsh                                 | ...          | OK          |                                 |                    |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | Update      | /Users/iceonfire/.bashrc:                                 |              |             |                                 |                    |        |             |      |                |
+  | -           | [                                                         | -f           | ~/.fzf.bash | ]                               | &&                 | source | ~/.fzf.bash |      |                |
+  | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | Update      | /Users/iceonfire/.zshrc:                                  |              |             |                                 |                    |        |             |      |                |
+  | -           | [                                                         | -f           | ~/.fzf.zsh  | ]                               | &&                 | source | ~/.fzf.zsh  |      |                |
+  | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | Finished.   | Restart                                                   | your         | shell       | or                              | reload             | config | file.       |      |                |
+  | source      | ~/.bashrc                                                 | #            | bash        | (.bashrc                        | should             | be     | loaded      | from | .bash_profile) |
+  | source      | ~/.zshrc                                                  | #            | zsh         |                                 |                    |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | Use         | uninstall                                                 | script       | to          | remove                          | fzf.               |        |             |      |                |
+  |             |                                                           |              |             |                                 |                    |        |             |      |                |
+  | For         | more                                                      | information, | see:        | https://github.com/junegunn/fzf |                    |        |             |      |                |
+
 * vim
   3dd
   d cut
@@ -471,4 +635,86 @@
   V select whole line
   v select 
   u undo
+* reveal.js
+  #+begin_src js
+#+OPTIONS: reveal_control:t reveal_height:-1
+#+OPTIONS: reveal_history:nil reveal_keyboard:t reveal_overview:t
+#+OPTIONS: reveal_progress:t reveal_rolling_links:nil
+#+OPTIONS: reveal_single_file:nil reveal_slide_number:"c"
+#+OPTIONS: reveal_title_slide:auto reveal_width:-1
+#+REVEAL_MARGIN: -1
+#+REVEAL_MIN_SCALE: -1
+#+REVEAL_MAX_SCALE: -1
+#+REVEAL_ROOT: file:///C:\Users\nd04805\Documents\99 EMACS\work\PPT\reveal.js
+#+REVEAL_TRANS: none
+#+REVEAL_SPEED: default
+#+REVEAL_THEME: moon
+#+REVEAL_EXTRA_CSS:
+#+REVEAL_EXTRA_JS:
+#+REVEAL_HLEVEL:
+#+REVEAL_TITLE_SLIDE_BACKGROUND:
+#+REVEAL_TITLE_SLIDE_BACKGROUND_SIZE:
+#+REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT:
+#+REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION:
+#+REVEAL_MATHJAX_URL: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+#+REVEAL_PREAMBLE:
+#+REVEAL_HEAD_PREAMBLE:
+#+REVEAL_POSTAMBLE:
+#+REVEAL_MULTIPLEX_ID:
+#+REVEAL_MULTIPLEX_SECRET:
+#+REVEAL_MULTIPLEX_URL:
+#+REVEAL_MULTIPLEX_SOCKETIO_URL:
+#+REVEAL_SLIDE_HEADER: 
+#+REVEAL_SLIDE_FOOTER:Process Automation
+#+REVEAL_PLUGINS:
+#+REVEAL_DEFAULT_FRAG_STYLE:
+#+REVEAL_INIT_SCRIPT:
+#+REVEAL_HIGHLIGHT_CSS: %r/lib/css/zenburn.css
+Reveal.initialize({
 
+    controls: false,                 hide the control of under//right 
+
+    progress: false,                 //hide the bottom of the progress bar 
+
+    slideNumber: true,               //display the page number of the slide in the lower right corner 
+
+    history: true,                   //leave each page to your browser's history 
+
+    overview: false,                 to disable display the "Overview" page that can be viewed in Esc//
+
+    center: false,                   (will top justify) not the vertical direction central display of//slide 
+
+    touch: false,                    //disable the touch operation of 
+
+    loop: true,                      to loop the//slide
+
+    rtl: true,                       //from right to left slide 
+
+    fragments: false,                to disable the Fragments//
+
+    autoSlide: 1000,                 //Set the automatic slide in milliseconds. The default is 0 (no automatic slide) 
+
+    autoSlideStoppable: false ,      to hide the button for automatic slide stop//lower left 
+
+    mouseWheel: true,                to enable the slide by the wheel of the//mouse 
+
+    transition: 'cube',              //operating the slide in the cube-shaped transition 
+
+                                     //setpoint default/cube/page/concave/zoom/linear/fade/none 
+
+    transitionSpeed: 'slow',         //slow set the slide speed. Setting value Default/Fast/Slow 
+
+    //parallax background of the image URL setting 
+
+    parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+
+    of//parallax background set the size 
+
+    parallaxBackgroundSize: '2100px 1024x',
+
+});
+  #+end_src
+* taskjuggler
+* typora
+  - [2021-11-18 Thu 16:29] \\
+    https://www.jianshu.com/p/007a13ca4d0e
