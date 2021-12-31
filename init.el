@@ -29,6 +29,7 @@
 (setq make-backup-files nil)
 (setq ring-bell-function nil)
 (setq system-time-locale "C")
+(setq org-src-fontify-natively t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; (setq ns-pop-up-frames nil)
 ;; (setq tab-line-mode 1)
@@ -740,4 +741,3 @@
 (setenv "LC_MONETARY" "zh_CN.UTF-8")
 (setenv "LC_NUMERIC" "zh_CN.UTF-8")
 (setenv "LC_TIME" "zh_CN.UTF-8")
-

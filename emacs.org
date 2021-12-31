@@ -77,10 +77,12 @@
    - brew install http-server
    - cd ~/inceptio && ./http-serve
    - browse http://10.8.25.229:8080
-** echo
+** echo, export, unset
    #+begin_src shell
-     echo 1.1.1.1 255.255.255.0 >> /etc/hosts
-     sudo chmod 777 ~
+     $echo 1.1.1.1 255.255.255.0 >> /etc/hosts
+     $sudo chmod 777 ~
+     $export ALL_PROXY=127.0.0.1:7890
+     $unset ALL_PROXY
    #+end_src
 * linux
 ** disable lid sleep
@@ -97,6 +99,18 @@
      su root
      cd /boot/efi/loader
      "oldkern"
+   #+end_src
+   [[https://blog.csdn.net/qq_41042595/article/details/108342297][grub boot fix]]
+   #+begin_src sh
+     $sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt-get update
+     $sudo apt-get install -y boot-repair && boot-repair
+   #+end_src
+   efibootmgr
+   #+begin_src sh
+     $efibootmgr -o 0010,0019.0002
+     $efibootmgr -b 0019 -a
+     $efibootmgr -b 0003 -B
+     $efibootmgr -n 0019         #next boot
    #+end_src
 ** ubuntu test
    - ssh test@10.8.19.95
@@ -168,6 +182,7 @@
    sudo aptitude dist-upgrade
    sudo apt-get upgrade
    sudo apt-get dist-upgrade
+   sudo apt clean
 ** dpkg management
    #+begin_src shell
      sudo dpkg --configure -a
@@ -266,6 +281,34 @@
    Go to the folder "~/.config/autostart/" and directly set the "xmodmap.desktop" file:
 ** things to do after installation
    https://mutschler.eu/linux/install-guides/pop-os-post-install/
+** locale issue
+   https://www.thomas-krenn.com/en/wiki/Perl_warning_Setting_locale_failed_in_Debian
+   #+begin_src shell
+     $gedit .bashrc
+     export LC_ALL=en_US.UTF-8
+     export LANG=en_US.UTF-8
+     export LANGUAGE=en_US.UTF-8
+   #+end_src
+** du
+   #+begin_src shell
+     $du -aSh ~/ | sort -h -r|head -n 10  
+     $sudo du -acSh / --exclude={/proc,/media}| sort -h -r|head -n 10
+   #+end_src
+* OpenStack
+  #+begin_src shell
+    $apt update && apt upgrade -y
+    $apt dist-upgrade -y
+    $snap install microstack --beta --devmode
+    $systemctl restart snapd.service
+    $snap run microstack init --auto --control
+    $snap get microstack config.credentials.keystone-password
+    $snap run microstack.openstack catlog list
+    $snap run microstack launch cirros --name xyl
+    $ssh -i /home/root/snap/microstack/common/.ssh/id_microstack cirros@10.20.20.43
+    $systemctl restart snap.microstack.*
+    $snap disable microstack
+    $snap enable microstack
+  #+end_src
 * ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
 ** ~/.bash_profile
 * mtr(asn) trace
