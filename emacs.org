@@ -456,6 +456,9 @@
    #+end_src
 ** bullet symbol
    [[https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/]]
+** todo view
+   C-c C-x > restrict todo region
+   org-agenda t
 * counsel-projectil
   - C-c C-o open file window, o action to the file.
 * magit
