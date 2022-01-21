@@ -477,6 +477,23 @@
 (advice-add 'company-complete-common :before (lambda () (setq my-company-point (point))))
 (advice-add 'company-complete-common :after (lambda () (when (equal my-company-point (point))
 						    (yas-expand))))
+
+(use-package lsp-mode
+  :ensure t
+  :defer t
+  :hook (lsp-mode . (lambda ()
+                      (let ((lsp-keymap-prefix "C-c l"))
+                        (lsp-enable-which-key-integration))))
+  :init
+  (setq lsp-keep-workspace-alive nil
+        lsp-signature-doc-lines 5
+        lsp-idle-delay 0.5
+        lsp-prefer-capf t
+        lsp-client-packages nil)
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (define-key lsp-mode-map (kbd "s-l") nil)
+  )
 ;; (use-package term
 ;;   :commands term
 ;;   :hook (term-line-mode)
