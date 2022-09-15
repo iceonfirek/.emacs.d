@@ -21,7 +21,7 @@
 (setq-default cursor-type '(bar . 5))
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
-(paredit-mode -1)
+;;(paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
 ;;(server-start)
 ;;Global 优化
@@ -41,14 +41,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
- '(centaur-tabs-gray-out-icons 'buffer)
- '(centaur-tabs-hide-tabs-hooks nil)
- '(centaur-tabs-mode t nil (centaur-tabs))
- '(centaur-tabs-modified-marker "*")
- '(centaur-tabs-set-bar 'left)
- '(centaur-tabs-set-close-button nil)
- '(centaur-tabs-set-icons t)
- '(centaur-tabs-set-modified-marker t)
+ ;; '(centaur-tabs-gray-out-icons 'buffer)
+ ;; '(centaur-tabs-hide-tabs-hooks nil)
+ ;; '(centaur-tabs-mode t nil (centaur-tabs))
+ ;; '(centaur-tabs-modified-marker "*")
+ ;; '(centaur-tabs-set-bar 'left)
+ ;; '(centaur-tabs-set-close-button nil)
+ ;; '(centaur-tabs-set-icons t)
+ ;; '(centaur-tabs-set-modified-marker t)
  '(custom-safe-themes
    '("97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
