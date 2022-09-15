@@ -8,22 +8,22 @@
 ;;; Theme
 (setq inhibit-startup-message t)
 (setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
-(scroll-bar-mode -1)
+;;**(scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
 ;;(fringe-mode 1)
 (display-time-mode 1)
 (display-battery-mode 1)
 ;;(set-fringe-mode 5)
-;;(menu-bar-mode -1)
+(menu-bar-mode -1)
 (setq visible-bell t)
 (load-theme 'wombat)
-(setq-default cursor-type 'bar)
+(setq-default cursor-type '(bar . 5))
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
 (paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
-(server-start)
+;;(server-start)
 ;;Global 优化
 (setq auto-save-default t)
 (setq make-backup-files nil)
@@ -54,8 +54,10 @@
  '(debug-on-error t)
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
+ '(geiser-racket--binary "/usr/local/bin/racket")
+ '(geiser-racket-binary "/usr/local/bin/racket")
  '(global-smart-tab-mode t)
- '(org-agenda-files '("/Users/iceonfire/inceptio/Agenda/agenda.org"))
+ '(org-agenda-files nil)
  '(org-babel-load-languages
    '((calc . t)
      (dot . t)
@@ -78,7 +80,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi py-autopep8 multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -88,25 +90,26 @@
 ;;Global binding keys
 (global-set-key (kbd "M-z") 'copy-isearch-match)
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
+(global-set-key (kbd "C-x z") 'execute-extended-command)
 (global-set-key (kbd "<f5>") 'eval-region)
-(global-set-key (kbd "s-I") 'scroll-down-command)
-(global-set-key (kbd "C-s-i") 'beginning-of-buffer)
-(global-set-key (kbd "s-K") 'scroll-up-command)
-(global-set-key (kbd "C-s-k") 'end-of-buffer)
+;;(global-set-key (kbd "s-I") 'scroll-down-command)
+(global-set-key (kbd "<home>") 'beginning-of-buffer)
+;;(global-set-key (kbd "s-K") 'scroll-up-command)
+(global-set-key (kbd "<end>") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
 (global-set-key (kbd "s-w") 'kill-current-buffer)
 (global-set-key (kbd "s-u") 'kill-whole-line)
-(global-set-key (kbd "s-l") 'forward-char)
+;; (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-L") 'forward-word)
 (global-set-key (kbd "C-s-l") 'move-end-of-line)
-(global-set-key (kbd "s-j") 'backward-char)
+;; (global-set-key (kbd "s-j") 'backward-char)
 (global-set-key (kbd "C-s-j") 'move-beginning-of-line)
 (global-set-key (kbd "s-J") 'backward-word)
-(global-set-key (kbd "s-i") 'previous-line)
-(global-set-key (kbd "s-k") 'next-line)
+;; (global-set-key (kbd "s-i") 'previous-line)
+;; (global-set-key (kbd "s-k") 'next-line)
 (global-set-key (kbd "s-n") 'set-mark-command)
 (global-set-key (kbd "s-N") 'pop-to-mark-command)
 (global-set-key (kbd "s-o") 'other-window)
@@ -122,6 +125,7 @@
 (global-set-key (kbd "s-x") 'kill-region)
 (global-set-key (kbd "<f12>") 'company-mode)
 (global-set-key (kbd "s-f") 'consult-line)
+(global-set-key (kbd "C-x l") 'consult-line)
 ;;Package install
 (require
  'package)
@@ -482,7 +486,7 @@
   :ensure t
   :defer t
   :hook (lsp-mode . (lambda ()
-                      (let ((lsp-keymap-prefix "C-c l"))
+                      (let ((lsp-keymap-prefix "M-c l"))
                         (lsp-enable-which-key-integration))))
   :init
   (setq lsp-keep-workspace-alive nil
@@ -491,9 +495,10 @@
         lsp-prefer-capf t
         lsp-client-packages nil)
   :config
-  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-  (define-key lsp-mode-map (kbd "s-l") nil)
-  )
+ (define-key lsp-mode-map (kbd "M-c l") lsp-command-map)
+ (define-key lsp-mode-map (kbd "s-l") nil)
+   (define-key lsp-mode-map (kbd "c") nil)
+ )
 ;; (use-package term
 ;;   :commands term
 ;;   :hook (term-line-mode)
@@ -630,10 +635,10 @@
   :custom
   (python-shell-internal "python3"))
 
-(use-package py-autopep8
-  :ensure t
-  :hook (python-mode . py-autopep8-enable-on-save)
-  )
+;;(use-package py-autopep8
+;;  :ensure t
+;;  :hook (python-mode . py-autopep8-enable-on-save)
+;;  )
 (use-package jedi-core
   :ensure t)
 ;; (setq jedi:server-args '("--log-level=DEBUG" "--log=/Users/iceonfire/jedi.log" "--log-rotate-max-size=1000000" "--log-rotate-max-count=3" "--log-traceback"))
@@ -718,6 +723,22 @@
 (global-set-key "\C-ct" 'go-translate-popup)
 (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
 (setq go-translate-buffer-follow-p t)
+
+;;matrix
+;; Install `plz' HTTP library (not on MELPA yet).
+
+;; Install and load `quelpa-use-package'.
+
+(package-install 'quelpa-use-package)
+(require 'quelpa-use-package)
+
+(use-package plz
+  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
+
+;; Install Ement.
+(use-package ement
+  :quelpa (ement :fetcher github :repo "alphapapa/ement.el"))
+
 ;;doom-themes
 ;; (use-package doom-themes
 ;;   :ensure t
@@ -735,7 +756,7 @@
 ;;   (doom-themes-treemacs-config)
 ;;   ;; Corrects (and improves) org-mode's native fontification.
 ;;   (doom-themes-org-config))
-;;epa key
+;;epa keyq
 (setq-local epa-file-encrypt-to '("iceonfirekun@163.com"))
 (setq epa-file-select-keys 1)
 (setf epa-pinentry-mode 'loopback)
@@ -779,3 +800,37 @@
 (setenv "LC_MONETARY" "zh_CN.UTF-8")
 (setenv "LC_NUMERIC" "zh_CN.UTF-8")
 (setenv "LC_TIME" "zh_CN.UTF-8")
+
+(defvar infu-bionic-reading-face nil "a face for `infu-bionic-reading-region'.")
+
+;;(setq infu-bionic-reading-face 'bold)
+(setq infu-bionic-reading-face 'typescript-jsdoc-tag)
+(setq infu-bionic-reading-face-2 'all-the-icons-lgreen)
+;; try
+;; 'bold
+;; 'error
+;; 'warning
+;; 'highlight
+;; or any value of M-x list-faces-display
+;; bionic-reading
+(defun infu-bionic-reading-buffer ()
+  (interactive)
+  (infu-bionic-reading-region (point-min) (point-max)))
+
+(defun infu-bionic-reading-region (Begin End)
+  (interactive "r")
+  (let (xBounds xWordBegin xWordEnd  )
+    (save-restriction
+      (narrow-to-region Begin End)
+      (goto-char (point-min))
+      (while (forward-word)
+        ;; bold the first half of the word to the left of cursor
+        (setq xBounds (bounds-of-thing-at-point 'word))
+        (setq xWordBegin (car xBounds))
+        (setq xWordEnd (cdr xBounds))
+	;;        (setq xBoldEndPos (+ xWordBegin (1+ (/ (- xWordEnd xWordBegin) 2))))
+	(setq xBoldEndPos (+ xWordBegin 3))
+;;	(put-text-property xWordBegin xBoldEndPos
+;;                           'font-lock-face infu-bionic-reading-face-2)
+        (put-text-property xBoldEndPos xWordEnd
+                           'font-lock-face infu-bionic-reading-face)))))

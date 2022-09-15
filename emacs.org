@@ -1,766 +1,795 @@
 #+OPTIONS: p:t author:Kun
 #+Title: Emacs
 #+SETUPFILE: /Users/iceonfire/.emacs.d/org-themes/src/imagine_light/imagine_light.theme
-* system
-  - sudo pmset -a disablesleep 1
-  - open -n /Applications/
-  - sudo codesign --force --deep --sign - /~
-  - xattr -r -d com.apple.quarantine ~
-  - sudo dd if=/Users/iceonfire/Downloads/pop-os_20.04_amd64_intel_35.iso of=/dev/disk4 bs=1m
-  - /Applications/Emacs.app/Contents/MacOS/Emacs --debug-init
-  - export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-  - mac kill process  ps -ax | grep , killall
-  - mac package source [[https://www.macports.org/install.php][link]]
-  - fix app damaged：
-    #+begin_src
-    sudo xattr -rd com.apple.quarantine ~
-    #+end_src
-  - emacsclient -n filename
-  - netstat
-    #+begin_src shell 
-      sudo lsof -i -n -P | grep TCP
-      sudo lsof -i -n -P | grep LAgent
-    #+end_src
-  - http://127.0.0.1:3000 ~/Downloads/sharetool
-** crontab定时任务 chech jitouch
-   https://ole.michelsen.dk/blog/schedule-jobs-with-crontab-on-mac-osx/
-   #+begin_src shell
-     crontab -l
-     EDITOR=/usr/local/bin/emacsclient crontab -e
-     sudo /usr/sbin/cron restart
-   #+end_src
-   #+begin_src shell
-     -eq
-     is equal to
-     if [ "$a" -eq "$b" ]
-	-ne
-	is not equal to
-	if [ "$a" -ne "$b" ]
-	   -gt
-	   is greater than
-	   if [ "$a" -gt "$b" ]
-	      -ge
-	      is greater than or equal to
-	      if [ "$a" -ge "$b" ]
-		 -lt
-		 is less than
-		 if [ "$a" -lt "$b" ]
-		    -le
-		    is less than or equal to
-		    if [ "$a" -le "$b" ]
-   #+end_src
-   #+begin_src shell
-     #! /bin/bash
+*** system
+    - sudo pmset -a disablesleep 1
+    - open -n /Applications/
+    - sudo codesign --force --deep --sign - /~
+    - xattr -r -d com.apple.quarantine ~
+    - sudo dd if=/Users/iceonfire/Downloads/pop-os_20.04_amd64_intel_35.iso of=/dev/disk4 bs=1m
+    - /Applications/Emacs.app/Contents/MacOS/Emacs --debug-init
+    - export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+    - mac kill process  ps -ax | grep , killall
+    - mac package source [[https://www.macports.org/install.php][link]]
+    - fix app damaged：
+      #+begin_src
+      sudo xattr -rd com.apple.quarantine ~
+      #+end_src
+    - emacsclient -n filename
+    - netstat
+      #+begin_src shell 
+	sudo lsof -i -n -P | grep TCP
+	sudo lsof -i -n -P | grep LAgent
+      #+end_src
+    - http://127.0.0.1:3000 ~/Downloads/sharetool
+    - sudo find / -name "php" -type l  
+**** crontab定时任务 chech jitouch
+     https://ole.michelsen.dk/blog/schedule-jobs-with-crontab-on-mac-osx/
+     #+begin_src shell
+       crontab -l
+       EDITOR=/usr/local/bin/emacsclient crontab -e
+       sudo /usr/sbin/cron restart
+     #+end_src
+     #+begin_src shell
+       -eq
+       is equal to
+       if [ "$a" -eq "$b" ]
+	  -ne
+	  is not equal to
+	  if [ "$a" -ne "$b" ]
+	     -gt
+	     is greater than
+	     if [ "$a" -gt "$b" ]
+		-ge
+		is greater than or equal to
+		if [ "$a" -ge "$b" ]
+		   -lt
+		   is less than
+		   if [ "$a" -lt "$b" ]
+		      -le
+		      is less than or equal to
+		      if [ "$a" -le "$b" ]
+     #+end_src
+     #+begin_src shell
+       #! /bin/bash
      
-     PROCESS=jitouch
-     number=$(ps aux | grep -v grep | grep -ci $PROCESS)
+       PROCESS=jitouch
+       number=$(ps aux | grep -v grep | grep -ci $PROCESS)
      
-     if [ $number -eq 1 ]
-     then
-	 #  echo hello
-	 nohup sleep 1800 2>&1 
-	 nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
-     else
-	 nohup /Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS/Jitouch.app/Contents/MacOS/Jitouch 2>&1 
-	 # echo open jitouch again!!
-	 nohup sleep 1800 2>&1 
-	 nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
-     fi
-   #+end_src
-   #+begin_src shell
-     C-z //suspend job;
-     bg %1 //后台运行1号;
-     job -l //list jobs
-   #+end_src
-   -  curl myip.ipip.net
-** 搭建http server
-   - brew install http-server
-   - cd ~/inceptio && ./http-serve
-   - browse http://10.8.25.229:8080
-** echo, export, unset
-   #+begin_src shell
-     $echo 1.1.1.1 255.255.255.0 >> /etc/hosts
-     $sudo chmod 777 ~
-     $export ALL_PROXY=127.0.0.1:7890
-     $unset ALL_PROXY
-   #+end_src
-* linux
-** disable lid sleep
-     - 编辑下列文件：/etc/systemd/logind.conf
-     - #HandlePowerKey 按下电源键后的行为，默认 power off
-     - #HandleSleepKey 按下挂起键后的行为，默认 suspend
-     - #HandleHibernateKey 按下休眠键后的行为，默认 hibernate
-     - #HandleLidSwitch 合上笔记本盖后的行为，默认 suspend（改为 lock；即合盖不休眠）在原文件中，还要去掉前面的#
-     - 运行：systemctl restart systemd-logind就会生效。
-** boot grub
-   #+begin_src shell
-     sudo gedit /etc/default/grub
-     sudo update-grub
-     su root
-     cd /boot/efi/loader
-     "oldkern"
-   #+end_src
-   [[https://blog.csdn.net/qq_41042595/article/details/108342297][grub boot fix]]
-   #+begin_src sh
-     $sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt-get update
-     $sudo apt-get install -y boot-repair && boot-repair
-   #+end_src
-   efibootmgr
-   #+begin_src sh
-     $efibootmgr -o 0010,0019.0002
-     $efibootmgr -b 0019 -a
-     $efibootmgr -b 0003 -B
-     $efibootmgr -n 0019         #next boot
-   #+end_src
-** ubuntu test
-   - ssh test@10.8.19.95
-** ssh app
-   sudo apt install openssh-server
-** gsettings set org.gnome.desktop.interface scaling-factor 2
-** recovery mode
-   #+begin_quote
-   Messed up the /etc/environment file in my Ubuntu 12.04 LTS vm today. Here's how I boot into Ubuntu recovery mode and access the file system as root in write mode.
-   Hold 'Shift' while the machine is starting up to load up GNU GRUB
-   Start up Ubuntu in recovery mode
-   Choose "Drop To Root Shell Prompt'
-   By default, this will allow you to access the file system in read-only mode
-   Switch to read/write mode by executing
-   This:
-   $ mount -o remount,rw /
-   Now I can fix whatever files I messed up earlier
-   #+end_quote
-** linux migration
-*** package migration
-    #+begin_src shell //source to destiny
-      sudo dpkg --get-selections | sed "s/.*deinstall//" | sed "s/install$//g" > ~/pkglist
-      sudo aptitude update && cat pkglist | xargs sudo aptitude install -y
-    #+end_src
-*** home file migration
-    #+begin_quote
-    ~/, /etc/apt, /opt,
-    #+end_quote
-** shell theme
-   #+begin_src
-为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
-如果你要重新恢复到 bash：chsh -s /bin/bash root
-   #+end_src
-*** change theme
-    [[https://www.jianshu.com/p/0849ef24ffc6]]
-** check kernel
-   #+begin_src shell
-     ,*降级* 5.0.42内 开机第二个画面esc 选择内核
-     dpkg -l|grep kern|grep 77
-     apt remove ~（其他内核）
-     apt-mark hold ~（可用内核）
-     uname -sr
-     sudo dpkg --purge linux-image-unsigned-5.15.0-051500
-   #+end_src
-** remove package/dpkg
-   #+begin_src shell
-   sudo dpkg --get-selections | grep emacs
-   sudo apt-get remove emacsen-common
-   #+end_src
-** restart network
-   #+begin_quote shell
-   sudo ifdown wlan0 && sudo ifup -v wlan0
-   #+end_quote
-** add user
-   #+begin_src shell
-     $ sudo useradd -s /bin/bash -d /home/vivek/ -m -G sudo vivek
-     $ sudo passwd vivek
-   #+end_src
-   [[https://www.cyberciti.biz/faq/create-a-user-account-on-ubuntu-linux/]]
-** package manager
-   sudo apt install synaptic
-   sudo apt --fix-broken install
-   sudo apt update
-   sudo apt list --upgradable
-   sudo apt-get update
-   sudo apt-get install aptitude
-   sudo aptitude safe-upgrade
-   sudo aptitude upgrade
-   sudo aptitude dist-upgrade
-   sudo apt-get upgrade
-   sudo apt-get dist-upgrade
-   sudo apt clean
-** dpkg management
-   #+begin_src shell
-     sudo dpkg --configure -a
-     sudo rm /var/lib/dpkg/info/sunloginclient.*
-     sudo dpkg --configure -D 777 sunloginclient
+       if [ $number -eq 1 ]
+       then
+	   #  echo hello
+	   nohup sleep 1800 2>&1 
+	   nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
+       else
+	   nohup /Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS/Jitouch.app/Contents/MacOS/Jitouch 2>&1 
+	   # echo open jitouch again!!
+	   nohup sleep 1800 2>&1 
+	   nohup /Users/iceonfire/.emacs.d/repeat.sh 2>&1 
+       fi
+     #+end_src
+     #+begin_src shell
+       C-z //suspend job;
+       bg %1 //后台运行1号;
+       job -l //list jobs
+     #+end_src
+     -  curl myip.ipip.net
+**** 搭建http server
+     - brew install http-server
+     - cd ~/inceptio && ./http-serve
+     - browse http://10.8.25.229:8080
+**** echo, export, unset
+     #+begin_src shell
+       $echo 1.1.1.1 255.255.255.0 >> /etc/hosts
+       $sudo chmod 777 ~
+       $export ALL_PROXY=127.0.0.1:7890
+       $unset ALL_PROXY
+     #+end_src
+*** linux
+**** disable lid sleep
+       - 编辑下列文件：/etc/systemd/logind.conf
+       - #HandlePowerKey 按下电源键后的行为，默认 power off
+       - #HandleSleepKey 按下挂起键后的行为，默认 suspend
+       - #HandleHibernateKey 按下休眠键后的行为，默认 hibernate
+       - #HandleLidSwitch 合上笔记本盖后的行为，默认 suspend（改为 lock；即合盖不休眠）在原文件中，还要去掉前面的#
+       - 运行：systemctl restart systemd-logind就会生效。
+**** boot grub
+     #+begin_src shell
+       sudo gedit /etc/default/grub
+       sudo update-grub
+       su root
+       cd /boot/efi/loader
+       "oldkern"
+     #+end_src
+     [[https://blog.csdn.net/qq_41042595/article/details/108342297][grub boot fix]]
+     #+begin_src sh
+       $sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt-get update
+       $sudo apt-get install -y boot-repair && boot-repair
+     #+end_src
+     efibootmgr
+     #+begin_src sh
+       $efibootmgr -o 0010,0019.0002
+       $efibootmgr -b 0019 -a
+       $efibootmgr -b 0003 -B
+       $efibootmgr -n 0019         #next boot
+     #+end_src
+**** ubuntu test
+     - ssh test@10.8.19.95
+**** ssh app
+     sudo apt install openssh-server
+**** gsettings set org.gnome.desktop.interface scaling-factor 2
+**** recovery mode
+     #+begin_quote
+     Messed up the /etc/environment file in my Ubuntu 12.04 LTS vm today. Here's how I boot into Ubuntu recovery mode and access the file system as root in write mode.
+     Hold 'Shift' while the machine is starting up to load up GNU GRUB
+     Start up Ubuntu in recovery mode
+     Choose "Drop To Root Shell Prompt'
+     By default, this will allow you to access the file system in read-only mode
+     Switch to read/write mode by executing
+     This:
+     $ mount -o remount,rw /
+     Now I can fix whatever files I messed up earlier
+     #+end_quote
+**** linux migration
+***** package migration
+      #+begin_src shell //source to destiny
+	sudo dpkg --get-selections | sed "s/.*deinstall//" | sed "s/install$//g" > ~/pkglist
+	sudo aptitude update && cat pkglist | xargs sudo aptitude install -y
+      #+end_src
+***** home file migration
+      #+begin_quote
+      ~/, /etc/apt, /opt,
+      #+end_quote
+**** shell theme
+     #+begin_src
+  为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
+  如果你要重新恢复到 bash：chsh -s /bin/bash root
+     #+end_src
+***** change theme
+      [[https://www.jianshu.com/p/0849ef24ffc6]]
+**** check kernel
+     #+begin_src shell
+       ,*降级* 5.0.42内 开机第二个画面esc 选择内核
+       dpkg -l|grep kern|grep 77
+       apt remove ~（其他内核）
+       apt-mark hold ~（可用内核）
+       uname -sr
+       sudo dpkg --purge linux-image-unsigned-5.15.0-051500
+     #+end_src
+**** remove package/dpkg
+     #+begin_src shell
      sudo dpkg --get-selections | grep emacs
      sudo apt-get remove emacsen-common
-   #+end_src
-** python default version
-   #+begin_src shell
-     sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
-     sudo update-alternatives --config python3 
-   #+end_src
-** rebuild deb
-   https://www.163.com/dy/article/FQBUDF120531MQYJ.html
-   https://www.codeleading.com/article/17784463674/ //修改系统信息
-** nfs
-   #+begin_src shell  //for server
-     sudo apt install nfs-kernel-server
-     sudo systemctl start nfs-kernel-server.service
-     sudo systemctl start rpc-statd
-     vim /etc/exports
-     /        *(rw,sync,fsid=0,no_root_squash,no_subtree_check,insecure)
-     /srv     *(ro,sync,subtree_check)
-     /home    *.hostname.com(rw,sync,no_subtree_check)
-     /scratch *(rw,async,no_subtree_check,no_root_squash,noexec)
-     sudo systemctl start rpc-statd
-     sudo exportfs -a
-   #+end_src
-   #+begin_src shell //for client
-     sudo apt install nfs-common
-     sudo mkdir /mnt/nfs
-     sudo mount example.hostname.com:/src /mnt/nfs
-   #+end_src
-   #+begin_src shell //for mac
-     showmount -e 10.211.55.15
-     sudo mount -o vers=4 10.211.55.15:/ nfs
-   #+end_src
-** smb
-   #+begin_src shell
-     sudo apt install samba
-     sudo smbpasswd  -a sydney
-     sudo vim /etc/samba/smb.conf
-     # [NASShare]
-     comment = anything_will_do
-     path = /media/sydney/Storage/
-     read only = no
-     guest ok = yes
-     public = yes
-     browseable = yes
-     sudo systemctl restart smbd
-     sudo  chmod o+rx /media/sydney/Storage
-     sudo systemctl restart smbd
-   #+end_src
-** input
-   #+begin_src shell
-     $ sudo apt install fcitx fcitx-frontend-all fcitx-rime
-     $ im-config -n fcitx
-     $ sudo tee /etc/profile.d/z-pop-os-fcitx.sh <<'EOF'
-     export GTK_IM_MODULE=""
-     export QT_IM_MODULE=""
-     export XMODIFIERS=""
-     EOF
-   #+end_src
-   文件 ~/.config/fcitx/conf/fcitx-classic-ui.config：
-   #+begin_src shell
-     [ClassicUI]
-     FontSize=14
-     Font=Noto Sans CJK SC
-     MenuFont=Noto Sans CJK SC
-     SkinType=dark
-   #+end_src
-** key modifier
-   #+begin_src shell
-     $xev
-     $sudo apt install xcape
-     $vim ~/.xmodmap
-     keycode 133 = Mode_switch
-     keysym a = a A Left
-     keysym d = d D Right
-     keysym w = w W Up
-     keysym s = s S Down
-     $vim ~/xmodmap.sh
-     xmodmap ~/.xmodmap
-     xcape -r 'Mode_switch=Escape'
-     $chmod +x ~/xmodmap.sh
-     $vim ~/.config/autostart/xmodmap.desktop
-     [Desktop Entry]
-     Type=Application
-     Exec=sh -c "$HOME/xmodmap.sh"
-     Hidden=false
-     X-GNOME-Autostart-enabled=true
-     Name=xmodmap
-     Comment=xmodmap script
-   #+end_src
-   Go to the folder "~/.config/autostart/" and directly set the "xmodmap.desktop" file:
-** things to do after installation
-   https://mutschler.eu/linux/install-guides/pop-os-post-install/
-** locale issue
-   https://www.thomas-krenn.com/en/wiki/Perl_warning_Setting_locale_failed_in_Debian
-   #+begin_src shell
-     $gedit .bashrc
-     export LC_ALL=en_US.UTF-8
-     export LANG=en_US.UTF-8
-     export LANGUAGE=en_US.UTF-8
-   #+end_src
-** du
-   #+begin_src shell
-     $du -aSh ~/ | sort -h -r|head -n 10  
-     $sudo du -acSh / --exclude={/proc,/media}| sort -h -r|head -n 10
-   #+end_src
-* OpenStack
-  #+begin_src shell
-    $apt update && apt upgrade -y
-    $apt dist-upgrade -y
-    $snap install microstack --beta --devmode
-    $systemctl restart snapd.service
-    $snap run microstack init --auto --control
-    $snap get microstack config.credentials.keystone-password
-    $snap run microstack.openstack catlog list
-    $snap run microstack launch cirros --name xyl
-    $ssh -i /home/root/snap/microstack/common/.ssh/id_microstack cirros@10.20.20.43
-    $systemctl restart snap.microstack.*
-    $snap disable microstack
-    $snap enable microstack
-  #+end_src
-* ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
-** ~/.bash_profile
-* mtr(asn) trace
-** asn
-   [[https://github.com/nitefood/asn#installation]]
-   #+begin_src
-   brew install bash coreutils curl whois mtr jq ipcalc grepcidr nmap aha && brew link mtr
-   #+end_src
-** [[https://github.com/nitefood/asn#installation]]
-** touch asn file from curl.
-** https://www.ipqualityscore.com/user/dashboard
-   #+begin_src zsh
-   TOKEN="M1Jvm88NU6UKjPQ417S9Ttsi6SxBUPsq"; mkdir "$HOME/.asn/" && echo "$TOKEN" > "$HOME/.asn/iqs_token" && chmod -R 600 "$HOME/.asn/"
-   #+end_src
-** usage
-   - asn <ASnumber>: to lookup matching ASN data. Supports “as123” and “123” formats (case insensitive)
-   - asn <IP.AD.DR.ESS>: to lookup matching route and ASN data
-   - asn <ROUTE>: to lookup matching ASN data
-   - asn <host.name.tld>: to lookup matching IP, route and ASN data (supports multiple IPs - e.g. DNS RR)
-* windows system
-** remote control lid closed lost connection
-   [[https://community.spiceworks.com/topic/2234833-closing-laptop-lid-breaks-remote-control-program]]
-* yank
-** c-w king region between cusor to mark
-** c-y yank
-** m-y kill ring
-** s-y ? ```````````
-* Jitouch
-  I copied the jitouch app file from Library/PreferencePanes/Jitouch.prefPane/Contents/Resources and pasted it into its sibling folder Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS and it works like a charm now!
-  [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
-  #+begin_src bash
-    pkill -f "Jitouch"
-    sleep 5
-    nohup ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS/Jitouch > /dev/null 2>&1 &
-  #+end_src
-  #+begin_src bash
-    cd ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS
-    nohup ./jitouch &
-  #+end_src
-* emacs
-  - eval-buffer ;;macs
-  - C-h f function RET ( describe-function ) displays the documentation of Lisp function
-  - CLM/command-  global-command-mode ;;
-  - counsel-find-file
-  - C-x-1 ;;close other windows
-  - counsel-switch-buffer
-  - C-x LEFT and C-x RIGHT . C-x LEFT ( previous-buffer ) C-x o ( other-window ).
-  - C-x 1 close other windows, C-x 2 open window under, C-x 3 open window right, C-x 0 close current window
-  - C-x C-f	Open/Create File, C-x k	Close File,,C-x C-s	Save File
-  - C-x C-e eval current function
-  - C-x C-q to turn dired into editing mode.use M-% to replace foo with bar in the dired buffer. ...
-  - use C-c C-c to save
-  - C-h f describe function
-  - counsel load theme
-  - buffer menu -> d -> x to delete marked buffers
-  - *copy multiple pathnames* right click + option
-* paredit
-  #+ATTR_ORG: :width 1200
-  [[/Users/iceonfire/github/Scheme/paredit_command.png]]
-* dired
-  - ^ drill up, j search, g refresh, d mark, x excute, 0 w copy file path,
-  - cant access icloud folder -> emacs full disk access-> open any file by "open file"
-* consult
-  - consult-yank-from-kill-ring
-* graphviz
-  - [2021-08-31 Tue 13:12] \\
-    using graphviz by babel dot file [[https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/][link]]
-      #+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
-        graph graphname {
-    	node [shape=box, fontname="Microsoft Yahei"];
-    	rankdir=LR;
-    	a [label="用户提交申请"]
-    	b [label="直接领导（主/备）"]
-    	c [label="高级总监"]
-    	d [label="IT负责人（主/备）"]
-    	e [label="IT高级总监"]
-    	a -- b
-    	b -- c
-    	c -- d
-    	d -- e
-        }
-         #+end_src
-    [[https://graphviz.org/Gallery/]]
-* org-mode
-  - C-c C-x C-v (org-toggle-inline-images), custom group -> org faces.
-  - C-c C-t todo/done;
-  - C-C C-q set tags
-  - C-c C-s schedule; d deadline;
-  - C-c C-c eval code block to result
-  - *org store link* insert all links
-  - C-c - convert paragragh to lists
-  - terminal C-c C-j line-mode; C-c C-k char-mode
-  - [[internal link]] <<internal link>>
-  - global-visual-line-mode 自动断行
-  - external link, org-store-link ; org-insert-link
-** exprot settings [[https://orgmode.org/manual/Export-Settings.html#Export-Settings][link]]
-   - Paragraphs are separated by at least one empty line. If you need to enforce a line break within a paragraph, use ‘\\’ at the end of a line.
-   #+BEGIN_VERSE
-   this is verse
-   #+END_VERSE
-   #+BEGIN_QUOTE
-   this is quote
-   #+END_QUOTE
-   #+BEGIN_CENTER
-   Everything should be made as simple as possible, \\
-   but not any simpler
-   #+END_CENTER
-   in the [[https://gitlab.com/OlMon/org-themes/-/tree/master/src][src]] directory, there is a folders for every theme. There is at least a .theme file. Download it and just add to your org file
-;;   #+SETUPFILE: <path to .theme file>
-   This will embed the css into the html.
-   If you download the .css file of a theme, you can add it by adding
-   #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="<path to css>" />
-   export-with-todo&theme
-   #+OPTIONS: p:t pri:t
-   ;;#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup#+end_src
-** logging mode
-*** C-c C-x
-    - C-i clock-in
-    - C-o clock-out
-    - C-d display time
-    - C-q cancel
-*** repeater task
-    - [[https://orgmode.org/manual/Repeated-tasks.html]]
-    #+begin_src
-    DEADLINE: <2005-10-01 Sat +1m +1w -3d -10h>
-    #+end_src
-** color text
-   #+begin_src
-   (org-add-link-type
- "color"
- (lambda (path)
-   (message (concat "color "
-                    (progn (add-text-properties
-                            0 (length path)
-                            (list 'face `((t (:foreground ,path))))
-                            path) path))))
- (lambda (path desc format)
-   (cond
-    ((eq format 'html)
-     (format "<span style=\"color:%s;\">%s</span>" path desc))
-    ((eq format 'latex)
-     (format "{\\color{%s}%s}" path desc)))))
-    - This is [[color:green][green text]]
-    - This is [[color:red][red]]
-   #+end_src
-** bullet symbol
-   [[https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/]]
-** todo view
-   C-c C-x > restrict todo region
-   org-agenda t
-* counsel-projectil
-  - C-c C-o open file window, o action to the file.
-* magit
-  - s stage, u unstage, c comit, c-c c-c which comment, P -f p, force push,
-* git
-** git init
-   - git init
-   - git remote add origin https://gitlab.rd.inceptioglobal.ai/iceonfirek/emacs.git
-   - git add .
-   - git commit -m "Initial commit"
-   - git push -u origin master
-** git reset
-   - git merge --abort
-   - git reset --hard HEAD~~~~
-   - git log -5
-   - git restore ***
-** git remote
-   - *change remote*
-   - git remote set-url origin ~.git
-   - [[https://devconnected.com/how-to-change-git-remote-origin/]]
-** git status, remote, branch
-   - git remote -v
-   - git branch -a
-   - git show
-   - git fetch
-   - git stash
-** git account
-   - Change username and email global
-   - git config --global user.name "<username>"
-   - git config --global user.email "<email>"
-   - Change username and email for current repo
-   - git config  user.name "<username>" --replace-all
-   - git config  user.email "<email>" --replace-all
-   - git commit --author="John Doe <john@doe.org>"
-** git ssh connect
-   #+begin_src shell
-     ssh-keygen -t rsa
-     cat ~/.ssh/id_rsa.pub
      #+end_src
-* mark ring
-  - C-u C-spc mark pop,
-* term mode
-  - C-c C-j, line mode. /use shell/
-* web browser
-  - widget-webkit-browse-url
-* Meow mode
-  - j,k,h,l,i + shift.
-* geiser scheme
-  #+begin_quote
-  How Geiser associates a REPL to your Scheme buffer
-  To determine what Scheme implementation corresponds to a given source file, Geiser uses the following algorithm:
-  If the file-local variable geiser-scheme-implementation is defined, its value is used. A common way of setting buffer-local variables is to put them in a comment near the beginning of the file, surrounded by -*- marks, as in:
-  ;; -*- geiser-scheme-implementation: guile -*-
-  If you’ve customized geiser-active-implementations so that it’s a single-element list (as explained in here), that element is used as the chosen implementation.
-  The contents of the file is scanned for hints on its associated implementation. For instance, files that contain a #lang directive will be considered Racket source code, while those with a define-module form in them will be assigned to a Guile REPL.
-  The current buffer’s file name is checked against the rules given in geiser-implementations-alist, and the first match is applied. You can provide your own rules by customizing this variable, as explained below.
-  If we haven’t been lucky this far and you have customized geiser-default-implementation to the name of a supported implementation, we’ll follow your lead.
-  See? That’s the problem of being a smart aleck: one’s always outsmarted by people around. At this point, geiser-mode will humbly give up and ask you to explicitly choose the Scheme implementation.
-  As you can see in the list above, there are several ways to influence Geiser’s guessing by means of customizable variables. The most direct (and most impoverishing) is probably limiting the active implementations to a single one, while customizing geiser-implementations-alist is the most flexible (and, unsurprisingly, also the most complex). Here’s the default value for the latter variable:
-  (((regexp "\\.scm$") guile)
-  ((regexp "\\.ss$") racket)
-  ((regexp "\\.rkt$") racket))
-  which describes the simple heuristic that files with ‘.scm’ as extension are by default associated to a Guile REPL while those ending in ‘.ss’ or ‘.rkt’ correspond to Racket’s implementation (with the caveat that these rules are applied only if the previous heuristics have failed to detect the correct implementation, and that they’ll match only if the corresponding implementation is active). You can add rules to geiser-implementations-alist (or replace all of them) by customizing it. Besides regular expressions, you can also use a directory name; for instance, the following snippet:
-  (eval-after-load "geiser-impl"
-  '(add-to-list 'geiser-implementations-alist
-  '((dir "/home/jao/prj/frob") guile)))
-  will add a new rule that says that any file inside my ‘/home/jao/prj/frob’ directory (or, recursively, any of its children) is to be assigned to Guile. Since rules are first matched, first served, this new rule will take precedence over the default ones.
-  A final tip: if you want Geiser to start automatically a REPL for you if it notices that there’s no one active when it enters geiser-mode, you can customize geiser-mode-start-repl-p to t.
-  #+end_quote
-** commands
-   #+begin_src
-   C-c C-s chez
-   #+end_src
-* Go-Mode
-** .bashrc .bash_profile .zshrc
-   - 环境变量添加到.bash_profile&.zshrc中
-   #+begin_src shell
-    export GOROOT=/usr/local/go
-    export GOPATH=$HOME/go
-    export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-   #+end_src
-** go code
-   https://github.com/mdempsky/gocode
-** go build
-   main go build > project
-   util go build > mod pkg
-   go run . >go mod init ../> go build . > go install
-** go project layerout
-   https://github.com/golang-standards/project-layout/blob/master/README_zh.md
-* yasnippet
-** yasnippet description table
-* k8s
-** minikube
-   #+begin_src
-   kubectl get po -A
-   minikube dashboard
-   //hello-minikube deployment
-   kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4
-   kubectl expose deployment hello-minikube --type=NodePort --port=8080
-   kubectl get services hello-minikube
-   minikube service hello-minikube
-   kubectl port-forward service/hello-minikube 7080:8080
-   //loadbalancer deployment
-   kubectl create deployment balanced --image=k8s.gcr.io/echoserver:1.4
-   kubectl expose deployment balanced --type=LoadBalancer --port=8080
-   minikube tunnel
-   kubectl get services balanced
-   //manage cluster
-   minikube pause
-   minikube unpause
-   minikube stop
-   minikube config set memory 16384
-   minikube addons list
-   minikube start -p aged --kubernetes-version=v1.16.1
-   minikube delete --all
-   #+end_src
-   #+begin_quote
-     https://minikube.sigs.k8s.io/docs/start/
-   #+end_quote
-* general key binding
-** karabiner
-   #+begin_src bash
-   cd ~/.config/karabiner/assets/complex_modifications
-   curl -O "url of jason"
-   #+end_src
-** apple keyboard binding
-   systeme-preferences-keyboard-shorcuts
-* confluence replacement Regexp
-  #+begin_src emacs-lisp
-    org-reload
-  #+end_src
-  regexp:
-  #+begin_src regexp
-  \(\[.*images/\)\(.*.[png]\)\(]\)
-  !\2!
-  #+end_src
-  [[https://www.youtube.com/watch?v=TxYGHjKBMUg]]
-  [[https://www.emacswiki.org/emacs/RegularExpression]]
-  (\([0-9*]+.[0-9*]+.[0-9*]+.[0-9*]+)\)
-  "a regexp cannot find a non-match. A regexp is not negative."
-* code-server
-  nohup code-server 2>&1 &
-  安全组添加192.168.0.0/16 到 端口58080
-  https://www.techrepublic.com/article/how-to-run-an-instance-of-ms-code-over-your-network/
-  https://reposhub.com/javascript/editors/coderpair-vscode-live.html
-  ~/.config/
-  /lib/systemd/system/code-server.service
-* chrome
-  - [2021-10-13 Wed 19:24] \\
-    thisisunsafe
-  - [2021-09-07 Tue 17:11] \\
-    frameless
+**** restart network
+     #+begin_quote shell
+     sudo ifdown wlan0 && sudo ifup -v wlan0
+     #+end_quote
+**** add user
+     #+begin_src shell
+       $ sudo useradd -s /bin/bash -d /home/vivek/ -m -G sudo vivek
+       $ sudo passwd vivek
+     #+end_src
+     [[https://www.cyberciti.biz/faq/create-a-user-account-on-ubuntu-linux/]]
+**** package manager
+     sudo apt install synaptic
+     sudo apt --fix-broken install
+     sudo apt update
+     sudo apt list --upgradable
+     sudo apt-get update
+     sudo apt-get install aptitude
+     sudo aptitude safe-upgrade
+     sudo aptitude upgrade
+     sudo aptitude dist-upgrade
+     sudo apt-get upgrade
+     sudo apt-get dist-upgrade
+     sudo apt clean
+**** dpkg management
+     #+begin_src shell
+       sudo dpkg --configure -a
+       sudo rm /var/lib/dpkg/info/sunloginclient.*
+       sudo dpkg --configure -D 777 sunloginclient
+       sudo dpkg --get-selections | grep emacs
+       sudo apt-get remove emacsen-common
+     #+end_src
+**** python default version
+     #+begin_src shell
+       sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+       sudo update-alternatives --config python3 
+     #+end_src
+**** rebuild deb
+     https://www.163.com/dy/article/FQBUDF120531MQYJ.html
+     https://www.codeleading.com/article/17784463674/ //修改系统信息
+**** nfs
+     #+begin_src shell  //for server
+       sudo apt install nfs-kernel-server
+       sudo systemctl start nfs-kernel-server.service
+       sudo systemctl start rpc-statd
+       vim /etc/exports
+       /        *(rw,sync,fsid=0,no_root_squash,no_subtree_check,insecure)
+       /srv     *(ro,sync,subtree_check)
+       /home    *.hostname.com(rw,sync,no_subtree_check)
+       /scratch *(rw,async,no_subtree_check,no_root_squash,noexec)
+       sudo systemctl start rpc-statd
+       sudo exportfs -a
+     #+end_src
+     #+begin_src shell //for client
+       sudo apt install nfs-common
+       sudo mkdir /mnt/nfs
+       sudo mount example.hostname.com:/src /mnt/nfs
+     #+end_src
+     #+begin_src shell //for mac
+       showmount -e 10.211.55.15
+       sudo mount -o vers=4 10.211.55.15:/ nfs
+     #+end_src
+**** smb
+     #+begin_src shell
+       sudo apt install samba
+       sudo smbpasswd  -a sydney
+       sudo vim /etc/samba/smb.conf
+       # [NASShare]
+       comment = anything_will_do
+       path = /media/sydney/Storage/
+       read only = no
+       guest ok = yes
+       public = yes
+       browseable = yes
+       sudo systemctl restart smbd
+       sudo  chmod o+rx /media/sydney/Storage
+       sudo systemctl restart smbd
+     #+end_src
+**** input
+     #+begin_src shell
+       $ sudo apt install fcitx fcitx-frontend-all fcitx-rime
+       $ im-config -n fcitx
+       $ sudo tee /etc/profile.d/z-pop-os-fcitx.sh <<'EOF'
+       export GTK_IM_MODULE=""
+       export QT_IM_MODULE=""
+       export XMODIFIERS=""
+       EOF
+     #+end_src
+     文件 ~/.config/fcitx/conf/fcitx-classic-ui.config：
+     #+begin_src shell
+       [ClassicUI]
+       FontSize=14
+       Font=Noto Sans CJK SC
+       MenuFont=Noto Sans CJK SC
+       SkinType=dark
+     #+end_src
+**** key modifier
+     #+begin_src shell
+       $xev
+       $sudo apt install xcape
+       $vim ~/.xmodmap
+       keycode 133 = Mode_switch
+       keysym a = a A Left
+       keysym d = d D Right
+       keysym w = w W Up
+       keysym s = s S Down
+       $vim ~/xmodmap.sh
+       xmodmap ~/.xmodmap
+       xcape -r 'Mode_switch=Escape'
+       $chmod +x ~/xmodmap.sh
+       $vim ~/.config/autostart/xmodmap.desktop
+       [Desktop Entry]
+       Type=Application
+       Exec=sh -c "$HOME/xmodmap.sh"
+       Hidden=false
+       X-GNOME-Autostart-enabled=true
+       Name=xmodmap
+       Comment=xmodmap script
+     #+end_src
+     Go to the folder "~/.config/autostart/" and directly set the "xmodmap.desktop" file:
+**** things to do after installation
+     https://mutschler.eu/linux/install-guides/pop-os-post-install/
+**** locale issue
+     https://www.thomas-krenn.com/en/wiki/Perl_warning_Setting_locale_failed_in_Debian
+     #+begin_src shell
+       $gedit .bashrc
+       export LC_ALL=en_US.UTF-8
+       export LANG=en_US.UTF-8
+       export LANGUAGE=en_US.UTF-8
+     #+end_src
+**** du
+     #+begin_src shell
+       $du -aSh ~/ | sort -h -r|head -n 10  
+       $sudo du -acSh / --exclude={/proc,/media}| sort -h -r|head -n 10
+     #+end_src
+**** hidpi
+     #+begin_src ubuntu
+     sudo apt-get install gnome-tweak-tool 
+     #+end_src
+*** OpenStack
     #+begin_src shell
-      /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window --app=https://jms.inceptio.tech/luna/\?login_to\=b7eef7e3-ad23-4e58-8c69-43cc44e0c397
+      $apt update && apt upgrade -y
+      $apt dist-upgrade -y
+      $snap install microstack --beta --devmode
+      $systemctl restart snapd.service
+      $snap run microstack init --auto --control
+      $snap get microstack config.credentials.keystone-password
+      $snap run microstack.openstack catlog list
+      $snap run microstack launch cirros --name xyl
+      $ssh -i /home/root/snap/microstack/common/.ssh/id_microstack cirros@10.20.20.43
+      $systemctl restart snap.microstack.*
+      $snap disable microstack
+      $snap enable microstack
     #+end_src
-* eaf
-  - m-u focus-out
-  - i focus input
-  - m-s open url
-  - m-D
-  - c-c b eaf bookmarks
-* nushell
-  - starship-prompt
-  - firecode fonts
-* org-reveal
-  - o slides show
-  - alt left click zoom in
-  - s note mode
-  - p previous slide
-  - n/spc next slide
-  - f fullscreen
-  - ? shortcut
-* pd网卡无法启动
-  sudo -b /Applications/Parallels\ Desktop.app/Contents/MacOS/prl_client_app
-* zsh fzf
-  zsh-syntax-highlighting zsh-autosuggestions fzf 
-  c-t, c-r
-  [[https://medium.com/@ivanaugustobd/your-terminal-can-be-much-much-more-productive-5256424658e8]]
-  #+begin_src shell
-    sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-    git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
-  #+end_src
+*** ln -s /usr/local/Cellar/****/bin/**** /usr/local/bin
+**** ~/.bash_profile
+*** mtr(asn) trace
+**** asn
+     [[https://github.com/nitefood/asn#installation]]
+     #+begin_src
+     brew install bash coreutils curl whois mtr jq ipcalc grepcidr nmap aha && brew link mtr
+     #+end_src
+**** [[https://github.com/nitefood/asn#installation]]
+**** touch asn file from curl.
+**** https://www.ipqualityscore.com/user/dashboard
+     #+begin_src zsh
+     TOKEN="M1Jvm88NU6UKjPQ417S9Ttsi6SxBUPsq"; mkdir "$HOME/.asn/" && echo "$TOKEN" > "$HOME/.asn/iqs_token" && chmod -R 600 "$HOME/.asn/"
+     #+end_src
+**** usage
+     - asn <ASnumber>: to lookup matching ASN data. Supports “as123” and “123” formats (case insensitive)
+     - asn <IP.AD.DR.ESS>: to lookup matching route and ASN data
+     - asn <ROUTE>: to lookup matching ASN data
+     - asn <host.name.tld>: to lookup matching IP, route and ASN data (supports multiple IPs - e.g. DNS RR)
+*** windows system
+**** remote control lid closed lost connection
+     [[https://community.spiceworks.com/topic/2234833-closing-laptop-lid-breaks-remote-control-program]]
+*** yank
+**** c-w king region between cusor to mark
+**** c-y yank
+**** m-y kill ring
+**** s-y ? ```````````
+*** Jitouch
+    - [2022-03-15 Tue 13:26] \\
+      follow: https://github.com/aaronkollasch/jitouch
+    I copied the jitouch app file from Library/PreferencePanes/Jitouch.prefPane/Contents/Resources and pasted it into its sibling folder Library/PreferencePanes/Jitouch.prefPane/Contents/MacOS and it works like a charm now!
+    [[https://www.zhihu.com/question/430120501]] & https://www.reddit.com/r/macbookpro/comments/jvi03i/jitouch_replacement_after_big_sur/
+    #+begin_src bash
+      pkill -f "Jitouch"
+      sleep 5
+      nohup ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS/Jitouch > /dev/null 2>&1 &
+    #+end_src
+    #+begin_src bash
+      cd ~/Library/PreferencePanes/Jitouch.prefPane/Contents/Resources/Jitouch.app/Contents/MacOS
+      nohup ./jitouch &
+    #+end_src
+*** emacs
+    - eval-buffer ;;macs
+    - C-h f function RET ( describe-function ) displays the documentation of Lisp function
+    - CLM/command-  global-command-mode ;;
+    - counsel-find-file
+    - C-x-1 ;;close other windows
+    - counsel-switch-buffer
+    - C-x LEFT and C-x RIGHT . C-x LEFT ( previous-buffer ) C-x o ( other-window ).
+    - C-x 1 close other windows, C-x 2 open window under, C-x 3 open window right, C-x 0 close current window
+    - C-x C-f	Open/Create File, C-x k	Close File,,C-x C-s	Save File
+    - C-x C-e eval current function
+    - C-x C-q to turn dired into editing mode.use M-% to replace foo with bar in the dired buffer. ...
+    - use C-c C-c to save
+    - C-h f describe function
+    - counsel load theme
+    - buffer menu -> d -> x to delete marked buffers
+    - *copy multiple pathnames* right click + option
+*** paredit
+    #+ATTR_ORG: :width 1200
+    [[/Users/iceonfire/github/Scheme/paredit_command.png]]
+*** dired
+    - ^ drill up, j search, g refresh, d mark, x excute, 0 w copy file path,
+    - cant access icloud folder -> emacs full disk access-> open any file by "open file"
+*** consu1lt
+    - consult-yank-from-kill-ring
+*** graphviz
+    - [2021-08-31 Tue 13:12] \\
+      using graphviz by babel dot file [[https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/][link]]
+	#+begin_src dot :file ./images/example2.png :cmdline -Kdot -Tpng
+          graph graphname {
+    	  node [shape=box, fontname="Microsoft Yahei"];
+    	  rankdir=LR;
+    	  a [label="用户提交申请"]
+    	  b [label="直接领导（主/备）"]
+    	  c [label="高级总监"]
+    	  d [label="IT负责人（主/备）"]
+    	  e [label="IT高级总监"]
+    	  a -- b
+    	  b -- c
+    	  c -- d
+    	  d -- e
+          }
+           #+end_src
+      [[https://graphviz.org/Gallery/]]
+*** org-mode
+    - C-c C-x C-v (org-toggle-inline-images), custom group -> org faces.
+    - C-c C-t todo/done;
+    - C-C C-q set tags
+    - C-c C-s schedule; d deadline;
+    - C-c C-c eval code block to result
+    - *org store link* insert all links
+    - C-c - convert paragragh to lists
+    - terminal C-c C-j line-mode; C-c C-k char-mode
+    - [[internal link]] <<internal link>>
+    - global-visual-line-mode 自动断行
+    - external link, org-store-link ; org-insert-link
+**** exprot settings [[https://orgmode.org/manual/Export-Settings.html#Export-Settings][link]]
+     - Paragraphs are separated by at least one empty line. If you need to enforce a line break within a paragraph, use ‘\\’ at the end of a line.
+     #+BEGIN_VERSE
+     this is verse
+     #+END_VERSE
+     #+BEGIN_QUOTE
+     this is quote
+     #+END_QUOTE
+     #+BEGIN_CENTER
+     Everything should be made as simple as possible, \\
+     but not any simpler
+     #+END_CENTER
+     in the [[https://gitlab.com/OlMon/org-themes/-/tree/master/src][src]] directory, there is a folders for every theme. There is at least a .theme file. Download it and just add to your org file
+  ;;   #+SETUPFILE: <path to .theme file>
+     This will embed the css into the html.
+     If you download the .css file of a theme, you can add it by adding
+     #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="<path to css>" />
+     export-with-todo&theme
+     #+OPTIONS: p:t pri:t
+     ;;#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup#+end_src
+**** logging mode
+***** C-c C-x
+      - C-i clock-in
+      - C-o clock-out
+      - C-d display time
+      - C-q cancel
+***** repeater task
+      - [[https://orgmode.org/manual/Repeated-tasks.html]]
+      #+begin_src
+      DEADLINE: <2005-10-01 Sat +1m +1w -3d -10h>
+      #+end_src
+**** color text
+     #+begin_src
+     (org-add-link-type
+   "color"
+   (lambda (path)
+     (message (concat "color "
+                      (progn (add-text-properties
+                              0 (length path)
+                              (list 'face `((t (:foreground ,path))))
+                              path) path))))
+   (lambda (path desc format)
+     (cond
+      ((eq format 'html)
+       (format "<span style=\"color:%s;\">%s</span>" path desc))
+      ((eq format 'latex)
+       (format "{\\color{%s}%s}" path desc)))))
+      - This is [[color:green][green text]]
+      - This is [[color:red][red]]
+     #+end_src
+**** bullet symbol
+     [[https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/]]
+**** todo view
+     C-c C-x > restrict todo region
+     org-agenda t
+*** counsel-projectil
+    - C-c C-o open file window, o action to the file.
+*** magit
+    - s stage, u unstage, c comit, c-c c-c which comment, P -f p, force push,
+*** git
+**** git init
+     - git init
+     - git remote add origin https://gitlab.rd.inceptioglobal.ai/iceonfirek/emacs.git
+     - git add .
+     - git commit -m "Initial commit"
+     - git push -u origin master
+**** git reset
+     - git merge --abort
+     - git reset --hard HEAD~~~~
+     - git log -5
+     - git restore ***
+**** git remote
+     - *change remote*
+     - git remote set-url origin ~.git
+     - [[https://devconnected.com/how-to-change-git-remote-origin/]]
+**** git status, remote, branch
+     - git remote -v
+     - git branch -a
+     - git show
+     - git fetch
+     - git stash
+**** git account
+     - Change username and email global
+     - git config --global user.name "<username>"
+     - git config --global user.email "<email>"
+     - Change username and email for current repo
+     - git config  user.name "<username>" --replace-all
+     - git config  user.email "<email>" --replace-all
+     - git commit --author="John Doe <john@doe.org>"
+**** git ssh connect
+     #+begin_src shell
+       ssh-keygen -t rsa
+       cat ~/.ssh/id_rsa.pub
+       #+end_src
+*** mark ring
+    - C-u C-spc mark pop,
+*** term mode
+    - C-c C-j, line mode. /use shell/
+*** web browser
+    - widget-webkit-browse-url
+*** Meow mode
+    - j,k,h,l,i + shift.
+*** geiser scheme
+    #+begin_quote
+    How Geiser associates a REPL to your Scheme buffer
+    To determine what Scheme implementation corresponds to a given source file, Geiser uses the following algorithm:
+    If the file-local variable geiser-scheme-implementation is defined, its value is used. A common way of setting buffer-local variables is to put them in a comment near the beginning of the file, surrounded by -*- marks, as in:
+    ;; -*- geiser-scheme-implementation: guile -*-
+    If you’ve customized geiser-active-implementations so that it’s a single-element list (as explained in here), that element is used as the chosen implementation.
+    The contents of the file is scanned for hints on its associated implementation. For instance, files that contain a #lang directive will be considered Racket source code, while those with a define-module form in them will be assigned to a Guile REPL.
+    The current buffer’s file name is checked against the rules given in geiser-implementations-alist, and the first match is applied. You can provide your own rules by customizing this variable, as explained below.
+    If we haven’t been lucky this far and you have customized geiser-default-implementation to the name of a supported implementation, we’ll follow your lead.
+    See? That’s the problem of being a smart aleck: one’s always outsmarted by people around. At this point, geiser-mode will humbly give up and ask you to explicitly choose the Scheme implementation.
+    As you can see in the list above, there are several ways to influence Geiser’s guessing by means of customizable variables. The most direct (and most impoverishing) is probably limiting the active implementations to a single one, while customizing geiser-implementations-alist is the most flexible (and, unsurprisingly, also the most complex). Here’s the default value for the latter variable:
+    (((regexp "\\.scm$") guile)
+    ((regexp "\\.ss$") racket)
+    ((regexp "\\.rkt$") racket))
+    which describes the simple heuristic that files with ‘.scm’ as extension are by default associated to a Guile REPL while those ending in ‘.ss’ or ‘.rkt’ correspond to Racket’s implementation (with the caveat that these rules are applied only if the previous heuristics have failed to detect the correct implementation, and that they’ll match only if the corresponding implementation is active). You can add rules to geiser-implementations-alist (or replace all of them) by customizing it. Besides regular expressions, you can also use a directory name; for instance, the following snippet:
+    (eval-after-load "geiser-impl"
+    '(add-to-list 'geiser-implementations-alist
+    '((dir "/home/jao/prj/frob") guile)))
+    will add a new rule that says that any file inside my ‘/home/jao/prj/frob’ directory (or, recursively, any of its children) is to be assigned to Guile. Since rules are first matched, first served, this new rule will take precedence over the default ones.
+    A final tip: if you want Geiser to start automatically a REPL for you if it notices that there’s no one active when it enters geiser-mode, you can customize geiser-mode-start-repl-p to t.
+    #+end_quote
+**** commands
+     #+begin_src
+     C-c C-s chez
+     #+end_src
+*** Go-Mode
+**** .bashrc .bash_profile .zshrc
+     - 环境变量添加到.bash_profile&.zshrc中
+     #+begin_src shell
+      export GOROOT=/usr/local/go
+      export GOPATH=$HOME/go
+      export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+     #+end_src
+**** go code
+     https://github.com/mdempsky/gocode
+**** go build
+     main go build > project
+     util go build > mod pkg
+     go run . >go mod init ../> go build . > go install
+**** go project layerout
+     https://github.com/golang-standards/project-layout/blob/master/README_zh.md
+*** yasnippet
+**** yasnippet description table
+*** k8s
+**** minikube
+     #+begin_src
+     kubectl get po -A
+     minikube dashboard
+     //hello-minikube deployment
+     kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4
+     kubectl expose deployment hello-minikube --type=NodePort --port=8080
+     kubectl get services hello-minikube
+     minikube service hello-minikube
+     kubectl port-forward service/hello-minikube 7080:8080
+     //loadbalancer deployment
+     kubectl create deployment balanced --image=k8s.gcr.io/echoserver:1.4
+     kubectl expose deployment balanced --type=LoadBalancer --port=8080
+     minikube tunnel
+     kubectl get services balanced
+     //manage cluster
+     minikube pause
+     minikube unpause
+     minikube stop
+     minikube config set memory 16384
+     minikube addons list
+     minikube start -p aged --kubernetes-version=v1.16.1
+     minikube delete --all
+     #+end_src
+     #+begin_quote
+       https://minikube.sigs.k8s.io/docs/start/
+     #+end_quote
+*** general key binding
+**** karabiner
+     #+begin_src bash
+     cd ~/.config/karabiner/assets/complex_modifications
+     curl -O "url of jason"
+     #+end_src
+**** apple keyboard binding
+     systeme-preferences-keyboard-shorcuts
+*** confluence replacement Regexp
+    #+begin_src emacs-lisp
+      org-reload
+    #+end_src
+    regexp:
+    #+begin_src regexp
+     ^(?:[^:@/]+(?::[^@/]+)?@)?(?:192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(?:1[6789]|2[0-9]|3[01])\.\d+\.\d+)(?::\d+)?(?:/.*)?$
+    #+end_src
+    #+begin_src regexp
+    \(\[.*images/\)\(.*.[png]\)\(]\)
+    !\2!
+    #+end_src
+    [[https://www.youtube.com/watch?v=TxYGHjKBMUg]]
+    [[https://www.emacswiki.org/emacs/RegularExpression]]
+    (\([0-9*]+.[0-9*]+.[0-9*]+.[0-9*]+)\)
+    "a regexp cannot find a non-match. A regexp is not negative."
+*** code-server
+    nohup code-server 2>&1 &
+    安全组添加192.168.0.0/16 到 端口58080
+    https://www.techrepublic.com/article/how-to-run-an-instance-of-ms-code-over-your-network/
+    https://reposhub.com/javascript/editors/coderpair-vscode-live.html
+    ~/.config/
+    /lib/systemd/system/code-server.service
+*** chrome
+    - [2021-10-13 Wed 19:24] \\
+      thisisunsafe
+    - [2021-09-07 Tue 17:11] \\
+      frameless
+      #+begin_src shell
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window --app=https://jms.inceptio.tech/luna/\?login_to\=b7eef7e3-ad23-4e58-8c69-43cc44e0c397
+      #+end_src
+*** eaf
+    - m-u focus-out
+    - i focus input
+    - m-s open url
+    - m-D
+    - c-c b eaf bookmarks
+*** nushell
+    - starship-prompt
+    - firecode fonts
+*** org-reveal
+    - o slides show
+    - alt left click zoom in
+    - s note mode
+    - p previous slide
+    - n/spc next slide
+    - f fullscreen
+    - ? shortcut
+*** pd网卡无法启动
+    sudo -b /Applications/Parallels\ Desktop.app/Contents/MacOS/prl_client_app
+*** zsh fzf
+    zsh-syntax-highlighting zsh-autosuggestions fzf 
+    c-t, c-r
+    [[https://medium.com/@ivanaugustobd/your-terminal-can-be-much-much-more-productive-5256424658e8]]
+    #+begin_src shell
+      sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+      git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
+      git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+      git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+      git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+    #+end_src
 
-  #+RESULTS:
-  | Downloading | bin/fzf                                                   | ...          |             |                                 |                    |        |             |      |                |
-  | -           | Found                                                     | in           | $PATH       |                                 |                    |        |             |      |                |
-  | -           | Creating                                                  | symlink:     | bin/fzf     | ->                              | /usr/local/bin/fzf |        |             |      |                |
-  | -           | Checking                                                  | fzf          | executable  | ...                             | 0.27.2             | !=     | 0.28.0      |      |                |
-  | Archive:    | /var/folders/p8/fv723px131l93kgpm08xd8g80000gq/T//fzf.zip |              |             |                                 |                    |        |             |      |                |
-  | inflating:  | fzf                                                       |              |             |                                 |                    |        |             |      |                |
-  | -           | Checking                                                  | fzf          | executable  | ...                             | 0.28.0             |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | Generate    | /Users/iceonfire/.fzf.bash                                | ...          | OK          |                                 |                    |        |             |      |                |
-  | Generate    | /Users/iceonfire/.fzf.zsh                                 | ...          | OK          |                                 |                    |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | Update      | /Users/iceonfire/.bashrc:                                 |              |             |                                 |                    |        |             |      |                |
-  | -           | [                                                         | -f           | ~/.fzf.bash | ]                               | &&                 | source | ~/.fzf.bash |      |                |
-  | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | Update      | /Users/iceonfire/.zshrc:                                  |              |             |                                 |                    |        |             |      |                |
-  | -           | [                                                         | -f           | ~/.fzf.zsh  | ]                               | &&                 | source | ~/.fzf.zsh  |      |                |
-  | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | Finished.   | Restart                                                   | your         | shell       | or                              | reload             | config | file.       |      |                |
-  | source      | ~/.bashrc                                                 | #            | bash        | (.bashrc                        | should             | be     | loaded      | from | .bash_profile) |
-  | source      | ~/.zshrc                                                  | #            | zsh         |                                 |                    |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | Use         | uninstall                                                 | script       | to          | remove                          | fzf.               |        |             |      |                |
-  |             |                                                           |              |             |                                 |                    |        |             |      |                |
-  | For         | more                                                      | information, | see:        | https://github.com/junegunn/fzf |                    |        |             |      |                |
+    #+RESULTS:
+    | Downloading | bin/fzf                                                   | ...          |             |                                 |                    |        |             |      |                |
+    | -           | Found                                                     | in           | $PATH       |                                 |                    |        |             |      |                |
+    | -           | Creating                                                  | symlink:     | bin/fzf     | ->                              | /usr/local/bin/fzf |        |             |      |                |
+    | -           | Checking                                                  | fzf          | executable  | ...                             | 0.27.2             | !=     | 0.28.0      |      |                |
+    | Archive:    | /var/folders/p8/fv723px131l93kgpm08xd8g80000gq/T//fzf.zip |              |             |                                 |                    |        |             |      |                |
+    | inflating:  | fzf                                                       |              |             |                                 |                    |        |             |      |                |
+    | -           | Checking                                                  | fzf          | executable  | ...                             | 0.28.0             |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | Generate    | /Users/iceonfire/.fzf.bash                                | ...          | OK          |                                 |                    |        |             |      |                |
+    | Generate    | /Users/iceonfire/.fzf.zsh                                 | ...          | OK          |                                 |                    |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | Update      | /Users/iceonfire/.bashrc:                                 |              |             |                                 |                    |        |             |      |                |
+    | -           | [                                                         | -f           | ~/.fzf.bash | ]                               | &&                 | source | ~/.fzf.bash |      |                |
+    | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | Update      | /Users/iceonfire/.zshrc:                                  |              |             |                                 |                    |        |             |      |                |
+    | -           | [                                                         | -f           | ~/.fzf.zsh  | ]                               | &&                 | source | ~/.fzf.zsh  |      |                |
+    | +           | Added                                                     |              |             |                                 |                    |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | Finished.   | Restart                                                   | your         | shell       | or                              | reload             | config | file.       |      |                |
+    | source      | ~/.bashrc                                                 | #            | bash        | (.bashrc                        | should             | be     | loaded      | from | .bash_profile) |
+    | source      | ~/.zshrc                                                  | #            | zsh         |                                 |                    |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | Use         | uninstall                                                 | script       | to          | remove                          | fzf.               |        |             |      |                |
+    |             |                                                           |              |             |                                 |                    |        |             |      |                |
+    | For         | more                                                      | information, | see:        | https://github.com/junegunn/fzf |                    |        |             |      |                |
 
-* vim
-  3dd
-  d cut
-  p paste
-  V select whole line
-  v select 
-  u undo
-* reveal.js
-  #+begin_src js
-#+OPTIONS: reveal_control:t reveal_height:-1
-#+OPTIONS: reveal_history:nil reveal_keyboard:t reveal_overview:t
-#+OPTIONS: reveal_progress:t reveal_rolling_links:nil
-#+OPTIONS: reveal_single_file:nil reveal_slide_number:"c"
-#+OPTIONS: reveal_title_slide:auto reveal_width:-1
-#+REVEAL_MARGIN: -1
-#+REVEAL_MIN_SCALE: -1
-#+REVEAL_MAX_SCALE: -1
-#+REVEAL_ROOT: file:///C:\Users\nd04805\Documents\99 EMACS\work\PPT\reveal.js
-#+REVEAL_TRANS: none
-#+REVEAL_SPEED: default
-#+REVEAL_THEME: moon
-#+REVEAL_EXTRA_CSS:
-#+REVEAL_EXTRA_JS:
-#+REVEAL_HLEVEL:
-#+REVEAL_TITLE_SLIDE_BACKGROUND:
-#+REVEAL_TITLE_SLIDE_BACKGROUND_SIZE:
-#+REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT:
-#+REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION:
-#+REVEAL_MATHJAX_URL: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-#+REVEAL_PREAMBLE:
-#+REVEAL_HEAD_PREAMBLE:
-#+REVEAL_POSTAMBLE:
-#+REVEAL_MULTIPLEX_ID:
-#+REVEAL_MULTIPLEX_SECRET:
-#+REVEAL_MULTIPLEX_URL:
-#+REVEAL_MULTIPLEX_SOCKETIO_URL:
-#+REVEAL_SLIDE_HEADER: 
-#+REVEAL_SLIDE_FOOTER:Process Automation
-#+REVEAL_PLUGINS:
-#+REVEAL_DEFAULT_FRAG_STYLE:
-#+REVEAL_INIT_SCRIPT:
-#+REVEAL_HIGHLIGHT_CSS: %r/lib/css/zenburn.css
-Reveal.initialize({
+*** vim
+    3dd
+    d cut
+    p paste
+    V select whole line
+    v select 
+    u undo
+*** reveal.js
+    #+begin_src js
+  #+OPTIONS: reveal_control:t reveal_height:-1
+  #+OPTIONS: reveal_history:nil reveal_keyboard:t reveal_overview:t
+  #+OPTIONS: reveal_progress:t reveal_rolling_links:nil
+  #+OPTIONS: reveal_single_file:nil reveal_slide_number:"c"
+  #+OPTIONS: reveal_title_slide:auto reveal_width:-1
+  #+REVEAL_MARGIN: -1
+  #+REVEAL_MIN_SCALE: -1
+  #+REVEAL_MAX_SCALE: -1
+  #+REVEAL_ROOT: file:///C:\Users\nd04805\Documents\99 EMACS\work\PPT\reveal.js
+  #+REVEAL_TRANS: none
+  #+REVEAL_SPEED: default
+  #+REVEAL_THEME: moon
+  #+REVEAL_EXTRA_CSS:
+  #+REVEAL_EXTRA_JS:
+  #+REVEAL_HLEVEL:
+  #+REVEAL_TITLE_SLIDE_BACKGROUND:
+  #+REVEAL_TITLE_SLIDE_BACKGROUND_SIZE:
+  #+REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT:
+  #+REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION:
+  #+REVEAL_MATHJAX_URL: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  #+REVEAL_PREAMBLE:
+  #+REVEAL_HEAD_PREAMBLE:
+  #+REVEAL_POSTAMBLE:
+  #+REVEAL_MULTIPLEX_ID:
+  #+REVEAL_MULTIPLEX_SECRET:
+  #+REVEAL_MULTIPLEX_URL:
+  #+REVEAL_MULTIPLEX_SOCKETIO_URL:
+  #+REVEAL_SLIDE_HEADER: 
+  #+REVEAL_SLIDE_FOOTER:Process Automation
+  #+REVEAL_PLUGINS:
+  #+REVEAL_DEFAULT_FRAG_STYLE:
+  #+REVEAL_INIT_SCRIPT:
+  #+REVEAL_HIGHLIGHT_CSS: %r/lib/css/zenburn.css
+  Reveal.initialize({
 
-    controls: false,                 hide the control of under//right 
+      controls: false,                 hide the control of under//right 
 
-    progress: false,                 //hide the bottom of the progress bar 
+      progress: false,                 //hide the bottom of the progress bar 
 
-    slideNumber: true,               //display the page number of the slide in the lower right corner 
+      slideNumber: true,               //display the page number of the slide in the lower right corner 
 
-    history: true,                   //leave each page to your browser's history 
+      history: true,                   //leave each page to your browser's history 
 
-    overview: false,                 to disable display the "Overview" page that can be viewed in Esc//
+      overview: false,                 to disable display the "Overview" page that can be viewed in Esc//
 
-    center: false,                   (will top justify) not the vertical direction central display of//slide 
+      center: false,                   (will top justify) not the vertical direction central display of//slide 
 
-    touch: false,                    //disable the touch operation of 
+      touch: false,                    //disable the touch operation of 
 
-    loop: true,                      to loop the//slide
+      loop: true,                      to loop the//slide
 
-    rtl: true,                       //from right to left slide 
+      rtl: true,                       //from right to left slide 
 
-    fragments: false,                to disable the Fragments//
+      fragments: false,                to disable the Fragments//
 
-    autoSlide: 1000,                 //Set the automatic slide in milliseconds. The default is 0 (no automatic slide) 
+      autoSlide: 1000,                 //Set the automatic slide in milliseconds. The default is 0 (no automatic slide) 
 
-    autoSlideStoppable: false ,      to hide the button for automatic slide stop//lower left 
+      autoSlideStoppable: false ,      to hide the button for automatic slide stop//lower left 
 
-    mouseWheel: true,                to enable the slide by the wheel of the//mouse 
+      mouseWheel: true,                to enable the slide by the wheel of the//mouse 
 
-    transition: 'cube',              //operating the slide in the cube-shaped transition 
+      transition: 'cube',              //operating the slide in the cube-shaped transition 
 
-                                     //setpoint default/cube/page/concave/zoom/linear/fade/none 
+                                       //setpoint default/cube/page/concave/zoom/linear/fade/none 
 
-    transitionSpeed: 'slow',         //slow set the slide speed. Setting value Default/Fast/Slow 
+      transitionSpeed: 'slow',         //slow set the slide speed. Setting value Default/Fast/Slow 
 
-    //parallax background of the image URL setting 
+      //parallax background of the image URL setting 
 
-    parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+      parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
 
-    of//parallax background set the size 
+      of//parallax background set the size 
 
-    parallaxBackgroundSize: '2100px 1024x',
+      parallaxBackgroundSize: '2100px 1024x',
 
-});
-  #+end_src
-* taskjuggler
-* typora
-  - [2021-11-18 Thu 16:29] \\
-    https://www.jianshu.com/p/007a13ca4d0e
+  });
+    #+end_src
+*** taskjuggler
+*** typora
+    - [2021-11-18 Thu 16:29] \\
+      https://www.jianshu.com/p/007a13ca4d0e
+*** JavaScript
+**** Set
+     #+begin_src javascript 求差集
+       var intersection = function(nums1, nums2) {
+	   return [...new Set(nums2)].filter(item => !nums1.includes(item))
+       };
+     #+end_src
+     #+begin_src js  求交集
+       var intersection = function(nums1, nums2) {
+	   return [...new Set(nums1)].filter(item => nums2.includes(item))
+       };
+     #+end_src
+*** Clojure 7w7l
+*** Wine
+****  env WINEPREFIX=~/.ukylin-wine/wxwork ukylin-wine ./WeCom_4.0.16.6007.exe 
+*** sshfs
+    - [2022-09-02 Fri 11:06] \\
+      sudo diskutil umount force /path/to/mount
+      sshfs xintaishi@10.8.23.60:/home/xintaishi/Downloads ./sshfs/
