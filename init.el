@@ -80,7 +80,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -267,7 +267,7 @@
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "PaleVioletRed3"))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-black))))
- '(vterm-color-black ((t (:inherit term-color-black :background "gray100"))))
+;; '(vterm-color-black ((t (:inherit term-color-black :background "gray100"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
 ;;Packages-use
 ;;(add-to-list 'load-path "~/lisp/geiser-gambit")
@@ -550,9 +550,9 @@
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH") ;;very important to go mode
   )
-(use-package vterm)
-(define-key vterm-mode-map (kbd "s-j") 'vterm-send-left)
-(define-key vterm-mode-map (kbd "s-l") 'vterm-send-right)
+;; (use-package vterm)
+;; (define-key vterm-mode-map (kbd "s-j") 'vterm-send-left)
+;; (define-key vterm-mode-map (kbd "s-l") 'vterm-send-right)
 ;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
 ;;  (setq vterm-kill-buffer-on-exit t))
 (use-package smart-tab
