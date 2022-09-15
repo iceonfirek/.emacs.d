@@ -713,16 +713,16 @@
 ;;(require 'eaf-browser)
 ;(require 'eaf-pdf`-viewer)
 ;;google translate
-(require 'go-translate) 
-(setq go-translate-base-url "https://translate.google.cn")
-(setq go-translate-target-language "en")
-(setq go-translate-local-language "zh-CN")
-(defun go-translate-token--extract-tkk ()
-  (cons 430675 2721866133))
-(global-set-key "\C-cT" 'go-translate)
-(global-set-key "\C-ct" 'go-translate-popup)
-(setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
-(setq go-translate-buffer-follow-p t)
+;; (require 'go-translate) 
+;; (setq go-translate-base-url "https://translate.google.cn")
+;; (setq go-translate-target-language "en")
+;; (setq go-translate-local-language "zh-CN")
+;; (defun go-translate-token--extract-tkk ()
+;;   (cons 430675 2721866133))
+;; (global-set-key "\C-cT" 'go-translate)
+;; (global-set-key "\C-ct" 'go-translate-popup)
+;; (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
+;; (setq go-translate-buffer-follow-p t)
 
 ;;matrix
 ;; Install `plz' HTTP library (not on MELPA yet).
