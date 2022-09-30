@@ -140,6 +140,10 @@
       #+begin_quote
       ~/, /etc/apt, /opt,
       #+end_quote
+***** sed
+      #+begin_src shell
+	sed -i 's/aliyun/163/g' sources.list
+      #+end_src
 **** shell theme
      #+begin_src
   为 root 用户设置 zsh 为系统默认 shell：chsh -s /bin/zsh root
@@ -298,6 +302,19 @@
 **** hidpi
      #+begin_src ubuntu
      sudo apt-get install gnome-tweak-tool 
+     #+end_src
+**** grub
+     #+begin_src bash
+       (hd0),(hd1),(hd1,gpt3),(hd1,gpt2),(hd1,gpt1)
+       假定通过 ls (hd1,gpt2)/boot/grub 发现了grub.cfg文件，则表明Linux安装在这个分区
+       输入 cat (hd0,gpt2)/etc/fstab
+       会输出类似下面的信息
+       # <file system> <mount point> <type> <options> <dump> <pass>
+       # / was on /dev/sda2 during installation
+       UUID=dd6e0539-1369-4938-8af5-378f02cf05cf /               ext4    errors=remount-ro 0       1
+       grub> linux (hd0,gpt2)/boot/vmlinuz-4.8.0-36-generic ro text root=/dev/sda2
+       grub> initrd (hd0,gpt2)/boot/initrd.img-4.8.0-36-generic
+       grub> boot
      #+end_src
 *** OpenStack
     #+begin_src shell
@@ -793,3 +810,90 @@
     - [2022-09-02 Fri 11:06] \\
       sudo diskutil umount force /path/to/mount
       sshfs xintaishi@10.8.23.60:/home/xintaishi/Downloads ./sshfs/
+*** clojure
+**** require
+      #+begin_src clojure
+        (ns example.core
+          (:require [clojure.math.numeric-tower :as math]))
+        
+         (require '[clojure.math.numeric-tower :as math :refer [sqrt]])
+        
+        (ns myproject.core
+        (:require (clojure [core]
+                           [string :as str :refer [replace]] ))) 
+      #+end_src
+      #+begin_src clojure
+      (require '[clojure.repl :refer [doc]])
+      #+end_src
+**** libs
+      #+begin_src clojure
+      cat project.clj 
+      (defproject complex-numbers "0.1.0-SNAPSHOT"
+        :description "complex-numbers exercise"
+        :url "https://github.com/exercism/clojure/tree/master/exercises/complex-numbers"
+        :dependencies [[org.clojure/clojure "1.10.0"] [org.clojure/math.numeric-tower "0.0.5"]])
+      
+      lein deps :tree
+      Retrieving org/clojure/math.numeric-tower/0.0.5/math.numeric-tower-0.0.5.pom from central
+      Retrieving org/clojure/math.numeric-tower/0.0.5/math.numeric-tower-0.0.5.jar from central
+       [nrepl "0.9.0" :exclusions [[org.clojure/clojure]]]
+       [org.clojure/clojure "1.10.0"]
+         [org.clojure/core.specs.alpha "0.2.44"]
+         [org.clojure/spec.alpha "0.2.176"]
+       [org.clojure/math.numeric-tower "0.0.5"]
+       [org.nrepl/incomplete "0.1.0" :exclusions [[org.clojure/clojure]]]
+      #+end_src
+    - [2022-09-26 Mon 11:28] \\
+      clj -Sdeps "{:deps                     
+                     {org.clojure/math.numeric-tower
+                      {:git/url \"https://github.com/clojure/math.numeric-tower.git\"
+              :sha \"97827be66f35feebc3c89ba81c546fef4adc7947\"}}}"
+**** flatten
+     #+begin_src clojure
+	(defn flatten
+       "Takes any nested combination of sequential things (lists, vectors,
+       etc.) and returns their contents as a single, flat lazy sequence.
+       (flatten nil) returns an empty sequence."
+       {:added "1.2"
+	:static true}
+       [x]
+       (filter (complement sequential?)
+	       (rest (tree-seq sequential? seq x))))
+     #+end_src
+**** for
+     #+begin_src clojure
+       (defn transform-2 [m]
+	 (for [[score letters] m
+	       letter letters]
+	   (* score letter)))
+       #'etl/transform-2
+       etl> (transform-2 {1 [1 2 3] 2 [ 2 2 3]})
+       (1 2 3 4 4 6)
+       
+       (defn transform [source] ;; <- arglist goes here
+	 (into {}
+	       (for [[key value] source
+		     letter value]
+		 [(lower-case letter) key]))
+	 )
+     #+end_src
+**** filter false
+     #+begin_src clojure
+       (filter false? (map = a b))
+     #+end_src
+**** iterate
+     #+begin_src clojure
+       (defn nth-prime [n]
+	 (when (< n 1)
+	   (throw (IllegalArgumentException.)))
+	 (nth (filter prime? (iterate inc 2)) (dec n)))
+     #+end_src
+**** partition
+     #+begin_src clojure
+       (defn sublist? [list1 list2]
+	 (some #{list1} (partition (count list1) 1 list2)))
+       (partition 3 1 [1 2 3 4 5])
+       ((1 2 3) (2 3 4) (3 4 5))
+     #+end_src
+**** set
+     https://clojuredocs.org/clojure.set

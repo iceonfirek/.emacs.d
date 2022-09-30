@@ -21,7 +21,7 @@
 (setq-default cursor-type '(bar . 5))
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
-(paredit-mode -1)
+;;(paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
 ;;(server-start)
 ;;Global 优化
@@ -34,21 +34,13 @@
 ;; (setq ns-pop-up-frames nil)
 ;; (setq tab-line-mode 1)
 ;; (setq tab-bar-mode 1)
-;; (show-paren-mode 1)
+(show-paren-mode 1)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
- '(centaur-tabs-gray-out-icons 'buffer)
- '(centaur-tabs-hide-tabs-hooks nil)
- '(centaur-tabs-mode t nil (centaur-tabs))
- '(centaur-tabs-modified-marker "*")
- '(centaur-tabs-set-bar 'left)
- '(centaur-tabs-set-close-button nil)
- '(centaur-tabs-set-icons t)
- '(centaur-tabs-set-modified-marker t)
  '(custom-safe-themes
    '("97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
@@ -80,7 +72,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib ox-reveal org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org ox-confluence load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode multi-vterm vterm exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(expand-region isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -101,7 +93,7 @@
 (global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
 (global-set-key (kbd "s-w") 'kill-current-buffer)
-(global-set-key (kbd "s-u") 'kill-whole-line)
+(global-set-key (kbd "C-u") 'kill-whole-line)
 ;; (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-L") 'forward-word)
 (global-set-key (kbd "C-s-l") 'move-end-of-line)
@@ -267,7 +259,6 @@
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "PaleVioletRed3"))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-black))))
- '(vterm-color-black ((t (:inherit term-color-black :background "gray100"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
 ;;Packages-use
 ;;(add-to-list 'load-path "~/lisp/geiser-gambit")
@@ -286,10 +277,12 @@
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
   :bind (
-	 ("s-)" . paredit-forward-slurp-sexp)
-	 ("s-(" . paredit-backward-slurp-sexp)
-	 ("M-)" . paredit-join-sexps)
-	 ("M-(" . paredit-split-sexp)))
+	 ("s-<right>" . paredit-forward-slurp-sexp)
+	 ("s-<left>" . paredit-backward-slurp-sexp)
+	 ("M-<right>" . paredit-join-sexps)
+	 ("M-<left>" . paredit-split-sexp)
+	 ("M-<down>" . paredit-splice-sexp)))
+(add-hook 'cider-repl-mode-hook #'paredit-mode)
 ;;Vertico, Consult
 (use-package vertico
   :init
@@ -550,9 +543,9 @@
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH") ;;very important to go mode
   )
-(use-package vterm)
-(define-key vterm-mode-map (kbd "s-j") 'vterm-send-left)
-(define-key vterm-mode-map (kbd "s-l") 'vterm-send-right)
+;; (use-package vterm)
+;; (define-key vterm-mode-map (kbd "s-j") 'vterm-send-left)
+;; (define-key vterm-mode-map (kbd "s-l") 'vterm-send-right)
 ;;  :load-path  "/usr/local/Cellar/emacs-libvterm"
 ;;  (setq vterm-kill-buffer-on-exit t))
 (use-package smart-tab
@@ -681,7 +674,7 @@
   :hook (rjsx-mode . prettier-js-mode))
 
 ;;ox-confluece (install org)
-(require 'ox-confluence)
+;;(require 'ox-confluence)
 ;;(require 'ov-highlight)
 ;;EAF
 ;(use-package quelpa-use-package)
@@ -713,16 +706,16 @@
 ;;(require 'eaf-browser)
 ;(require 'eaf-pdf`-viewer)
 ;;google translate
-(require 'go-translate) 
-(setq go-translate-base-url "https://translate.google.cn")
-(setq go-translate-target-language "en")
-(setq go-translate-local-language "zh-CN")
-(defun go-translate-token--extract-tkk ()
-  (cons 430675 2721866133))
-(global-set-key "\C-cT" 'go-translate)
-(global-set-key "\C-ct" 'go-translate-popup)
-(setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
-(setq go-translate-buffer-follow-p t)
+;; (require 'go-translate) 
+;; (setq go-translate-base-url "https://translate.google.cn")
+;; (setq go-translate-target-language "en")
+;; (setq go-translate-local-language "zh-CN")
+;; (defun go-translate-token--extract-tkk ()
+;;   (cons 430675 2721866133))
+;; (global-set-key "\C-cT" 'go-translate)
+;; (global-set-key "\C-ct" 'go-translate-popup)
+;; (setq go-translate-inputs-function #'go-translate-inputs-current-or-prompt)
+;; (setq go-translate-buffer-follow-p t)
 
 ;;matrix
 ;; Install `plz' HTTP library (not on MELPA yet).
@@ -778,7 +771,7 @@
 (setq ispell-complete-word-dict
   (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
 ;; load-file ox-reveal.el
-(require 'ox-reveal)
+;;(require 'ox-reveal)
 (setq org-reveal-root "file:////Users/iceonfire/reveal.js")
 ;;spell-fu
 ;; (use-package spell-fu)
@@ -834,3 +827,5 @@
 ;;                           'font-lock-face infu-bionic-reading-face-2)
         (put-text-property xBoldEndPos xWordEnd
                            'font-lock-face infu-bionic-reading-face)))))
+(use-package expand-region
+  :bind ("C-=" . er/expand-region)
