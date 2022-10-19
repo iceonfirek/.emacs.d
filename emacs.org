@@ -389,6 +389,8 @@
     - counsel load theme
     - buffer menu -> d -> x to delete marked buffers
     - *copy multiple pathnames* right click + option
+    - consult-grep consult-find to find lines and files in directory
+    - paradox-upgrade-packages  update emacs
 *** paredit
     #+ATTR_ORG: :width 1200
     [[/Users/iceonfire/github/Scheme/paredit_command.png]]
@@ -897,3 +899,21 @@
      #+end_src
 **** set
      https://clojuredocs.org/clojure.set
+**** cond->
+     #+begin_src clojure
+       (defn convert [n]
+	 (cond-> nil
+	   (= 0 (mod n 3)) (str "Pling")
+	   (= 0 (mod n 5)) (str "Plang")
+	   (= 0 (mod n 7)) (str "Plong")
+	   :always (or (str n))
+	   ))
+     #+end_src
+**** random chars
+     #+begin_src clojure
+       (defn rand-str [len]
+	 (apply str (take len (repeatedly #(char (+ (rand 26) 65))))))
+       
+       (defn rand-int [len]
+	 (apply str (take len (repeatedly #(char (+ (rand 10) 48))))))
+     #+end_src

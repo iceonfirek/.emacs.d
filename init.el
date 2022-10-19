@@ -1,9 +1,9 @@
 ;;; package --- Summar
 ;;; Commentary:
-;; (setq url-proxy-services
-;;   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-;;    ("http" . "127.0.0.1:7890")
-;;     ("https" . "127.0.0.1:7890")))
+(setq url-proxy-services
+  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+   ("http" . "127.0.0.1:7890")
+    ("https" . "127.0.0.1:7890")))
 ;;; Code:
 ;;; Theme
 (setq inhibit-startup-message t)
@@ -72,7 +72,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(expand-region isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(paradox expand-region isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -118,6 +118,7 @@
 (global-set-key (kbd "<f12>") 'company-mode)
 (global-set-key (kbd "s-f") 'consult-line)
 (global-set-key (kbd "C-x l") 'consult-line)
+(global-set-key (kbd "C-c l") 'consult-grep)
 ;;Package install
 (require
  'package)
@@ -276,6 +277,7 @@
 ;; (use-package geiser-chez)
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
+  :hook (clojure-mode . paredit-mode)
   :bind (
 	 ("s-<right>" . paredit-forward-slurp-sexp)
 	 ("s-<left>" . paredit-backward-slurp-sexp)
@@ -308,6 +310,7 @@
   :bind ;; C-c bindings (mode-specific-map)
   ("C-c h" . consult-history)
   ("C-c m" . consult-mode-command)
+  ("C-c f" . consult-find)
   ("C-c b" . consult-bookmark)
   ("C-c k" . consult-kmacro)
   ;; C-x bindings (ctl-x-map)
@@ -696,7 +699,7 @@
 ;;    (defalias 'browse-web #'eaf-open-browser)
 ;;    ;; (eaf-bind-key eaf-send-down-key "s-k" eaf-app-keybiding)
 ;;    ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
-;;    ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)					;
+;;    ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)		;
 ;;    ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
 ;;    ;; (eaf-bind-key scroll_down "s-i" eaf-pdf-viewer-keybinding)
 ;;    ;; (eaf-bind-key scroll_up "s-k" eaf-pdf-viewer-keybinding)
@@ -828,4 +831,9 @@
         (put-text-property xBoldEndPos xWordEnd
                            'font-lock-face infu-bionic-reading-face)))))
 (use-package expand-region
-  :bind ("C-=" . er/expand-region)
+  :bind ("C-=" . er/expand-region))
+(use-package paradox
+  :init
+  (setq paradox-github-token t)
+  (setq paradox-execute-asynchronously t)
+  (setq paradox-automatically-star t))
