@@ -390,6 +390,7 @@
     - buffer menu -> d -> x to delete marked buffers
     - *copy multiple pathnames* right click + option
     - consult-grep consult-find to find lines and files in directory
+    - multiple files [[https://www.reddit.com/r/emacs/comments/uuqj7o/how_do_i_open_multiple_files_at_once_from/]]
     - paradox-upgrade-packages  update emacs
 *** paredit
     #+ATTR_ORG: :width 1200

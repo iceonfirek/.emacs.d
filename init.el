@@ -72,7 +72,8 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(paradox expand-region isend-mode py-autopep8 racket-mode geiser-racket cider clojure-mode ts ement plz prettier-js tide rjsx-mode lsp-tailwindcss yaml-mode org-plus-contrib org-re-reveal python-mode company-jedi multiple-cursors elpy org-reveal flycheck-aspell spell-fu pdf-tools posframe go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet-snippets yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar which-key vertico use-package rainbow-delimiters projectile popup paredit org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+ '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python"))
 ;;
@@ -123,7 +124,7 @@
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
+			 ("nongnu" . "https://elpa.nongnu.org/packages/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
@@ -236,8 +237,10 @@
  '(auto-dim-other-buffers-face ((t (:background "gray10"))))
  '(centaur-tabs-unselected ((t (:background "#3D3C3D" :foreground "grey50" :height 120 :family "FiraCode NF"))))
  '(company-echo ((t nil)) t)
- '(company-scrollbar-bg ((t (:background "orange1"))))
- '(company-scrollbar-fg ((t (:background "dark gray"))))
+ '(company-scrollbar-bg ((t (:background "orange1"))) t)
+ '(company-scrollbar-fg ((t (:background "dark gray"))) t)
+ '(company-tooltip-scrollbar-thumb ((t (:background "dark gray"))))
+ '(company-tooltip-scrollbar-track ((t (:background "orange1"))))
  '(company-tooltip-selection ((t (:background "orange3"))))
  '(consult-preview-line ((t (:inherit consult-preview-insertion :extend t :background "Orange" :foreground "gray100"))))
  '(cursor ((t (:background "OliveDrab1"))))
@@ -364,7 +367,7 @@
    :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
-   consult--source-file consult--source-project-file consult--source-bookmark
+;;   consult--source-file consult--source-project-file consult--source-bookmark
    :preview-key (kbd "M-."))
   (setq consult-narrow-key "<") ;; (kbd "C-+")
   (setq consult-project-root-function
@@ -438,6 +441,8 @@
   (yas-reload-all)
   (use-package yasnippet-snippets
     :ensure t))
+
+(add-hook 'org-mode-hook 'org-indent-mode)
 ;;
 ;; company mode
 ;;
@@ -508,10 +513,11 @@
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
   :custom
-  (org-bullets-bullet-list '("✥" "⚫" "◉" "○" "◈" "◇")))
+  (org-bullets-bullet-list '("✥" "*" "◉" "○" "◈" "◇")))
 (use-package org
   :config
   (setq org-ellipsis " ▾"))
+
 ;(setenv "PATH" (concat "/opt/local/bin/:" (getenv "PATH")))
 ;;always show image inline automatically after src code
 (eval-after-load 'org
@@ -832,8 +838,16 @@
                            'font-lock-face infu-bionic-reading-face)))))
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
-(use-package paradox
-  :init
-  (setq paradox-github-token t)
-  (setq paradox-execute-asynchronously t)
-  (setq paradox-automatically-star t))
+
+;; (use-package paradox
+;;   :init
+;;   (setq paradox-github-token t)
+;;   (setq paradox-execute-asynchronously t)
+;;   (setq paradox-automatically-star t))
+
+(use-package auto-package-update
+   :ensure t
+   :config
+   (setq auto-package-update-delete-old-versions t
+         auto-package-update-interval 4)
+   (auto-package-update-maybe))
