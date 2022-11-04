@@ -1,9 +1,9 @@
 ;;; package --- Summar
 ;;; Commentary:
-(setq url-proxy-services
-  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-   ("http" . "127.0.0.1:7890")
-    ("https" . "127.0.0.1:7890")))
+;;(setq url-proxy-services
+;;  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+;;   ("http" . "127.0.0.1:7890")
+;;    ("https" . "127.0.0.1:7890")))
 ;;; Code:
 ;;; Theme
 (setq inhibit-startup-message t)
@@ -23,7 +23,7 @@
 ;;(global-visual-line-mode 1)
 ;;(paredit-mode -1)
 (setq explicit-shell-file-name "/bin/zsh")
-;;(server-start)
+(server-start)
 ;;Global 优化
 (setq auto-save-default t)
 (setq make-backup-files nil)
@@ -55,6 +55,7 @@
      (dot . t)
      (shell . t)
      (scheme . t)
+     (clojure . t)
      (python . t)
      (emacs-lisp . t)
      (shell . t)))
@@ -72,10 +73,11 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
- '(python-shell-interpreter "python"))
+ '(python-shell-interpreter "python")
+ '(safe-local-variable-values '((geiser-autodoc--inhibit . t))))
 ;;
 ;;Vterm theme
 ;;
@@ -94,6 +96,7 @@
 (global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
 (global-set-key (kbd "s-w") 'kill-current-buffer)
+(global-set-key (kbd "C-x w") 'kill-current-buffer)
 (global-set-key (kbd "C-u") 'kill-whole-line)
 ;; (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-L") 'forward-word)
@@ -105,6 +108,7 @@
 ;; (global-set-key (kbd "s-k") 'next-line)
 (global-set-key (kbd "s-n") 'set-mark-command)
 (global-set-key (kbd "s-N") 'pop-to-mark-command)
+(global-set-key (kbd "C-o") 'other-window)
 (global-set-key (kbd "s-o") 'other-window)
 (global-set-key (kbd "s-d") 'delete-char)
 (global-set-key (kbd "s-p") 'org-export-dispatch)
@@ -113,18 +117,23 @@
 (global-set-key (kbd "<s-return>") (lambda () (interactive) (end-of-line) (newline-and-indent)))
 (global-set-key (kbd "s-:") 'comment-or-uncomment-region)
 (global-set-key (kbd "s-1") 'centaur-tabs-backward)
+(global-set-key (kbd "C-r") 'centaur-tabs-backward)
 (global-set-key (kbd "s-2") 'centaur-tabs-forward)
+(global-set-key (kbd "C-t") 'centaur-tabs-forward)  
 (global-set-key (kbd "s-`") 'centaur-tabs-backward-group)
 (global-set-key (kbd "s-x") 'kill-region)
 (global-set-key (kbd "<f12>") 'company-mode)
 (global-set-key (kbd "s-f") 'consult-line)
 (global-set-key (kbd "C-x l") 'consult-line)
 (global-set-key (kbd "C-c l") 'consult-grep)
+(global-set-key (kbd "C-c C-k") 'cider-eval-all-files)
+(global-set-key (kbd "C-/") 'shell-command)
+
 ;;Package install
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("nongnu" . "https://elpa.nongnu.org/packages/")
+;;			 ("nongnu" . "https://elpa.nongnu.org/packages/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
@@ -851,3 +860,32 @@
    (setq auto-package-update-delete-old-versions t
          auto-package-update-interval 4)
    (auto-package-update-maybe))
+;;latex
+(setenv "PATH" (concat ":/Library/TeX/texbin/" (getenv "PATH")))
+(add-to-list 'exec-path "/Library/TeX/texbin/")
+(defun my/text-scale-adjust-latex-previews ()
+  "Adjust the size of latex preview fragments when changing the
+buffer's text scale."
+  (pcase major-mode
+    ('latex-mode
+     (dolist (ov (overlays-in (point-min) (point-max)))
+       (if (eq (overlay-get ov 'category)
+               'preview-overlay)
+           (my/text-scale--resize-fragment ov))))
+    ('org-mode
+     (dolist (ov (overlays-in (point-min) (point-max)))
+       (if (eq (overlay-get ov 'org-overlay-type)
+               'org-latex-overlay)
+           (my/text-scale--resize-fragment ov))))))
+
+(defun my/text-scale--resize-fragment (ov)
+  (overlay-put
+   ov 'display
+   (cons 'image
+         (plist-put
+          (cdr (overlay-get ov 'display))
+          :scale (+ 1.0 (* 0.25 text-scale-mode-amount))))))
+
+(add-hook 'text-scale-mode-hook #'my/text-scale-adjust-latex-previews)
+(setq org-latex-create-formula-image-program 'dvisvgm)
+(setq org-babel-clojure-backend 'cider)
