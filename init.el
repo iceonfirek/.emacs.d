@@ -6,18 +6,21 @@
 ;;    ("https" . "127.0.0.1:7890")))
 ;;; Code:
 ;;; Theme
+
+;;(setq frame-resize-pixelwise t)
 (setq inhibit-startup-message t)
 (setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
 ;;**(scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
+(visual-line-mode 1)
 ;;(fringe-mode 1)
 (display-time-mode 1)
 (display-battery-mode 1)
 ;;(set-fringe-mode 5)
 (menu-bar-mode -1)
 (setq visible-bell t)
-(load-theme 'wombat)
+(load-theme 'modus-vivendi)
 (setq-default cursor-type '(bar . 5))
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
@@ -42,7 +45,7 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
  '(custom-safe-themes
-   '("97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
+   '("3fe1ebb870cc8a28e69763dde7b08c0f6b7e71cc310ffc3394622e5df6e4f0da" "7160746eb7ae4ced07bb3084a3421d7f8c9c999d1ca13886db5657cc25ae3f80" "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
  '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
@@ -140,11 +143,11 @@
 (unless (package-installed-p 'use-package) (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
-(use-package auto-dim-other-buffers
-  :init
-  (add-hook 'after-init-hook (lambda ()
-  (when (fboundp 'auto-dim-other-buffers-mode)
-    (auto-dim-other-buffers-mode t)))))
+;; (use-package auto-dim-other-buffers
+;;   :init
+;;   (add-hook 'after-init-hook (lambda ()
+;;   (when (fboundp 'auto-dim-other-buffers-mode)
+;;     (auto-dim-other-buffers-mode t)))))
 ;;dashboard
 (use-package dashboard
   :ensure t
@@ -194,14 +197,14 @@
 	centaur-tabs-height 25
 	;;centaur-tabs-width 40
 	centaur-tabs-set-icons t
-	centaur-tabs-set-bar 'left
+	centaur-tabs-set-bar 'over
 	centaur-tabs-label-fixed-length 20
 	centaur-tabs-gray-out-icons 'buffer
 	centaur-tabs-set-close-button nil
 	centaur-tabs-set-modified-marker t
 	centaur-tabs-modified-marker "*")
   (centaur-tabs-headline-match)
-  (centaur-tabs-change-fonts "FiraCode NF" 120)
+  (centaur-tabs-change-fonts "FiraCode NF" 100)
   (defun centaur-tabs-buffer-groups ()
      (list
       (cond
@@ -242,9 +245,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 134 :family "FiraCode NF" :background "gray3"))))
- '(auto-dim-other-buffers-face ((t (:background "gray10"))))
- '(centaur-tabs-unselected ((t (:background "#3D3C3D" :foreground "grey50" :height 120 :family "FiraCode NF"))))
+ '(default ((t (:height 134 :family "FiraCode NF" :background "#17474F"))))
+ '(auto-dim-other-buffers-face ((t (:background "#1E5C66"))))
+ '(auto-dim-other-buffers-hide-face ((t (:background "#1E5C66" :foreground "#1E5C66"))))
+ '(centaur-tabs-selected ((t (:inherit bold :background "#3AB2C5" :box (:line-width (1 . 1) :color "#3AB2C5")))))
+ '(centaur-tabs-selected-tab ((t (:background "D8F0F3"))))
+ '(centaur-tabs-unselected ((t (:background "#1E5C66" :foreground "grey50" :box (:line-width (1 . 1) :color "#1E5C66") :height 120 :family "FiraCode NF"))))
  '(company-echo ((t nil)) t)
  '(company-scrollbar-bg ((t (:background "orange1"))) t)
  '(company-scrollbar-fg ((t (:background "dark gray"))) t)
@@ -253,7 +259,8 @@
  '(company-tooltip-selection ((t (:background "orange3"))))
  '(consult-preview-line ((t (:inherit consult-preview-insertion :extend t :background "Orange" :foreground "gray100"))))
  '(cursor ((t (:background "OliveDrab1"))))
- '(mode-line-inactive ((t (:background "gray22" :foreground "#bebebe" :height 1.0))))
+ '(mode-line ((t (:background "#2E8E9E" :foreground "#f4f4f4" :box (:line-width (1 . 1) :color "#17474F") :overline nil :underline nil))))
+ '(mode-line-inactive ((t (:background "#1E5C66" :foreground "#bebebe" :box (:line-width (1 . 1) :color "#1E5C66") :overline nil :underline nil :height 1.0))))
  '(org-block ((t (:inherit shadow :extend t :width extra-condensed))))
  '(org-date ((t (:foreground "dim gray" :underline t))))
  '(org-level-1 ((t (:inherit outline-1 :extend nil :foreground "brown1" :height 1.1))))
@@ -270,6 +277,9 @@
  '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :foreground "tomato"))))
  '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground "green yellow"))))
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "PaleVioletRed3"))))
+ '(tab-bar ((t (:inherit nil :background "#1E5C66"))))
+ '(tab-bar-tab ((t (:inherit bold :background "#1E5C66" :box (:line-width (2 . 2) :color "#0e0e0e")))))
+ '(tab-line ((t (:inherit nil :background "#17474F" :box nil :overline nil :underline nil :height 0.95))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-black))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
@@ -418,8 +428,8 @@
   ([remap describe-key] . helpful-key))
 (use-package all-the-icons)
 (use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15) ))
+  :init (doom-modeline-mode 1))
+(setq doom-modeline-height 5)
 (use-package general)
 ;;projectile, magit
 (use-package projectile
