@@ -10,7 +10,7 @@
 ;;(setq frame-resize-pixelwise t)
 (setq inhibit-startup-message t)
 (setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
-;;**(scroll-bar-mode -1)
+(scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (visual-line-mode 1)
@@ -21,7 +21,7 @@
 (menu-bar-mode -1)
 (setq visible-bell t)
 (load-theme 'modus-vivendi)
-(setq-default cursor-type '(bar . 5))
+(setq-default cursor-type '(bar . 3))
 (global-prettify-symbols-mode 1)
 ;;(global-visual-line-mode 1)
 ;;(paredit-mode -1)
@@ -47,7 +47,6 @@
  '(custom-safe-themes
    '("3fe1ebb870cc8a28e69763dde7b08c0f6b7e71cc310ffc3394622e5df6e4f0da" "7160746eb7ae4ced07bb3084a3421d7f8c9c999d1ca13886db5657cc25ae3f80" "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
- '(doom-modeline-mode t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
  '(geiser-racket--binary "/usr/local/bin/racket")
  '(geiser-racket-binary "/usr/local/bin/racket")
@@ -193,8 +192,8 @@
   :demand
   :config
   (centaur-tabs-mode t)
-  (setq centaur-tabs-style "bar"
-	centaur-tabs-height 25
+  (setq centaur-tabs-style "box"
+	centaur-tabs-height 8
 	;;centaur-tabs-width 40
 	centaur-tabs-set-icons t
 	centaur-tabs-set-bar 'over
@@ -248,7 +247,7 @@
  '(default ((t (:height 134 :family "FiraCode NF" :background "#17474F"))))
  '(auto-dim-other-buffers-face ((t (:background "#1E5C66"))))
  '(auto-dim-other-buffers-hide-face ((t (:background "#1E5C66" :foreground "#1E5C66"))))
- '(centaur-tabs-selected ((t (:inherit bold :background "#3AB2C5" :box (:line-width (1 . 1) :color "#3AB2C5")))))
+ '(centaur-tabs-selected ((t (:background "#3AB2C5" :box (:line-width (1 . 1) :color "#3AB2C5") :height 120 :family "FiraCode NF"))))
  '(centaur-tabs-selected-tab ((t (:background "D8F0F3"))))
  '(centaur-tabs-unselected ((t (:background "#17474F" :foreground "grey50" :box (:line-width (1 . 1) :color "#1E5C66") :height 120 :family "FiraCode NF"))))
  '(company-echo ((t nil)) t)
@@ -286,6 +285,7 @@
  '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground "green yellow"))))
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "PaleVioletRed3"))))
  '(region ((t (:extend t :background "#CF8388" :foreground "#161010"))))
+ '(show-paren-match ((t (:background "light green" :foreground "#ffffff" :underline nil))))
  '(tab-bar ((t (:inherit nil :background "#1E5C66"))))
  '(tab-bar-tab ((t (:inherit bold :background "#1E5C66" :box (:line-width (2 . 2) :color "#0e0e0e")))))
  '(tab-line ((t (:inherit nil :background "#17474F" :box nil :overline nil :underline nil :height 0.95))))
@@ -437,8 +437,8 @@
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key] . helpful-key))
 (use-package all-the-icons)
-(use-package doom-modeline
-  :init (doom-modeline-mode 1))
+;; (use-package doom-modeline
+;;   :init (doom-modeline-mode 1))
 (setq doom-modeline-height 5)
 (use-package general)
 ;;projectile, magit
@@ -804,10 +804,10 @@
 ;; ;; load predictive package
 ;; (autoload 'predictive-mode "~/.emacs.d/predictive/predictive"
 ;;   "Turn on Predictive Completion Mode." t)
-(setq ispell-program-name "aspell")
-(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together" "--run-together-limit=16"))
-(setq ispell-complete-word-dict
-  (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
+;; (setq ispell-program-name "aspell")
+;; (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--run-together" "--run-together-limit=16"))
+;; (setq ispell-complete-word-dict
+;;   (expand-file-name (concat user-emacs-directory "aspell_words.txt")))
 ;; load-file ox-reveal.el
 ;;(require 'ox-reveal)
 (setq org-reveal-root "file:////Users/iceonfire/reveal.js")
@@ -832,11 +832,11 @@
 (setenv "LC_NUMERIC" "zh_CN.UTF-8")
 (setenv "LC_TIME" "zh_CN.UTF-8")
 
-(defvar infu-bionic-reading-face nil "a face for `infu-bionic-reading-region'.")
+;; (defvar infu-bionic-reading-face nil "a face for `infu-bionic-reading-region'.")
 
-;;(setq infu-bionic-reading-face 'bold)
-(setq infu-bionic-reading-face 'typescript-jsdoc-tag)
-(setq infu-bionic-reading-face-2 'all-the-icons-lgreen)
+;; (setq infu-bionic-reading-face 'bold)
+;; (setq infu-bionic-reading-face 'typescript-jsdoc-tag)
+;; (setq infu-bionic-reading-face-2 'all-the-icons-lgreen)
 ;; try
 ;; 'bold
 ;; 'error
@@ -844,27 +844,27 @@
 ;; 'highlight
 ;; or any value of M-x list-faces-display
 ;; bionic-reading
-(defun infu-bionic-reading-buffer ()
-  (interactive)
-  (infu-bionic-reading-region (point-min) (point-max)))
+;; (defun infu-bionic-reading-buffer ()
+;;   (interactive)
+;;   (infu-bionic-reading-region (point-min) (point-max)))
 
-(defun infu-bionic-reading-region (Begin End)
-  (interactive "r")
-  (let (xBounds xWordBegin xWordEnd  )
-    (save-restriction
-      (narrow-to-region Begin End)
-      (goto-char (point-min))
-      (while (forward-word)
-        ;; bold the first half of the word to the left of cursor
-        (setq xBounds (bounds-of-thing-at-point 'word))
-        (setq xWordBegin (car xBounds))
-        (setq xWordEnd (cdr xBounds))
-	;;        (setq xBoldEndPos (+ xWordBegin (1+ (/ (- xWordEnd xWordBegin) 2))))
-	(setq xBoldEndPos (+ xWordBegin 3))
-;;	(put-text-property xWordBegin xBoldEndPos
-;;                           'font-lock-face infu-bionic-reading-face-2)
-        (put-text-property xBoldEndPos xWordEnd
-                           'font-lock-face infu-bionic-reading-face)))))
+;; (defun infu-bionic-reading-region (Begin End)
+;;   (interactive "r")
+;;   (let (xBounds xWordBegin xWordEnd  )
+;;     (save-restriction
+;;       (narrow-to-region Begin End)
+;;       (goto-char (point-min))
+;;       (while (forward-word)
+;;         ;; bold the first half of the word to the left of cursor
+;;         (setq xBounds (bounds-of-thing-at-point 'word))
+;;         (setq xWordBegin (car xBounds))
+;;         (setq xWordEnd (cdr xBounds))
+;; 	;;        (setq xBoldEndPos (+ xWordBegin (1+ (/ (- xWordEnd xWordBegin) 2))))
+;; 	(setq xBoldEndPos (+ xWordBegin 3))
+;; ;;	(put-text-property xWordBegin xBoldEndPos
+;; ;;                           'font-lock-face infu-bionic-reading-face-2)
+;;         (put-text-property xBoldEndPos xWordEnd
+;;                            'font-lock-face infu-bionic-reading-face)))))
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
