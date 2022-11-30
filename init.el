@@ -75,7 +75,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(rustic tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -168,23 +168,25 @@
   (setq dashboard-startup-banner "/Users/iceonfire/.emacs.d/elpa/dashboard-20210815.445/banners/5.png")
   (dashboard-setup-startup-hook))
 ;;Dired
-;; (use-package dired-sidebar
-;;   :bind (("C-c C-n" . dired-sidebar-toggle-sidebar))
-;;   :ensure t
-;;   :commands (dired-sidebar-toggle-sidebar)
-;;   :init
-;; (add-hook 'dired-sidebar-mode-hook
-;;           (lambda ()
-;;             (unless (file-remote-p default-directory)
-;;               (auto-revert-mode)))))
-;; :config
-;; (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-;; (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-;; (setq dired-sidebar-width 30)
-;; (setq dired-sidebar-subtree-line-prefix "__")
-;; (setq dired-sidebar-theme 'wombat)
-;; (setq dired-sidebar-use-term-integration t)
-;; (setq dired-sidebar-use-custom-font t)
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'modus-vivendi)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
+
+
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
 ;;Centaur-tabs
@@ -199,7 +201,7 @@
 	centaur-tabs-set-bar 'over
 	centaur-tabs-label-fixed-length 20
 	centaur-tabs-gray-out-icons 'buffer
-	centaur-tabs-set-close-button nil
+	centaur-tabs-set-close-button t
 	centaur-tabs-set-modified-marker t
 	centaur-tabs-modified-marker "*")
   (centaur-tabs-headline-match)
@@ -220,10 +222,11 @@
 				magit-blame-mode
 				)))
 	"Emacs")
-	((derived-mode-p 'dired-mode)
-	 "Dired")
+	((derived-mode-p 'clojure-mode)
+	 "Clojure")
 	((or (derived-mode-p 'eaf-mode)
-	     (string-equal "*dashboard*" (substring (buffer-name))))
+	     (string-equal "*dashboard*" (substring (buffer-name)))
+	     (derived-mode-p 'dired-mode))
 	 "eap")
 	(t "Edit"))))
   :bind
@@ -249,7 +252,7 @@
  '(auto-dim-other-buffers-hide-face ((t (:background "#1E5C66" :foreground "#1E5C66"))))
  '(centaur-tabs-selected ((t (:background "#3AB2C5" :box (:line-width (1 . 1) :color "#3AB2C5") :height 120 :family "FiraCode NF"))))
  '(centaur-tabs-selected-tab ((t (:background "D8F0F3"))))
- '(centaur-tabs-unselected ((t (:background "#17474F" :foreground "grey50" :box (:line-width (1 . 1) :color "#1E5C66") :height 120 :family "FiraCode NF"))))
+ '(centaur-tabs-unselected ((t (:background "#17474F" :foreground "grey50" :box (:line-width (1 . 1) :color "#17474F") :height 120 :family "FiraCode NF"))))
  '(company-echo ((t nil)) t)
  '(company-preview ((t (:background "#4A7880" :foreground "#e0e6f0"))))
  '(company-scrollbar-bg ((t (:background "orange1"))) t)
@@ -523,12 +526,33 @@
         lsp-signature-doc-lines 5
         lsp-idle-delay 0.5
         lsp-prefer-capf t
-        lsp-client-packages nil)
+        lsp-client-packages nil
+	lsp-headerline-breadcrumb-enable nil)
+  :custom
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  ;; enable / disable the hints as you prefer:
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
   :config
- (define-key lsp-mode-map (kbd "M-c l") lsp-command-map)
- (define-key lsp-mode-map (kbd "s-l") nil)
-   (define-key lsp-mode-map (kbd "c") nil)
- )
+  (define-key lsp-mode-map (kbd "M-c l") lsp-command-map)
+  (define-key lsp-mode-map (kbd "s-l") nil)
+  (define-key lsp-mode-map (kbd "c") nil)
+ ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  )
+;; (use-package lsp-ui
+;;   :ensure
+;;   :commands lsp-ui-mode
+;;   :custom
+;;   (lsp-ui-peek-always-show t)
+;;   (lsp-ui-sideline-show-hover t)
+;;   (lsp-ui-doc-enable nil))
 ;; (use-package term
 ;;   :commands term
 ;;   :hook (term-line-mode)
@@ -568,10 +592,8 @@
     ((eq format 'latex)
      (format "{\\color{%s}%s}" path desc)))))
 ;;flycheck
-(use-package flycheck
-  :ensure t)
-;; (dolist (hook '(org-mode-hook))
-;;   (add-hook hook (lambda () (flyspell-mode 1) (flycheck-mode 1) (flyspell-auto-correct-previous-hook 1))))
+;; (use-package flycheck
+;;   :ensure t)
 ;;SHELL
 (use-package exec-path-from-shell
   :ensure t
@@ -629,66 +651,58 @@
 ;;
 ;; go
 ;;
-(use-package go-mode
-  :ensure t
-  :mode (("\\.go\\'" . go-mode))
-  :hook ((before-save . gofmt-before-save))
-  :config
-  (setq gofmt-command "goimports")
-  (setq exec-path (append exec-path '("/usr/local/bin")))
-  (setq exec-path (append exec-path '("/Users/iceonfire/go/bin:/Users/iceonfire/go")))
-  (use-package company-go
-    :ensure t
-    :config
-    (add-hook 'go-mode-hook (lambda ()
-			      (add-to-list (make-local-variable 'company-backends)
-					   '(company-go company-files company-capf))))
-    )
-  (use-package go-eldoc
-    :ensure t
-    :hook (go-mode . go-eldoc-setup)
-    )
-  (use-package go-guru
-    :ensure t
-    :hook (go-mode . go-guru-hl-identifier-mode)
-    )
-  (use-package go-rename
-    :ensure t)
-  (use-package gotest
-    :defer 2
-    :after go-mode)
-  )
+;; (use-package go-mode
+;;   :ensure t
+;;   :mode (("\\.go\\'" . go-mode))
+;;   :hook ((before-save . gofmt-before-save))
+;;   :config
+;;   (setq gofmt-command "goimports")
+;;   (setq exec-path (append exec-path '("/usr/local/bin")))
+;;   (setq exec-path (append exec-path '("/Users/iceonfire/go/bin:/Users/iceonfire/go")))
+;;   (use-package company-go
+;;     :ensure t
+;;     :config
+;;     (add-hook 'go-mode-hook (lambda ()
+;; 			      (add-to-list (make-local-variable 'company-backends)
+;; 					   '(company-go company-files company-capf))))
+;;     )
+;;   (use-package go-eldoc
+;;     :ensure t
+;;     :hook (go-mode . go-eldoc-setup)
+;;     )
+;;   (use-package go-guru
+;;     :ensure t
+;;     :hook (go-mode . go-guru-hl-identifier-mode)
+;;     )
+;;   (use-package go-rename
+;;     :ensure t)
+;;   (use-package gotest
+;;     :defer 2
+;;     :after go-mode)
+;;   )
 
 ;;python mode
-(use-package python-mode
-  :ensure t
-;;  :hook (python-mode . lsp-deferred)
-  :custom
-  (python-shell-internal "python3"))
+;; (use-package python-mode
+;;   :ensure t
+;;   :custom
+;;   (python-shell-internal "python3"))
 
-;;(use-package py-autopep8
-;;  :ensure t
-;;  :hook (python-mode . py-autopep8-enable-on-save)
-;;  )
-(use-package jedi-core
-  :ensure t)
-;; (setq jedi:server-args '("--log-level=DEBUG" "--log=/Users/iceonfire/jedi.log" "--log-rotate-max-size=1000000" "--log-rotate-max-count=3" "--log-traceback"))
-(setq python-shell-completion-native-enable nil)
-(use-package company-jedi
-  :ensure t
-  :config
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (add-hook 'python-mode-hook (lambda ()
-				(add-to-list (make-local-variable 'company-backends)
-					     'company-jedi)))
-  )
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
-  ;; :config
-;;  (setq elpy-rpc-backend "jedi")
-  )
+;; (use-package jedi-core
+;;   :ensure t)
+;; (setq python-shell-completion-native-enable nil)
+;; (use-package company-jedi
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook 'jedi:setup)
+;;   (add-hook 'python-mode-hook (lambda ()
+;; 				(add-to-list (make-local-variable 'company-backends)
+;; 					     'company-jedi)))
+;;   )
+;; (use-package elpy
+;;   :ensure t
+;;   :init
+;;   (elpy-enable)
+;;   )
 
 ;; javascript
 (use-package rjsx-mode
@@ -822,15 +836,15 @@
 (setenv "CHEZSCHEMELIBEXTS" ".sc::.so:")
 
 ;;taskjuggler.
-(setenv "LC_ALL" "zh_CN.UTF-8")
-(setenv "LANG" "zh_CN.UTF-8")
-(setenv "LANGUAGE" "zh_CN.UTF-8")
-(setenv "LC_COLLATE" "zh_CN.UTF-8")
-(setenv "LC_CTYPE" "zh_CN.UTF-8")
-(setenv "LC_MESSAGES" "zh_CN.UTF-8")
-(setenv "LC_MONETARY" "zh_CN.UTF-8")
-(setenv "LC_NUMERIC" "zh_CN.UTF-8")
-(setenv "LC_TIME" "zh_CN.UTF-8")
+(setenv "LC_ALL" "en_US.UTF-8")
+(setenv "LANG" "en_US.UTF-8")
+(setenv "LANGUAGE" "en_US.UTF-8")
+(setenv "LC_COLLATE" "en_US.UTF-8")
+(setenv "LC_CTYPE" "en_US.UTF-8")
+(setenv "LC_MESSAGES" "en_US.UTF-8")
+(setenv "LC_MONETARY" "en_US.UTF-8")
+(setenv "LC_NUMERIC" "en_US.UTF-8")
+(setenv "LC_TIME" "en_US.UTF-8")
 
 ;; (defvar infu-bionic-reading-face nil "a face for `infu-bionic-reading-region'.")
 
@@ -920,3 +934,19 @@ buffer's text scale."
 
    (dired-get-marked-files t current-prefix-arg)))
 
+;;insert date
+(defun insert-time ()
+  (interactive)
+  (insert ";;" (shell-command-to-string "date")))
+
+;;rust
+(setq rust-format-on-save t)
+(add-hook 'rust-mode-hook
+          (lambda () (prettify-symbols-mode)))
+;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+;; (use-package tree-sitter
+;;   :config
+;;   (require 'tree-sitter-langs)
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package rustic)

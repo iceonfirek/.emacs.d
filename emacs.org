@@ -397,6 +397,7 @@
     [[/Users/iceonfire/github/Scheme/paredit_command.png]]
 *** dired
     - ^ drill up, j search, g refresh, d mark, x excute, 0 w copy file path,
+    - C-x C-n sidebar
     - cant access icloud folder -> emacs full disk access-> open any file by "open file"
 *** consu1lt
     - consult-yank-from-kill-ring
