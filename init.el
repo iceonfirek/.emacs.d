@@ -75,7 +75,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(rustic tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(cargo cargo-mode racer toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -313,6 +313,7 @@
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
   :hook (clojure-mode . paredit-mode)
+  :hook (rustic-mode . paredit-mode)
   :bind (
 	 ("s-<right>" . paredit-forward-slurp-sexp)
 	 ("s-<left>" . paredit-backward-slurp-sexp)
@@ -320,6 +321,9 @@
 	 ("M-<left>" . paredit-split-sexp)
 	 ("M-<down>" . paredit-splice-sexp)))
 (add-hook 'cider-repl-mode-hook #'paredit-mode)
+(eval-after-load "paredit"
+  '(progn
+     (define-key paredit-mode-map (kbd "DEL") nil)))
 ;;Vertico, Consult
 (use-package vertico
   :init
@@ -546,13 +550,13 @@
   (define-key lsp-mode-map (kbd "c") nil)
  ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   )
-;; (use-package lsp-ui
-;;   :ensure
-;;   :commands lsp-ui-mode
-;;   :custom
-;;   (lsp-ui-peek-always-show t)
-;;   (lsp-ui-sideline-show-hover t)
-;;   (lsp-ui-doc-enable nil))
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable nil))
 ;; (use-package term
 ;;   :commands term
 ;;   :hook (term-line-mode)
@@ -925,13 +929,9 @@ buffer's text scale."
 (setq org-babel-clojure-backend 'cider)
 
 (defun dired-pandoc-docx-org ()
-
   (interactive)
-
   (dired-do-async-shell-command
-
    "pandoc -f docx -t org --wrap=none" current-prefix-arg
-
    (dired-get-marked-files t current-prefix-arg)))
 
 ;;insert date
@@ -940,13 +940,98 @@ buffer's text scale."
   (insert ";;" (shell-command-to-string "date")))
 
 ;;rust
-(setq rust-format-on-save t)
 (add-hook 'rust-mode-hook
           (lambda () (prettify-symbols-mode)))
+
+(use-package rust-mode
+  :ensure t
+  :hook ((rust-mode . flycheck-mode)
+	 (rust-mode . paredit-mode)
+	 (rust-mode . lsp-deferred))
+;;  :bind (("<f6>" . my/rust-format-buffer))
+  :config
+  (require 'rust-rustfmt)
+  (defun my/rust-format-buffer ()
+    (interactive)
+    (rust-format-buffer)
+    (save-buffer))
+  (require 'lsp-rust)
+  (setq lsp-rust-analyzer-completion-add-call-parenthesis nil
+	lsp-rust-analyzer-proc-macro-enable t))
 ;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
-;; (use-package tree-sitter
+(use-package tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package rustic
+;;   :ensure
+;;   :bind (:map rustic-mode-map
+;;               ("M-j" . lsp-ui-imenu)
+;;               ("M-?" . lsp-find-references)
+;;               ("C-c C-c l" . flycheck-list-errors)
+;;               ("C-c C-c a" . lsp-execute-code-action)
+;;               ("C-c C-c r" . lsp-rename)
+;;               ("C-c C-c q" . lsp-workspace-restart)
+;;               ("C-c C-c Q" . lsp-workspace-shutdown)
+;;               ("C-c C-c s" . lsp-rust-analyzer-status)
+;;               ("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+;;               ("C-c C-c d" . dap-hydra)
+;;               ("C-c C-c h" . lsp-ui-doc-glance))
 ;;   :config
-;;   (require 'tree-sitter-langs)
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-(use-package rustic)
+;;   ;; uncomment for less flashiness
+;;   ;; (setq lsp-eldoc-hook nil)
+;;   ;; (setq lsp-enable-symbol-highlighting nil)
+;;   ;; (setq lsp-signature-auto-activate nil)
+
+;;   ;; comment to disable rustfmt on save
+;;   (setq rustic-format-on-save t))
+  ;;(add-hook 'rustic-mode-hook 'rk/rustic-mode-hook)
+(use-package rust-playground
+  :config
+  (setq rust-playground-basedir (expand-file-name "~/Exercism/rust/playground"))
+  ;; :hook
+  ;; (rust-mode . rust-playground-mode)
+  ;; :bind (:map rust-playground-mode-map
+  ;;             ("C-c C-c" . rust-playground-exec)
+  ;;             ("C-c b" . rust-playground-switch-between-cargo-and-main)
+  ;;             ("C-c k" . rust-playground-rm))
+;;  (add-hook 'rust-playground-mode-hook #'my/rust-playground-hook)
+  )
+(use-package toml-mode :ensure)
+(use-package racer
+  :defer t
+  :after rust-mode
+  :hook
+  (racer-mode . eldoc-mode))
+
+;;dap
+;; Enabling only some features
+(setq dap-auto-configure-features '(sessions locals controls tooltip))
+(with-eval-after-load 'lsp-rust
+    (require 'dap-cpptools))
+
+(with-eval-after-load 'dap-cpptools
+    ;; Add a template specific for debugging Rust programs.
+    ;; It is used for new projects, where I can M-x dap-edit-debug-template
+    (dap-register-debug-template "Rust::CppTools Run Configuration"
+                                 (list :type "cppdbg"
+                                       :request "launch"
+                                       :name "Rust::Run"
+                                       :MIMode "gdb"
+                                       :miDebuggerPath "/usr/local/bin/rust-gdb"
+                                       :environment []
+                                       :program "${workspaceFolder}/target/debug/${projectname}"
+                                       :cwd "${workspaceFolder}"
+                                       :console "external"
+                                       :dap-compilation "cargo build"
+                                       :dap-compilation-dir "${workspaceFolder}")))
+
+  (with-eval-after-load 'dap-mode
+    (setq dap-default-terminal-kind "integrated") ;; Make sure that terminal programs open a term for I/O in an Emacs buffer
+    (dap-auto-configure-mode +1))
+
+
+;;exercism
+(use-package exercism
+  :ensure t)
