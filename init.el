@@ -84,6 +84,27 @@
 ;;Vterm theme
 ;;
 
+;;define keys
+(defun backward-delete-word (arg)
+  "Delete characters backward until encountering the beginning of a word.
+With argument ARG, do this that many times."
+  (interactive "p")
+  (delete-region (point) (progn (backward-word arg) (point))))
+(defun delete-current-line (arg)
+  "Delete (not kill) the current line."
+  (interactive "p")
+  (save-excursion
+    (delete-region
+     (progn (forward-visible-line 0) (point))
+     (progn (forward-visible-line arg) (point)))))
+(defun copy-current-line (arg)
+  "copy the current line."
+  (interactive "p")
+  (save-excursion
+    (copy-region-as-kill
+     (progn (forward-visible-line 0) (point))
+     (progn (forward-visible-line arg) (point)))))
+
 ;;Global binding keys
 (global-set-key (kbd "M-z") 'copy-isearch-match)
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
@@ -94,12 +115,14 @@
 ;;(global-set-key (kbd "s-K") 'scroll-up-command)
 (global-set-key (kbd "<end>") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
+(global-set-key (kbd "C-i") 'copy-current-line)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
 (global-set-key (kbd "s-w") 'kill-current-buffer)
 (global-set-key (kbd "C-x w") 'kill-current-buffer)
-(global-set-key (kbd "C-u") 'kill-whole-line)
+(global-set-key (kbd "C-u") 'delete-current-line)
+(global-set-key (kbd "M-DEL") 'backward-delete-word)
 ;; (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-L") 'forward-word)
 (global-set-key (kbd "C-s-l") 'move-end-of-line)
@@ -313,7 +336,7 @@
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
   :hook (clojure-mode . paredit-mode)
-  :hook (rustic-mode . paredit-mode)
+  :hook (rust-mode . paredit-mode)
   :bind (
 	 ("s-<right>" . paredit-forward-slurp-sexp)
 	 ("s-<left>" . paredit-backward-slurp-sexp)
@@ -951,14 +974,24 @@ buffer's text scale."
 ;;  :bind (("<f6>" . my/rust-format-buffer))
   :config
   (require 'rust-rustfmt)
+  (rust-enable-format-on-save)
   (defun my/rust-format-buffer ()
     (interactive)
     (rust-format-buffer)
     (save-buffer))
+  (defun rust-run-autosave ()
+    (interactive)
+    (save-buffer)
+    (rust-run))
+  (defun rust-test-autosave ()
+    (interactive)
+    (save-buffer)
+    (rust-test))
   (require 'lsp-rust)
   (setq lsp-rust-analyzer-completion-add-call-parenthesis nil
 	lsp-rust-analyzer-proc-macro-enable t))
-;;(define-key rust-mode-map (kbd "C-c C-c") 'rust-run)
+(define-key rust-mode-map (kbd "C-c C-r") 'rust-run-autosave)
+(define-key rust-mode-map (kbd "C-c C-t") 'rust-test-autosave)
 (use-package tree-sitter
   :config
   (require 'tree-sitter-langs)
@@ -985,7 +1018,6 @@ buffer's text scale."
 ;;   ;; (setq lsp-signature-auto-activate nil)
 
 ;;   ;; comment to disable rustfmt on save
-;;   (setq rustic-format-on-save t))
   ;;(add-hook 'rustic-mode-hook 'rk/rustic-mode-hook)
 (use-package rust-playground
   :config
