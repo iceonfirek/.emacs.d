@@ -605,7 +605,7 @@ With argument ARG, do this that many times."
   (lsp-eldoc-render-all t)
   (lsp-idle-delay 0.6)
   ;; enable / disable the hints as you prefer:
-  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-server-display-inlay-hints nil)
   (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
   (lsp-rust-analyzer-display-chaining-hints t)
   (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
@@ -623,7 +623,7 @@ With argument ARG, do this that many times."
   :commands lsp-ui-mode
   :custom
   (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-show-hover nil)
   (lsp-ui-doc-enable nil))
 ;; (use-package term
 ;;   :commands term
@@ -1042,6 +1042,17 @@ buffer's text scale."
 (define-key rust-mode-map (kbd "s-s") 'my/rust-format-buffer)
 (define-key rust-mode-map (kbd "C-y") 'lsp-extend-selection)
 (define-key rust-mode-map (kbd "<C-return>") (lambda () (interactive) (end-of-line) (paredit-semicolon) (newline-and-indent)))
+(defun paredit-comma (&optional n)
+  (interactive "p")
+  (if (or (paredit-in-string-p) (paredit-in-comment-p))
+      (insert (make-string (or n 1) ?\, ))
+    (if (paredit-in-char-p)
+        (backward-char 2))
+    (let ((line-break-point (paredit-semicolon-find-line-break-point)))
+      (if line-break-point
+          (paredit-semicolon-with-line-break line-break-point (or n 1))
+          (insert (make-string (or n 1) ?\, ))))))
+(define-key rust-mode-map (kbd "C-,") (lambda () (interactive) (end-of-line) (paredit-comma) (newline-and-indent)))
 (use-package tree-sitter
   :config
   (require 'tree-sitter-langs)
