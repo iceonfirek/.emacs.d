@@ -10,6 +10,7 @@
 ;;(setq frame-resize-pixelwise t)
 (setq inhibit-startup-message t)
 (setq initial-major-mode (quote fundamental-mode)) ;;disable scratch start automatically
+(delete-selection-mode 1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -75,11 +76,40 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(cargo cargo-mode racer toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard smart-tab org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(whole-line-or-region smart-tab cargo cargo-mode racer toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
- '(safe-local-variable-values '((geiser-autodoc--inhibit . t))))
+ '(safe-local-variable-values
+   '((eval when
+	   (and
+	    (buffer-file-name)
+	    (not
+	     (file-directory-p
+	      (buffer-file-name)))
+	    (string-match-p "^[^.]"
+			    (buffer-file-name)))
+	   (unless
+	       (require 'package-recipe-mode nil t)
+	     (let
+		 ((load-path
+		   (cons "../package-build" load-path)))
+	       (require 'package-recipe-mode)))
+	   (unless
+	       (derived-mode-p 'emacs-lisp-mode)
+	     (emacs-lisp-mode))
+	   (package-build-minor-mode)
+	   (setq-local flycheck-checkers nil)
+	   (set
+	    (make-local-variable 'package-build-working-dir)
+	    (expand-file-name "../working/"))
+	   (set
+	    (make-local-variable 'package-build-archive-dir)
+	    (expand-file-name "../packages/"))
+	   (set
+	    (make-local-variable 'package-build-recipes-dir)
+	    default-directory))
+     (geiser-autodoc--inhibit . t))))
 ;;
 ;;Vterm theme
 ;;
@@ -104,8 +134,22 @@ With argument ARG, do this that many times."
     (copy-region-as-kill
      (progn (forward-visible-line 0) (point))
      (progn (forward-visible-line arg) (point)))))
+(defun cut-current-line (arg)
+  "copy the current line."
+  (interactive "p")
+  (save-excursion
+    (kill-region
+     (progn (forward-visible-line 0) (point))
+     (progn (forward-visible-line arg) (point)))))
+(defun paste-current-line (arg)
+  "paste the current line."
+  (interactive "p")
+  (yank))
+
+
 
 ;;Global binding keys
+(global-set-key (kbd "C-y") 'paste-current-line)
 (global-set-key (kbd "M-z") 'copy-isearch-match)
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
 (global-set-key (kbd "C-x z") 'execute-extended-command)
@@ -115,7 +159,7 @@ With argument ARG, do this that many times."
 ;;(global-set-key (kbd "s-K") 'scroll-up-command)
 (global-set-key (kbd "<end>") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
-(global-set-key (kbd "C-i") 'copy-current-line)
+(global-set-key (kbd "s-y") 'cut-current-line)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-x `") 'delete-window)
 ;(global-set-key (kbd "s-w") 'kill-buffer-and-window)
@@ -153,8 +197,8 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-c l") 'consult-grep)
 (global-set-key (kbd "C-c C-k") 'cider-eval-all-files)
 (global-set-key (kbd "C-/") 'shell-command)
-
-;;Package install
+(global-set-key (kbd "C-j") 'mc/mark-next-lines)    
+;;Package install  
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -346,7 +390,8 @@ With argument ARG, do this that many times."
 (add-hook 'cider-repl-mode-hook #'paredit-mode)
 (eval-after-load "paredit"
   '(progn
-     (define-key paredit-mode-map (kbd "DEL") nil)))
+     (define-key paredit-mode-map (kbd "DEL") nil)
+     (define-key paredit-mode-map (kbd "C-j") nil)))
 ;;Vertico, Consult
 (use-package vertico
   :init
@@ -908,13 +953,13 @@ With argument ARG, do this that many times."
 ;;                            'font-lock-face infu-bionic-reading-face)))))
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
-
+(setq er--show-expansion-message t)
+(eval-after-load 'rust-mode  '(require 'js-mode-expansions))
 ;; (use-package paradox
 ;;   :init
 ;;   (setq paradox-github-token t)
 ;;   (setq paradox-execute-asynchronously t)
 ;;   (setq paradox-automatically-star t))
-
 (use-package auto-package-update
    :ensure t
    :config
@@ -965,7 +1010,6 @@ buffer's text scale."
 ;;rust
 (add-hook 'rust-mode-hook
           (lambda () (prettify-symbols-mode)))
-
 (use-package rust-mode
   :ensure t
   :hook ((rust-mode . flycheck-mode)
@@ -981,22 +1025,31 @@ buffer's text scale."
     (save-buffer))
   (defun rust-run-autosave ()
     (interactive)
+    (rust-format-buffer)
     (save-buffer)
     (rust-run))
   (defun rust-test-autosave ()
     (interactive)
     (save-buffer)
+    (rust-format-buffer)
     (rust-test))
   (require 'lsp-rust)
   (setq lsp-rust-analyzer-completion-add-call-parenthesis nil
 	lsp-rust-analyzer-proc-macro-enable t))
+(eval-after-load 'rust-mode (load-library "rust-mode"))
 (define-key rust-mode-map (kbd "C-c C-r") 'rust-run-autosave)
 (define-key rust-mode-map (kbd "C-c C-t") 'rust-test-autosave)
+(define-key rust-mode-map (kbd "s-s") 'my/rust-format-buffer)
+(define-key rust-mode-map (kbd "C-y") 'lsp-extend-selection)
+(define-key rust-mode-map (kbd "<C-return>") (lambda () (interactive) (end-of-line) (paredit-semicolon) (newline-and-indent)))
 (use-package tree-sitter
   :config
   (require 'tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;;
+
+
 ;; (use-package rustic
 ;;   :ensure
 ;;   :bind (:map rustic-mode-map
