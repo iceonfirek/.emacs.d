@@ -564,10 +564,10 @@ With argument ARG, do this that many times."
   (setq company-minimum-prefix-length 3)
   (setq company-idle-delay 0.0)
   (setq company-backends
-	'((company-files company-yasnippet
+	'((company-files company-yasnippet 
 			 company-keywords
 			 company-capf)
-	  (company-abbrev company-dabbrev)))) 
+	  (company-abbrev company-dabbrev))))
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 				  (add-to-list (make-local-variable 'company-backends)
 					       'company-elisp)))
@@ -1131,3 +1131,10 @@ buffer's text scale."
 ;;exercism
 (use-package exercism
   :ensure t)
+;;electric pair
+
+
+(electric-pair-mode 1)
+(setq electric-pair-pairs '(
+			    (?\< . ?\>)
+			    (?\' . ?\')))
