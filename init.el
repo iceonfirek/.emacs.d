@@ -1,6 +1,6 @@
 ;;; package --- Summar
 ;;; Commentary:
-;;(setq url-proxy-services
+;; (setq url-proxy-services
 ;;  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
 ;;   ("http" . "127.0.0.1:7890")
 ;;    ("https" . "127.0.0.1:7890")))
@@ -76,7 +76,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(whole-line-or-region smart-tab cargo cargo-mode racer toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company embark consult auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez embark-consult doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -109,7 +109,8 @@
 	   (set
 	    (make-local-variable 'package-build-recipes-dir)
 	    default-directory))
-     (geiser-autodoc--inhibit . t))))
+     (geiser-autodoc--inhibit . t)))
+ '(warning-suppress-types '((emacs))))
 ;;
 ;;Vterm theme
 ;;
@@ -197,7 +198,8 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-c l") 'consult-grep)
 (global-set-key (kbd "C-c C-k") 'cider-eval-all-files)
 (global-set-key (kbd "C-/") 'shell-command)
-(global-set-key (kbd "C-j") 'mc/mark-next-lines)    
+(global-set-key (kbd "C-j") 'mc/mark-next-lines)
+(global-set-key (kbd "C-w") 'delete-other-windows)
 ;;Package install  
 (require
  'package)
@@ -252,7 +254,11 @@ With argument ARG, do this that many times."
   (setq dired-sidebar-theme 'modus-vivendi)
   (setq dired-sidebar-use-term-integration t)
   (setq dired-sidebar-use-custom-font t))
-
+(with-eval-after-load "dired"
+  (define-key dired-mode-map (kbd "<mouse-2>") #'dired-single-buffer-mouse)
+  (define-key dired-mode-map (kbd "<RET>") #'dired-single-buffer))
+(use-package dired-single
+  :ensure t)
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
@@ -380,7 +386,7 @@ With argument ARG, do this that many times."
 (use-package paredit
   :hook (scheme-mode . paredit-mode)
   :hook (clojure-mode . paredit-mode)
-  :hook (rust-mode . paredit-mode)
+;;  :hook (rust-mode . paredit-mode)
   :bind (
 	 ("s-<right>" . paredit-forward-slurp-sexp)
 	 ("s-<left>" . paredit-backward-slurp-sexp)
@@ -1085,7 +1091,7 @@ buffer's text scale."
   ;;(add-hook 'rustic-mode-hook 'rk/rustic-mode-hook)
 (use-package rust-playground
   :config
-  (setq rust-playground-basedir (expand-file-name "~/Exercism/rust/playground"))
+  (setq rust-playground-basedir (expand-file-name "~/Exercism/playground"))
   ;; :hook
   ;; (rust-mode . rust-playground-mode)
   ;; :bind (:map rust-playground-mode-map
@@ -1100,6 +1106,9 @@ buffer's text scale."
   :after rust-mode
   :hook
   (racer-mode . eldoc-mode))
+;;; racer-mode for getting IDE like features for rust-mode
+;; https://github.com/racer-rust/emacs-racer
+
 
 ;;dap
 ;; Enabling only some features
@@ -1138,3 +1147,15 @@ buffer's text scale."
 (setq electric-pair-pairs '(
 			    (?\< . ?\>)
 			    (?\' . ?\')))
+;;initial window size
+
+(use-package golden-ratio)
+(golden-ratio-mode 1)
+(setq golden-ratio-auto-scale t)
+(use-package graphviz-dot-mode
+  :ensure t
+  :config
+  (setq graphviz-dot-indent-width 4))
+
+;;windows ratio
+
