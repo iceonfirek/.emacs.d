@@ -1,4 +1,4 @@
-;;; package --- Summar
+1;;; package --- Summar
 ;;; Commentary:
 ;; (setq url-proxy-services
 ;;  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
@@ -76,7 +76,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc yasnippet go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -200,11 +200,12 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-/") 'shell-command)
 (global-set-key (kbd "C-j") 'mc/mark-next-lines)
 (global-set-key (kbd "C-w") 'delete-other-windows)
+(global-set-key (kbd "C-x 9") 'golden-ratio)
 ;;Package install  
 (require
  'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-;;			 ("nongnu" . "https://elpa.nongnu.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents (package-refresh-contents))
@@ -367,6 +368,7 @@ With argument ARG, do this that many times."
  '(tab-line ((t (:inherit nil :background "#17474F" :box nil :overline nil :underline nil :height 0.95))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-black))))
+ '(variable-pitch ((t (:height 134 :family "FiraCode NF" :background "#17474F" :height 160 :foreground "#a8a8a8"))))
  '(vertico-current ((t (:inherit bold :extend t :background "#CF8388" :foreground "#ffffff"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
 ;;Packages-use
@@ -547,6 +549,7 @@ With argument ARG, do this that many times."
   :init
   (add-hook 'org-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-minor-mode)
+  (add-hook 'toml-mode-hook #'yas-minor-mode)
   :config
   (yas-reload-all)
   (use-package yasnippet-snippets
@@ -1159,3 +1162,56 @@ buffer's text scale."
 
 ;;windows ratio
 
+;;epub reading
+(add-to-list 'load-path (expand-file-name "nov-xwidget" "~/.emacs.d"))
+(require 'nov-xwidget)
+(use-package nov
+  ;; TODO: enhance rendering with nov-xwidget
+  :mode ("\\.epub\\'" . nov-mode)
+;;  :custom
+  ;; (nov-text-width 120)
+  ;; (nov-text-width t)
+  ;; :hook
+  ;; ((nov-mode . (lambda ()
+  ;;                (setq-local buffer-display-table (make-display-table))
+  ;;                (aset buffer-display-table ?\^M [])))
+  ;;  (nov-post-html-render . (lambda () (let ((inhibit-message t)) (toggle-truncate-lines -1)))))
+  )
+(with-eval-after-load 'nov
+  (define-key nov-mode-map (kbd "o") 'nov-xwidget-view))
+(add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
+
+;;reading mode
+(defun xah-toggle-read-novel-mode ()
+  "Setup current buffer to be suitable for reading long novel/article text.
+
+• Line wrap at word boundaries.
+• Set a right margin.
+• line spacing is increased.
+• variable width font is used.
+
+Call again to toggle back.
+URL `http://ergoemacs.org/emacs/emacs_novel_reading_mode.html'
+Version 2016-01-16"
+  (interactive)
+  (if (null (get this-command 'state-on-p))
+      (progn
+        (set-window-margins
+         nil 0
+         (if (> fill-column (window-body-width))
+             0
+           (progn
+             (- (window-body-width) fill-column))))
+        (variable-pitch-mode 1)
+	(visual-line-mode nil)
+        (setq line-spacing 0.3)
+        (setq word-wrap t)
+        (put this-command 'state-on-p t))
+    (progn
+      (set-window-margins nil 0 0)
+      (variable-pitch-mode 0)
+      (visual-line-mode 1)
+      (setq line-spacing nil)
+      (setq word-wrap nil)
+      (put this-command 'state-on-p nil)))
+  (redraw-frame (selected-frame)))
