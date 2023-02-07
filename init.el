@@ -260,6 +260,10 @@ With argument ARG, do this that many times."
   (define-key dired-mode-map (kbd "<RET>") #'dired-single-buffer))
 (use-package dired-single
   :ensure t)
+(autoload 'dired-single-buffer "dired-single" "" t)
+(autoload 'dired-single-buffer-mouse "dired-single" "" t)
+(autoload 'dired-single-magic-buffer "dired-single" "" t)
+(autoload 'dired-single-toggle-buffer-name "dired-single" "" t)
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
@@ -368,7 +372,7 @@ With argument ARG, do this that many times."
  '(tab-line ((t (:inherit nil :background "#17474F" :box nil :overline nil :underline nil :height 0.95))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-black))))
- '(variable-pitch ((t (:height 134 :family "FiraCode NF" :background "#17474F" :height 160 :foreground "#a8a8a8"))))
+ '(variable-pitch ((t (:height 134 :family "FiraCode NF" :background "#17474F" :height 150 :foreground "#cccccc"))))
  '(vertico-current ((t (:inherit bold :extend t :background "#CF8388" :foreground "#ffffff"))))
  '(web-mode-current-element-highlight-face ((t (:background "#000000" :foreground "red" :weight bold)))))
 ;;Packages-use
@@ -1177,22 +1181,9 @@ buffer's text scale."
   ;;                (aset buffer-display-table ?\^M [])))
   ;;  (nov-post-html-render . (lambda () (let ((inhibit-message t)) (toggle-truncate-lines -1)))))
   )
-(with-eval-after-load 'nov
-  (define-key nov-mode-map (kbd "o") 'nov-xwidget-view))
-(add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
 
 ;;reading mode
 (defun xah-toggle-read-novel-mode ()
-  "Setup current buffer to be suitable for reading long novel/article text.
-
-• Line wrap at word boundaries.
-• Set a right margin.
-• line spacing is increased.
-• variable width font is used.
-
-Call again to toggle back.
-URL `http://ergoemacs.org/emacs/emacs_novel_reading_mode.html'
-Version 2016-01-16"
   (interactive)
   (if (null (get this-command 'state-on-p))
       (progn
@@ -1215,3 +1206,7 @@ Version 2016-01-16"
       (setq word-wrap nil)
       (put this-command 'state-on-p nil)))
   (redraw-frame (selected-frame)))
+(with-eval-after-load 'nov
+  (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
+  (xah-toggle-read-novel-mode))
+(add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
