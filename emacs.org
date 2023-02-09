@@ -18,8 +18,8 @@
     - emacsclient -n filename
     - netstat
       #+begin_src shell 
-	sudo lsof -i -n -P | grep TCP
-	sudo lsof -i -n -P | grep LAgent
+        sudo lsof -i -n -P | grep TCP
+        sudo lsof -i -n -P | grep LAgent
       #+end_src
     - http://127.0.0.1:3000 ~/Downloads/sharetool
     - sudo find / -name "php" -type l  
@@ -85,6 +85,15 @@
        $export ALL_PROXY=127.0.0.1:7890
        $unset ALL_PROXY
      #+end_src
+**** symbolink from icloud
+#+begin_src bash
+  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/.emacs.d ~/.emacs.d
+  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/.zshrc ~/.zshrc
+  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/Exercism ~/Exercism
+  ln -s /Users/iceonfire/Library/Mobile\ Documents/com~apple~CloudDocs/ /Users/iceonfire/icloud/
+  EMACS_USER_DIRECTORY=~/.emacs.d emacs
+  mv /Users/iceonfire/Library/Mobile\ Documents/com~apple~CloudDocs/.config /Users/iceonfire/
+#+end_src
 *** linux
 **** disable lid sleep
        - 编辑下列文件：/etc/systemd/logind.conf
@@ -790,47 +799,26 @@
   #+REVEAL_INIT_SCRIPT:
   #+REVEAL_HIGHLIGHT_CSS: %r/lib/css/zenburn.css
   Reveal.initialize({
-
       controls: false,                 hide the control of under//right 
-
       progress: false,                 //hide the bottom of the progress bar 
-
       slideNumber: true,               //display the page number of the slide in the lower right corner 
-
       history: true,                   //leave each page to your browser's history 
-
       overview: false,                 to disable display the "Overview" page that can be viewed in Esc//
-
       center: false,                   (will top justify) not the vertical direction central display of//slide 
-
       touch: false,                    //disable the touch operation of 
-
       loop: true,                      to loop the//slide
-
       rtl: true,                       //from right to left slide 
-
       fragments: false,                to disable the Fragments//
-
       autoSlide: 1000,                 //Set the automatic slide in milliseconds. The default is 0 (no automatic slide) 
-
       autoSlideStoppable: false ,      to hide the button for automatic slide stop//lower left 
-
       mouseWheel: true,                to enable the slide by the wheel of the//mouse 
-
       transition: 'cube',              //operating the slide in the cube-shaped transition 
-
                                        //setpoint default/cube/page/concave/zoom/linear/fade/none 
-
       transitionSpeed: 'slow',         //slow set the slide speed. Setting value Default/Fast/Slow 
-
       //parallax background of the image URL setting 
-
       parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
-
       of//parallax background set the size 
-
       parallaxBackgroundSize: '2100px 1024x',
-
   });
     #+end_src
 *** taskjuggler

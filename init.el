@@ -1,4 +1,4 @@
-1;;; package --- Summar
+;;; package --- Summar
 ;;; Commentary:
 ;; (setq url-proxy-services
 ;;  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
@@ -34,6 +34,11 @@
 (setq ring-bell-function nil)
 (setq system-time-locale "C")
 (setq org-src-fontify-natively t)
+;;native-comp
+(setq native-comp-deferred-compilation nil)
+;;no tittle-bar and round corners
+(add-to-list 'default-frame-alist '(undecorated-round . t))
+;;(add-to-list 'default-frame-alist '(undecorated . t))
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;; (setq ns-pop-up-frames nil)
 ;; (setq tab-line-mode 1)
@@ -76,7 +81,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism dap-mode tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket cider clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors elpy org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck dashboard org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize marginalia magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(yasnippet-snippets tide projectile which-key vertico paredit dashboard marginalia xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -235,7 +240,7 @@ With argument ARG, do this that many times."
 			  ))
   (image-type-available-p 'png)
   (setq dashboard-banner-logo-title nil)
-  (setq dashboard-startup-banner "/Users/iceonfire/.emacs.d/elpa/dashboard-20210815.445/banners/5.png")
+;;  (setq dashboard-startup-banner "/Users/iceonfire/.emacs.d/elpa/dashboard-20210815.445/banners/5.png")
   (dashboard-setup-startup-hook))
 ;;Dired
 (use-package dired-sidebar
@@ -266,7 +271,8 @@ With argument ARG, do this that many times."
 (autoload 'dired-single-toggle-buffer-name "dired-single" "" t)
 
 (use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-mode . all-the-icons-dired-mode)
+  )
 ;;Centaur-tabs
 (use-package centaur-tabs
   :demand
@@ -304,7 +310,8 @@ With argument ARG, do this that many times."
 	 "Clojure")
 	((or (derived-mode-p 'eaf-mode)
 	     (string-equal "*dashboard*" (substring (buffer-name)))
-	     (derived-mode-p 'dired-mode))
+	     (derived-mode-p 'dired-mode)
+	     (derived-mode-p 'dirvish-mode))
 	 "eap")
 	(t "Edit"))))
   :bind
@@ -556,9 +563,9 @@ With argument ARG, do this that many times."
   (add-hook 'toml-mode-hook #'yas-minor-mode)
   :config
   (yas-reload-all)
-  (use-package yasnippet-snippets
-    :ensure t))
-
+)
+(use-package yasnippet-snippets
+    :ensure t)
 (add-hook 'org-mode-hook 'org-indent-mode)
 ;;
 ;; company mode
@@ -603,9 +610,9 @@ With argument ARG, do this that many times."
 (use-package lsp-mode
   :ensure t
   :defer t
-  :hook (lsp-mode . (lambda ()
-                      (let ((lsp-keymap-prefix "M-c l"))
-                        (lsp-enable-which-key-integration))))
+  ;; :hook (lsp-mode . (lambda ()
+  ;;                     (let ((lsp-keymap-prefix "M-c l"))
+  ;;                       (lsp-enable-which-key-integration))))
   :init
   (setq lsp-keep-workspace-alive nil
         lsp-signature-doc-lines 5
@@ -629,6 +636,8 @@ With argument ARG, do this that many times."
   (define-key lsp-mode-map (kbd "M-c l") lsp-command-map)
   (define-key lsp-mode-map (kbd "s-l") nil)
   (define-key lsp-mode-map (kbd "c") nil)
+  :hook
+  (lsp-mode-hook . lsp-ui-mode)
  ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   )
 (use-package lsp-ui
@@ -1021,13 +1030,15 @@ buffer's text scale."
   (insert ";;" (shell-command-to-string "date")))
 
 ;;rust
-(add-hook 'rust-mode-hook
-          (lambda () (prettify-symbols-mode)))
+(require 'lsp-rust)
 (use-package rust-mode
   :ensure t
   :hook ((rust-mode . flycheck-mode)
 	 (rust-mode . paredit-mode)
-	 (rust-mode . lsp-deferred))
+;;	 (rust-mode . lsp-deferred)
+	 (rust-mode . lsp)
+	 (rust-mode . (lambda () (prettify-symbols-mode))))
+  
 ;;  :bind (("<f6>" . my/rust-format-buffer))
   :config
   (require 'rust-rustfmt)
@@ -1046,15 +1057,16 @@ buffer's text scale."
     (save-buffer)
     (rust-format-buffer)
     (rust-test))
-  (require 'lsp-rust)
+  (define-key rust-mode-map (kbd "C-c C-r") 'rust-run-autosave)
+  (define-key rust-mode-map (kbd "C-c C-t") 'rust-test-autosave)
+  (define-key rust-mode-map (kbd "s-s") 'my/rust-format-buffer)
+  (define-key rust-mode-map (kbd "C-y") 'lsp-extend-selection)
+  (define-key rust-mode-map (kbd "<C-return>") (lambda () (interactive) (end-of-line) (paredit-semicolon) (newline-and-indent)))
+  (define-key rust-mode-map (kbd "C-,") (lambda () (interactive) (end-of-line) (paredit-comma) (newline-and-indent)))
   (setq lsp-rust-analyzer-completion-add-call-parenthesis nil
 	lsp-rust-analyzer-proc-macro-enable t))
-(eval-after-load 'rust-mode (load-library "rust-mode"))
-(define-key rust-mode-map (kbd "C-c C-r") 'rust-run-autosave)
-(define-key rust-mode-map (kbd "C-c C-t") 'rust-test-autosave)
-(define-key rust-mode-map (kbd "s-s") 'my/rust-format-buffer)
-(define-key rust-mode-map (kbd "C-y") 'lsp-extend-selection)
-(define-key rust-mode-map (kbd "<C-return>") (lambda () (interactive) (end-of-line) (paredit-semicolon) (newline-and-indent)))
+;;(eval-after-load 'rust-mode (load-library "rust-mode"))
+
 (defun paredit-comma (&optional n)
   (interactive "p")
   (if (or (paredit-in-string-p) (paredit-in-comment-p))
@@ -1065,7 +1077,7 @@ buffer's text scale."
       (if line-break-point
           (paredit-semicolon-with-line-break line-break-point (or n 1))
           (insert (make-string (or n 1) ?\, ))))))
-(define-key rust-mode-map (kbd "C-,") (lambda () (interactive) (end-of-line) (paredit-comma) (newline-and-indent)))
+
 (use-package tree-sitter
   :config
   (require 'tree-sitter-langs)
@@ -1119,29 +1131,29 @@ buffer's text scale."
 
 ;;dap
 ;; Enabling only some features
-(setq dap-auto-configure-features '(sessions locals controls tooltip))
-(with-eval-after-load 'lsp-rust
-    (require 'dap-cpptools))
+;; (setq dap-auto-configure-features '(sessions locals controls tooltip))
+;; (with-eval-after-load 'lsp-rust
+;;     (require 'dap-cpptools))
 
-(with-eval-after-load 'dap-cpptools
-    ;; Add a template specific for debugging Rust programs.
-    ;; It is used for new projects, where I can M-x dap-edit-debug-template
-    (dap-register-debug-template "Rust::CppTools Run Configuration"
-                                 (list :type "cppdbg"
-                                       :request "launch"
-                                       :name "Rust::Run"
-                                       :MIMode "gdb"
-                                       :miDebuggerPath "/usr/local/bin/rust-gdb"
-                                       :environment []
-                                       :program "${workspaceFolder}/target/debug/${projectname}"
-                                       :cwd "${workspaceFolder}"
-                                       :console "external"
-                                       :dap-compilation "cargo build"
-                                       :dap-compilation-dir "${workspaceFolder}")))
+;; (with-eval-after-load 'dap-cpptools
+;;     ;; Add a template specific for debugging Rust programs.
+;;     ;; It is used for new projects, where I can M-x dap-edit-debug-template
+;;     (dap-register-debug-template "Rust::CppTools Run Configuration"
+;;                                  (list :type "cppdbg"
+;;                                        :request "launch"
+;;                                        :name "Rust::Run"
+;;                                        :MIMode "gdb"
+;;                                        :miDebuggerPath "/usr/local/bin/rust-gdb"
+;;                                        :environment []
+;;                                        :program "${workspaceFolder}/target/debug/${projectname}"
+;;                                        :cwd "${workspaceFolder}"
+;;                                        :console "external"
+;;                                        :dap-compilation "cargo build"
+;;                                        :dap-compilation-dir "${workspaceFolder}")))
 
-  (with-eval-after-load 'dap-mode
-    (setq dap-default-terminal-kind "integrated") ;; Make sure that terminal programs open a term for I/O in an Emacs buffer
-    (dap-auto-configure-mode +1))
+;;   (with-eval-after-load 'dap-mode
+;;     (setq dap-default-terminal-kind "integrated") ;; Make sure that terminal programs open a term for I/O in an Emacs buffer
+;;     (dap-auto-configure-mode +1))
 
 
 ;;exercism
@@ -1210,3 +1222,5 @@ buffer's text scale."
   (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
   (xah-toggle-read-novel-mode))
 (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
+;;(error "Lisp nesting exceeds ‘max-lisp-eval-depth’")
+(setq max-lisp-eval-depth 10000)
