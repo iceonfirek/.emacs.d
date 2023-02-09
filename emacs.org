@@ -87,12 +87,15 @@
      #+end_src
 **** symbolink from icloud
 #+begin_src bash
-  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/.emacs.d ~/.emacs.d
-  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/.zshrc ~/.zshrc
-  ln -s /Users/iceonfire/Library/Mobile\ Documents/com\~apple\~CloudDocs/Exercism ~/Exercism
-  ln -s /Users/iceonfire/Library/Mobile\ Documents/com~apple~CloudDocs/ /Users/iceonfire/icloud/
+  ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/.emacs.d ~/.emacs.d
+  ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/.zshrc ~/.zshrc
+  ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Exercism ~/Exercism
+  ln -s ~/Library/Mobile\ Documents/com~apple~CloudDocs/ ~/icloud/
   EMACS_USER_DIRECTORY=~/.emacs.d emacs
-  mv /Users/iceonfire/Library/Mobile\ Documents/com~apple~CloudDocs/.config /Users/iceonfire/
+  ln -s ~/Library/Mobile Documents/com~apple~CloudDocs/.config ~/
+  ln -s ~/Library/Mobile Documents/com~apple~CloudDocs/Downloads ~/
+  ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Brewfile ~/
+  ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Min ~/Library/Application\ Support/
 #+end_src
 *** linux
 **** disable lid sleep
