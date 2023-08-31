@@ -1,9 +1,9 @@
 ;;; package --- Summar
 ;;; Commentary:
-;; (setq url-proxy-services
-;;  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-;;   ("http" . "127.0.0.1:7890")
-;;    ("https" . "127.0.0.1:7890")))
+ (setq url-proxy-services
+  '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+   ("http" . "127.0.0.1:7890")
+    ("https" . "127.0.0.1:7890")))
 ;;; Code:
 ;;; Theme
 
@@ -50,6 +50,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
+ '(connection-local-criteria-alist
+   '(((:application eshell)
+      eshell-connection-default-profile)))
+ '(connection-local-profile-alist
+   '((eshell-connection-default-profile
+      (eshell-path-env-list))))
  '(custom-safe-themes
    '("3fe1ebb870cc8a28e69763dde7b08c0f6b7e71cc310ffc3394622e5df6e4f0da" "7160746eb7ae4ced07bb3084a3421d7f8c9c999d1ca13886db5657cc25ae3f80" "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
  '(debug-on-error t)
@@ -81,7 +87,7 @@
      (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(yasnippet-snippets tide projectile which-key vertico paredit dashboard marginalia xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(embark-vc vertico yasnippet-snippets tide projectile which-key paredit dashboard marginalia xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
@@ -423,7 +429,9 @@ With argument ARG, do this that many times."
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion))))))
+    ;;    completion-category-overrides '((file (styles . (partial-completion))))
+	completion-category-overrides nil
+  ))
 (use-package savehist
   :init
   (savehist-mode))
@@ -974,7 +982,7 @@ With argument ARG, do this that many times."
 ;;         (put-text-property xBoldEndPos xWordEnd
 ;;                            'font-lock-face infu-bionic-reading-face)))))
 (use-package expand-region
-  :bind ("C-=" . er/expand-region))
+  :bind ("C-=" . er/expand-region))at
 (setq er--show-expansion-message t)
 (eval-after-load 'rust-mode  '(require 'js-mode-expansions))
 ;; (use-package paradox
@@ -1030,7 +1038,7 @@ buffer's text scale."
   (insert ";;" (shell-command-to-string "date")))
 
 ;;rust
-(require 'lsp-rust)
+;; (require 'lsp-rust)
 (use-package rust-mode
   :ensure t
   :hook ((rust-mode . flycheck-mode)
@@ -1078,11 +1086,11 @@ buffer's text scale."
           (paredit-semicolon-with-line-break line-break-point (or n 1))
           (insert (make-string (or n 1) ?\, ))))))
 
-(use-package tree-sitter
-  :config
-  (require 'tree-sitter-langs)
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter
+;;   :config
+;;   (require 'tree-sitter-langs)
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 ;;
 
 
@@ -1177,7 +1185,6 @@ buffer's text scale."
   (setq graphviz-dot-indent-width 4))
 
 ;;windows ratio
-
 ;;epub reading
 (add-to-list 'load-path (expand-file-name "nov-xwidget" "~/.emacs.d"))
 (require 'nov-xwidget)
@@ -1224,3 +1231,4 @@ buffer's text scale."
 (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
 ;;(error "Lisp nesting exceeds ‘max-lisp-eval-depth’")
 (setq max-lisp-eval-depth 10000)
+
