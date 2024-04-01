@@ -998,3 +998,19 @@ dec hex key type def   dec hex key type   dec hex key type   dec hex key type
 #+end_src
 *** regex
 - 非数字字母  #"[^\d\w]+"
+*** Anki
+#+begin_quote
+like on 2023-01-28
+OSError: [Errno 30] Read-only file system
+这个问题的解决办法是 找到 context.py 文件
+
+比如我的路径就是 
+/Users/fire/Library/Application Support/Anki2/addons21/775418273/context.py
+
+然后找到第29行  CONFIG_FILENAME = _wqcfg.json
+把它的值改成非系统路径 就ok了,
+
+例如:
+CONFIG_FILENAME = '/Users/fire/road/data/wq_dict/_wqcfg.json'
+#+end_quote>
+

@@ -207,8 +207,7 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-w") 'delete-other-windows)
 (global-set-key (kbd "C-x 9") 'golden-ratio)
 ;;Package install  
-(require
- 'package)
+(require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
