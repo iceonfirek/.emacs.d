@@ -44,6 +44,7 @@
 ;; (setq tab-line-mode 1)
 ;; (setq tab-bar-mode 1)
 (show-paren-mode 1)
+ 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -51,7 +52,10 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode t)
  '(custom-safe-themes
-   '("3fe1ebb870cc8a28e69763dde7b08c0f6b7e71cc310ffc3394622e5df6e4f0da" "7160746eb7ae4ced07bb3084a3421d7f8c9c999d1ca13886db5657cc25ae3f80" "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
+   '("3fe1ebb870cc8a28e69763dde7b08c0f6b7e71cc310ffc3394622e5df6e4f0da"
+     "7160746eb7ae4ced07bb3084a3421d7f8c9c999d1ca13886db5657cc25ae3f80"
+     "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6"
+     default))
  '(debug-on-error t)
  '(geiser-chez-binary "/usr/local/bin/scheme")
  '(geiser-racket--binary "/usr/local/bin/racket")
@@ -59,61 +63,57 @@
  '(global-smart-tab-mode t)
  '(org-agenda-files nil)
  '(org-babel-load-languages
-   '((calc . t)
-     (dot . t)
-     (shell . t)
-     (scheme . t)
-     (clojure . t)
-     (python . t)
-     (emacs-lisp . t)
-     (shell . t)))
+   '((calc . t) (dot . t) (shell . t) (scheme . t) (clojure . t)
+     (python . t) (emacs-lisp . t) (shell . t)))
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(org-list-allow-alphabetical t)
  '(org-log-note-headings
-   '((done . "CLOSING NOTE %t")
-     (state . "State %-12s from %-12S %t")
-     (note . "%t")
-     (reschedule . "Rescheduled from %S on %t")
+   '((done . "CLOSING NOTE %t") (state . "State %-12s from %-12S %t")
+     (note . "%t") (reschedule . "Rescheduled from %S on %t")
      (delschedule . "Not scheduled, was %S on %t")
      (redeadline . "New deadline from %S on %t")
      (deldeadline . "Removed deadline, was %S on %t")
-     (refile . "Refiled on %t")
-     (clock-out . "")))
+     (refile . "Refiled on %t") (clock-out . "")))
  '(org-todo-keywords '((sequence "TODO" "DOING" "DONE")))
  '(package-selected-packages
-   '(yasnippet-snippets tide projectile which-key vertico paredit dashboard marginalia xwidgete nov-xwidget nov graphviz-dot-mode flycheck-rust racer consult-dash embark-consult embark lsp-mode golden-ratio whole-line-or-region smart-tab cargo cargo-mode toml-mode rust-playground exercism tree-sitter-langs tree-sitter rust-mode pandoc-mode geiser-chibi paradox expand-region isend-mode geiser-racket clojure-mode ement plz prettier-js rjsx-mode lsp-tailwindcss org-contrib org-re-reveal company-jedi multiple-cursors org-reveal flycheck-aspell pdf-tools go-translate epc quelpa-use-package visual-regexp flyspell-popup flycheck org load-theme-buffer-local gotest go-eldoc go-rename go-guru company-go comany-go go-mode exec-path-from-shell geiser company-graphviz-dot company auto-dim-other-buffers dired-sidebar rainbow-delimiters org-bullets orderless memoize magit lsp-ui lsp-treemacs helpful general geiser-chez doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles company-box command-log-mode comint-hyperlink centaur-tabs auto-package-update all-the-icons-dired))
+   '(all-the-icons-dired auto-dim-other-buffers auto-package-update
+			 centaur-tabs clojure-mode closql company-box
+			 dashboard dired-sidebar doom-modeline
+			 embark-consult ement evil
+			 exec-path-from-shell exercism expand-region
+			 flycheck-aspell geiser-chez geiser-chibi
+			 geiser-racket general git-commit go-mode
+			 go-translate golden-ratio graphviz-dot-mode
+			 helpful ivy lsp-docker lsp-tailwindcss
+			 lsp-treemacs lsp-ui magit marginalia
+			 multiple-cursors nov orderless org-bullets
+			 org-re-reveal pandoc-mode paredit popup
+			 prettier-js projectile quelpa-use-package
+			 racer racket-mode rainbow-delimiters
+			 rjsx-mode rust-playground sesman smart-tab
+			 tide toml-mode tree-sitter vertico which-key
+			 yasnippet-snippets))
  '(paradox-github-token t)
  '(python-shell-exec-path '("/usr/local/lib/python3.9/site-packages"))
  '(python-shell-interpreter "python")
  '(safe-local-variable-values
    '((eval when
-	   (and
-	    (buffer-file-name)
-	    (not
-	     (file-directory-p
-	      (buffer-file-name)))
-	    (string-match-p "^[^.]"
-			    (buffer-file-name)))
-	   (unless
-	       (require 'package-recipe-mode nil t)
-	     (let
-		 ((load-path
-		   (cons "../package-build" load-path)))
+	   (and (buffer-file-name)
+		(not (file-directory-p (buffer-file-name)))
+		(string-match-p "^[^.]" (buffer-file-name)))
+	   (unless (require 'package-recipe-mode nil t)
+	     (let ((load-path (cons "../package-build" load-path)))
 	       (require 'package-recipe-mode)))
-	   (unless
-	       (derived-mode-p 'emacs-lisp-mode)
+	   (unless (derived-mode-p 'emacs-lisp-mode)
 	     (emacs-lisp-mode))
 	   (package-build-minor-mode)
 	   (setq-local flycheck-checkers nil)
-	   (set
-	    (make-local-variable 'package-build-working-dir)
-	    (expand-file-name "../working/"))
-	   (set
-	    (make-local-variable 'package-build-archive-dir)
-	    (expand-file-name "../packages/"))
-	   (set
-	    (make-local-variable 'package-build-recipes-dir)
-	    default-directory))
+	   (set (make-local-variable 'package-build-working-dir)
+		(expand-file-name "../working/"))
+	   (set (make-local-variable 'package-build-archive-dir)
+		(expand-file-name "../packages/"))
+	   (set (make-local-variable 'package-build-recipes-dir)
+		default-directory))
      (geiser-autodoc--inhibit . t)))
  '(warning-suppress-types '((emacs))))
 ;;
@@ -153,16 +153,14 @@ With argument ARG, do this that many times."
   (yank))
 
 
-
-;;Global binding keys
 (global-set-key (kbd "C-y") 'paste-current-line)
 (global-set-key (kbd "M-z") 'copy-isearch-match)
 (global-set-key (kbd "C-SPC") 'execute-extended-command)
 (global-set-key (kbd "C-x z") 'execute-extended-command)
 (global-set-key (kbd "<f5>") 'eval-region)
-;;(global-set-key (kbd "s-I") 'scroll-down-command)
+(global-set-key (kbd "s-I") 'scroll-down-command)
 (global-set-key (kbd "<home>") 'beginning-of-buffer)
-;;(global-set-key (kbd "s-K") 'scroll-up-command)
+(global-set-key (kbd "s-K") 'scroll-up-command)
 (global-set-key (kbd "<end>") 'end-of-buffer)
 (global-set-key (kbd "s-r") 'kill-word):
 (global-set-key (kbd "s-y") 'cut-current-line)
@@ -176,11 +174,17 @@ With argument ARG, do this that many times."
 ;; (global-set-key (kbd "s-l") 'forward-char)
 (global-set-key (kbd "s-L") 'forward-word)
 (global-set-key (kbd "C-s-l") 'move-end-of-line)
+;;(global-set-key (kbd "s-L") 'move-end-of-line)
 ;; (global-set-key (kbd "s-j") 'backward-char)
 (global-set-key (kbd "C-s-j") 'move-beginning-of-line)
+(global-set-key (kbd "s-j") 'backward-char)
+(global-set-key (kbd "s-l") 'forward-char)
+(global-set-key (kbd "s-i") 'previous-line)
+(global-set-key (kbd "s-k") 'next-line)
+;;(global-set-key (kbd "s-J") 'move-beginning-of-line)
 (global-set-key (kbd "s-J") 'backward-word)
-;; (global-set-key (kbd "s-i") 'previous-line)
-;; (global-set-key (kbd "s-k") 'next-line)
+(global-set-key (kbd "C-s-i") 'beginning-of-buffer)
+(global-set-key (kbd "C-s-k") 'end-of-buffer)
 (global-set-key (kbd "s-n") 'set-mark-command)
 (global-set-key (kbd "s-N") 'pop-to-mark-command)
 (global-set-key (kbd "C-o") 'other-window)
@@ -206,6 +210,7 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-j") 'mc/mark-next-lines)
 (global-set-key (kbd "C-w") 'delete-other-windows)
 (global-set-key (kbd "C-x 9") 'golden-ratio)
+
 ;;Package install  
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -262,12 +267,12 @@ With argument ARG, do this that many times."
 (with-eval-after-load "dired"
   (define-key dired-mode-map (kbd "<mouse-2>") #'dired-single-buffer-mouse)
   (define-key dired-mode-map (kbd "<RET>") #'dired-single-buffer))
-(use-package dired-single
-  :ensure t)
-(autoload 'dired-single-buffer "dired-single" "" t)
-(autoload 'dired-single-buffer-mouse "dired-single" "" t)
-(autoload 'dired-single-magic-buffer "dired-single" "" t)
-(autoload 'dired-single-toggle-buffer-name "dired-single" "" t)
+;;(use-package dired-single
+;;  :ensure t)
+;;(autoload 'dired-single-buffer "dired-single" "" t)
+;;(autoload 'dired-single-buffer-mouse "dired-single" "" t)
+;;(autoload 'dired-single-magic-buffer "dired-single" "" t)
+;;(autoload 'dired-single-toggle-buffer-name "dired-single" "" t)
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode)
@@ -870,8 +875,8 @@ With argument ARG, do this that many times."
 (package-install 'quelpa-use-package)
 (require 'quelpa-use-package)
 
-(use-package plz
-  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
+;;(use-package plz
+;;  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
 
 ;; Install Ement.
 ;; (use-package ement
@@ -1029,7 +1034,7 @@ buffer's text scale."
   (insert ";;" (shell-command-to-string "date")))
 
 ;;rust
-(require 'lsp-rust)
+;;(require 'lsp-rust)
 (use-package rust-mode
   :ensure t
   :hook ((rust-mode . flycheck-mode)
@@ -1079,7 +1084,7 @@ buffer's text scale."
 
 (use-package tree-sitter
   :config
-  (require 'tree-sitter-langs)
+  ;;(require 'tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 ;;
@@ -1156,8 +1161,8 @@ buffer's text scale."
 
 
 ;;exercism
-(use-package exercism
-  :ensure t)
+;; (use-package exercism
+;;   :ensure t)
 ;;electric pair
 
 
@@ -1178,11 +1183,11 @@ buffer's text scale."
 ;;windows ratio
 
 ;;epub reading
-(add-to-list 'load-path (expand-file-name "nov-xwidget" "~/.emacs.d"))
-(require 'nov-xwidget)
-(use-package nov
+;;(add-to-list 'load-path (expand-file-name "nov-xwidget" "~/.emacs.d"))
+;;(require 'nov-xwidget)
+;;(use-package nov
   ;; TODO: enhance rendering with nov-xwidget
-  :mode ("\\.epub\\'" . nov-mode)
+;;  :mode ("\\.epub\\'" . nov-mode)
 ;;  :custom
   ;; (nov-text-width 120)
   ;; (nov-text-width t)
@@ -1191,7 +1196,7 @@ buffer's text scale."
   ;;                (setq-local buffer-display-table (make-display-table))
   ;;                (aset buffer-display-table ?\^M [])))
   ;;  (nov-post-html-render . (lambda () (let ((inhibit-message t)) (toggle-truncate-lines -1)))))
-  )
+;;  )
 
 ;;reading mode
 (defun xah-toggle-read-novel-mode ()
