@@ -427,25 +427,26 @@
        (progn (forward-visible-line 0) (point))
        (progn (forward-visible-line arg) (point)))))
   #+end_src
-    - eval-buffer ;;macs
-    - C-h f function RET ( describe-function ) displays the documentation of Lisp function
-    - CLM/command-  global-command-mode ;;
-    - counsel-find-file
-    - C-x-1 ;;close other windows
-    - counsel-switch-buffer
-    - C-x LEFT and C-x RIGHT . C-x LEFT ( previous-buffer ) C-x o ( other-window ).
-    - C-x 1 close other windows, C-x 2 open window under, C-x 3 open window right, C-x 0 close current window
-    - C-x C-f	Open/Create File, C-x k	Close File,,C-x C-s	Save File
-    - C-x C-e eval current function
-    - C-x C-q to turn dired into editing mode.use M-% to replace foo with bar in the dired buffer. ...
-    - use C-c C-c to save
-    - C-h f describe function
-    - counsel load theme
-    - buffer menu -> d -> x to delete marked buffers
-    - *copy multiple pathnames* right click + option
-    - consult-grep consult-find to find lines and files in directory
-    - multiple files [[https://www.reddit.com/r/emacs/comments/uuqj7o/how_do_i_open_multiple_files_at_once_from/]]
-    - paradox-upgrade-packages  update emacs
+  - eval-buffer ;;macs
+  - C-h f function RET ( describe-function ) displays the documentation of Lisp function
+  - CLM/command-  global-command-mode ;;
+  - counsel-find-file
+  - C-x-1 ;;close other windows
+  - counsel-switch-buffer
+  - C-x LEFT and C-x RIGHT . C-x LEFT ( previous-buffer ) C-x o ( other-window ).
+  - C-x 1 close other windows, C-x 2 open window under, C-x 3 open window right, C-x 0 close current window
+  - C-x C-f	Open/Create File, C-x k	Close File,,C-x C-s	Save File
+  - C-x C-e eval current function
+  - C-x C-q to turn dired into editing mode.use M-% to replace foo with bar in the dired buffer. ...
+  - use C-c C-c to save
+  - C-h f describe function
+  - counsel load theme
+  - buffer menu -> d -> x to delete marked buffers
+  - *copy multiple pathnames* right click + option
+  - consult-grep consult-find to find lines and files in directory
+  - multiple files [[https://www.reddit.com/r/emacs/comments/uuqj7o/how_do_i_open_multiple_files_at_once_from/]]
+  - flush-lines ^$ delete blank lines
+  - paradox-upgrade-packages  update emacs
 *** paredit
     #+ATTR_ORG: :width 1200
     [[/Users/iceonfire/github/Scheme/paredit_command.png]]
@@ -1013,4 +1014,28 @@ OSError: [Errno 30] Read-only file system
 例如:
 CONFIG_FILENAME = '/Users/fire/road/data/wq_dict/_wqcfg.json'
 #+end_quote>
+*** Markdown
+https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time
+#+begin_src 
+Impatient-mode
+It's designed to work with html but the doc gives a trick to make it work with markdown. It also works like a charm but requires one configuration step:
 
+Install impatient-mode with M-x package-install RET impatient-mode RET, given you have configured package.el to use the melpa repository.
+Start an emacs' web server with M-x httpd-start.
+Start impatient mode in the buffers you're interested to live preview: M-x impatient-mode.
+Open your browser to localhost:8080/imp. You'll see the list of buffers with the mode enabled. Click on one: you see live rendering of the buffer.
+To enable markdown conversion, we follow wikemacs:
+
+Define this elisp function somewhere, like in your init file:
+
+ <!-- language: lang-lisp -->
+
+  (defun markdown-html (buffer)
+    (princ (with-current-buffer buffer
+      (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://ndossougbe.github.io/strapdown/dist/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
+    (current-buffer)))
+Tell impatient mode to use it: M-x imp-set-user-filter RET markdown-html RET.
+
+Go back to your browser, it works!
+#+end_src>
+http://localhost:8080/imp/

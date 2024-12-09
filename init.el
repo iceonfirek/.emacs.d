@@ -6,6 +6,52 @@
    ("https" . "127.0.0.1:7890")))
 ;;; Code:
 ;;; Theme
+(add-to-list 'load-path "~/.emacs.d/elpaca/repos/org/lisp/")
+(add-to-list 'load-path "~/.emacs.d/elpaca/repos/vertico/")
+(setq package-enable-at-startup nil)
+(defvar elpaca-installer-version 0.7)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
 
 ;;(setq frame-resize-pixelwise t)
 (setq inhibit-startup-message t)
@@ -15,6 +61,7 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (visual-line-mode 1)
+(savehist-mode 1)
 ;;(fringe-mode 1)
 (display-time-mode 1)
 (display-battery-mode 1)
@@ -212,13 +259,13 @@ With argument ARG, do this that many times."
 (global-set-key (kbd "C-x 9") 'golden-ratio)
 
 ;;Package install  
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-(unless package-archive-contents (package-refresh-contents))
-(unless (package-installed-p 'use-package) (package-install 'use-package))
+;;(require 'package)
+;; (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+;; 			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+;;                          ("elpa" . "https://elpa.gnu.org/packages/")))
+;;(package-initialize)
+;;(unless package-archive-contents (package-refresh-contents))
+;;(unless (package-installed-p 'use-package) (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
 ;; (use-package auto-dim-other-buffers
@@ -226,6 +273,7 @@ With argument ARG, do this that many times."
 ;;   (add-hook 'after-init-hook (lambda ()
 ;;   (when (fboundp 'auto-dim-other-buffers-mode)
 ;;     (auto-dim-other-buffers-mode t)))))
+
 ;;dashboard
 (use-package dashboard
   :ensure t
@@ -420,17 +468,16 @@ With argument ARG, do this that many times."
   :init
   (vertico-mode)
   :bind
-  (
-   ("M-j" . vertico-next)
+  (("M-j" . vertico-next)
    ("M-k" . vertico-previous)))
 (use-package orderless
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
-(use-package savehist
-  :init
-  (savehist-mode))
+;; (use-package savehist
+;;   :init
+;;   (savehist-mode))
 (use-package marginalia
   :ensure t
   :config
@@ -493,7 +540,7 @@ With argument ARG, do this that many times."
    consult-theme
    :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
+   consult-bookmark consult-recent-file
 ;;   consult--source-file consult--source-project-file consult--source-bookmark
    :preview-key (kbd "M-."))
   (setq consult-narrow-key "<") ;; (kbd "C-+")
@@ -671,7 +718,7 @@ With argument ARG, do this that many times."
 
 ;(setenv "PATH" (concat "/opt/local/bin/:" (getenv "PATH")))
 ;;always show image inline automatically after src code
-(eval-after-load 'org
+(with-eval-after-load 'org
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 ;;org babel
 (setq org-confirm-babel-evaluate nil)
@@ -827,34 +874,23 @@ With argument ARG, do this that many times."
 ;;(require 'ox-confluence)
 ;;(require 'ov-highlight)
 ;;EAF
-;(use-package quelpa-use-package)
-;; Don't forget to run M-x eaf-install-dependencies
-;(use-package eaf 
-;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
-;;   :custom
-;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-;;   (eaf-browser-continue-where-left-off t)
-;;   (eaf-browser-enable-adblocker t)
-;;   (browse-url-browser-function 'eaf-open-browser) ;Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
-;;   :init
-;;   (use-package epc      :defer t :ensure t)
-;;   (use-package ctable   :defer t :ensure t)
-;;   (use-package deferred :defer t :ensure t)
-;;   (use-package s        :defer t :ensure t)
-;;   (setq browse-url-browser-function 'eaf-open-browser)
-;;    :config
-;;    (defalias 'browse-web #'eaf-open-browser)
-;;    ;; (eaf-bind-key eaf-send-down-key "s-k" eaf-app-keybiding)
-;;    ;; (eaf-bind-key eaf-send-up-key "s-i" eaf-app-keybiding)
-;;    ;; (eaf-bind-key eaf-send-return-key "s-m" eaf-app-keybiding)		;
-;;    ;; ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-;;    ;; (eaf-bind-key scroll_down "s-i" eaf-pdf-viewer-keybinding)
-;;    ;; (eaf-bind-key scroll_up "s-k" eaf-pdf-viewer-keybinding)
-;;   ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
-;; 					;(eaf-bind-key nil "M-q" eaf-browser-keybinding)
-;;   )
-;;(require 'eaf-browser)
-;(require 'eaf-pdf`-viewer)
+;;(use-package quelpa-use-package)
+;;Don't forget to run M-x eaf-install-dependencies
+(use-package eaf
+  :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+  :custom
+  (eaf-browser-continue-where-left-off t)
+  (eaf-browser-enable-adblocker t)
+  (browse-url-browser-function 'eaf-open-browser)
+  ;; 添加这些设置
+  (eaf-browser-verify-ssl nil)  ; 禁用 SSL 验证
+  :config
+  ;; 处理中文文件名
+  (setq eaf-browser-encode-url t)
+  ;; 设置超时时间
+  (setq eaf-browser-timeout 10))
+(require 'eaf-browser)
+;;(require 'eaf-pdf-viewer)
 ;;google translate
 ;; (require 'go-translate) 
 ;; (setq go-translate-base-url "https://translate.google.cn")
@@ -872,8 +908,8 @@ With argument ARG, do this that many times."
 
 ;; Install and load `quelpa-use-package'.
 
-(package-install 'quelpa-use-package)
-(require 'quelpa-use-package)
+;;(package-install 'quelpa-use-package)
+;;(require 'quelpa-use-package)
 
 ;;(use-package plz
 ;;  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
@@ -1172,8 +1208,9 @@ buffer's text scale."
 			    (?\' . ?\')))
 ;;initial window size
 
-(use-package golden-ratio)
-(golden-ratio-mode 1)
+(use-package golden-ratio
+  :ensure t)
+;;(golden-ratio-mode 1)
 (setq golden-ratio-auto-scale t)
 (use-package graphviz-dot-mode
   :ensure t
@@ -1228,3 +1265,674 @@ buffer's text scale."
 (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files)
 ;;(error "Lisp nesting exceeds ‘max-lisp-eval-depth’")
 (setq max-lisp-eval-depth 10000)
+
+(setq org-ai-openai-api-token "<ENTER YOUR API TOKEN HERE>")
+
+;; 1. 确保安装所需的包
+(use-package markdown-mode
+  :ensure t
+  :mode (("\\.md\\'" . gfm-mode))
+  :hook (markdown-mode . auto-fill-mode))
+
+(use-package impatient-mode
+  :ensure t)
+
+(use-package simple-httpd
+  :ensure t)
+
+;; 2. 主要的预览函数保持不变
+(defun my-markdown-preview ()
+  "Preview markdown."
+  (interactive)
+  (unless (process-status "httpd")
+    (httpd-start))
+  (unless impatient-mode
+    (impatient-mode))
+  (imp-set-user-filter #'my-markdown-filter)
+  ;; URL 编码处理，特别是对中文文件名
+  (let* ((filename (buffer-name))
+         (encoded-filename (url-hexify-string filename))
+         (preview-url (format "http://localhost:8080/imp/live/%s" encoded-filename)))
+    ;; 使用 EAF 打开
+    (if (fboundp 'eaf-open-browser)
+        (progn
+          ;; 禁用 SSL 验证
+          (setq eaf-browser-verify-ssl nil)
+          (eaf-open-browser preview-url))
+      ;; 降级到系统浏览器
+      (browse-url preview-url)))
+  (message "Opening markdown preview..."))
+
+;; 3. 修改过滤器函数，使用 Marked
+;; (defun my-markdown-filter (buffer)
+;;   (princ
+;;    (with-current-buffer buffer
+;;      (format "<!DOCTYPE html><html>
+;; <head>
+;; <meta charset='utf-8'>
+;; <title>Markdown Preview</title>
+;; <script src='https://cdn.jsdelivr.net/npm/marked/marked.min.js'></script>
+;; <style>
+;; /* 这里是我们的样式 */
+;; .markdown-body {
+;;     -ms-text-size-adjust: 100%%;
+;;     -webkit-text-size-adjust: 100%%;
+;;     margin: 0 auto;
+;;     padding: 45px;
+;;     color: #24292e;
+;;     background-color: #ffffff;
+;;     font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+;;     font-size: 14px;
+;;     line-height: 1.8;
+;;     word-wrap: break-word;
+;; }
+
+;; /* 标题样式 */
+;; .markdown-body h1 {
+;;     font-size: 28px;
+;;     font-weight: 500;
+;;     margin: 1em 0 0.5em;
+;;     color: #2c3e50;
+;; }
+
+;; .markdown-body h2 {
+;;     font-size: 22px;
+;;     font-weight: 500;
+;;     margin: 1.8em 0 1em;
+;;     color: #2c3e50;
+;; }
+
+;; /* 表格样式 */
+;; .markdown-body table {
+;;     width: 100%% !important;
+;;     margin: 1.5em 0 !important;
+;;     border-collapse: collapse !important;
+;;     background-color: transparent !important;
+;; }
+
+;; .markdown-body thead {
+;;     background-color: #f5f7fa !important;  /* 标题行背景色 */
+;; }
+
+;; .markdown-body th {
+;;     font-weight: 500 !important;
+;;     padding: 12px 8px !important;
+;;     text-align: left !important;
+;;     color: #333 !important;
+;;     background-color: #f5f7fa !important;  /* 确保每个标题单元格都有背景色 */
+;; }
+
+;; .markdown-body td {
+;;     padding: 12px 8px !important;
+;;     color: #333 !important;
+;;     background-color: transparent !important;
+;; }
+
+;; .markdown-body tr:nth-child(even) {
+;;     background-color: #fafafa !important;
+;; }
+
+;; /* 其他样式保持不变... */
+;; </style>
+;; </head>
+;; <body class='markdown-body'>
+;; <div id='content'></div>
+;; <script>
+;; // 配置 Marked 选项
+;; marked.setOptions({
+;;   gfm: true,
+;;   breaks: true,
+;;   tables: true,
+;;   sanitize: false,
+;;   smartLists: true,
+;;   smartypants: true,
+;;   xhtml: false
+;; });
+
+;; // 渲染内容
+;; document.getElementById('content').innerHTML = marked.parse(`%s`);
+;; </script>
+;; </body></html>"
+;;              (buffer-substring-no-properties (point-min) (point-max))))
+;;    (current-buffer)))
+
+;; 带标题栏，但是修改卡顿
+;; (defun my-markdown-filter (buffer)
+;;   (princ
+;;    (with-current-buffer buffer
+;;      (format "<!DOCTYPE html><html>
+;; <head>
+;; <meta charset='utf-8'>
+;; <title>Markdown Preview</title>
+;; <script src='https://cdn.jsdelivr.net/npm/marked/marked.min.js'></script>
+;; <style>
+;; /* 基础样式 */
+;; .markdown-body {
+;;     -ms-text-size-adjust: 100%%;
+;;     -webkit-text-size-adjust: 100%%;
+;;     margin: 0 auto;
+;;     padding: 45px;
+;;     margin-left: 250px;
+;;     transition: margin-left .3s;
+;;     color: #24292e;
+;;     background-color: #ffffff;
+;;     font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+;;     font-size: 14px;
+;;     line-height: 1.8;
+;;     word-wrap: break-word;
+;; }
+
+;; /* 标题样式 */
+;; .markdown-body h1 {
+;;     font-size: 28px;
+;;     font-weight: 500;
+;;     margin: 1em 0 0.5em;
+;;     color: #2c3e50;
+;; }
+
+;; .markdown-body h2 {
+;;     font-size: 22px;
+;;     font-weight: 500;
+;;     margin: 1.8em 0 1em;
+;;     color: #2c3e50;
+;; }
+
+;; .markdown-body h3 { 
+;;     font-size: 18px;
+;;     font-weight: 500;
+;;     margin: 1.5em 0 0.8em;
+;;     color: #2c3e50;
+;; }
+
+;; /* 表格样式 */
+;; .markdown-body table {
+;;     width: 100%% !important;
+;;     margin: 1.5em 0 !important;
+;;     border-collapse: collapse !important;
+;;     background-color: transparent !important;
+;; }
+
+;; .markdown-body thead {
+;;     background-color: #f5f7fa !important;
+;; }
+
+;; .markdown-body th {
+;;     font-weight: 500 !important;
+;;     padding: 12px 8px !important;
+;;     text-align: left !important;
+;;     color: #333 !important;
+;;     background-color: #f5f7fa !important;
+;; }
+
+;; .markdown-body td {
+;;     padding: 12px 8px !important;
+;;     color: #333 !important;
+;;     background-color: transparent !important;
+;; }
+
+;; .markdown-body tr:nth-child(even) {
+;;     background-color: #fafafa !important;
+;; }
+
+;; .markdown-body tr:nth-child(odd) {
+;;     background-color: #ffffff !important;
+;; }
+
+;; .markdown-body tr:hover {
+;;     background-color: #f8f9fa !important;
+;; }
+
+;; /* 侧边栏样式 */
+;; .sidebar {
+;;     height: 100%%;
+;;     width: 250px;
+;;     position: fixed;
+;;     z-index: 1;
+;;     top: 0;
+;;     left: 0;
+;;     background-color: #f8f9fa;
+;;     overflow-x: hidden;
+;;     transition: 0.3s;
+;;     border-right: 1px solid #eaecef;
+;;     padding-top: 60px;
+;; }
+
+;; .sidebar-hidden {
+;;     width: 0;
+;; }
+
+;; .sidebar a {
+;;     padding: 8px 16px;
+;;     text-decoration: none;
+;;     font-size: 14px;
+;;     color: #2c3e50;
+;;     display: block;
+;;     transition: 0.3s;
+;;     white-space: nowrap;
+;;     border-left: 3px solid transparent;
+;; }
+
+;; .sidebar a:hover {
+;;     color: #409eff;
+;;     background-color: #f1f1f1;
+;;     border-left-color: #409eff;
+;; }
+
+;; .sidebar .toc-h1 { 
+;;     padding-left: 16px; 
+;;     font-weight: 500;
+;; }
+;; .sidebar .toc-h2 { 
+;;     padding-left: 32px;
+;;     font-size: 13px;
+;; }
+;; .sidebar .toc-h3 { 
+;;     padding-left: 48px;
+;;     font-size: 13px;
+;;     color: #666;
+;; }
+
+;; /* 切换按钮样式 */
+;; .toggle-btn {
+;;     position: fixed;
+;;     left: 10px;
+;;     top: 10px;
+;;     z-index: 2;
+;;     font-size: 20px;
+;;     cursor: pointer;
+;;     background-color: #fff;
+;;     border: 1px solid #ddd;
+;;     border-radius: 4px;
+;;     padding: 8px 12px;
+;;     transition: 0.3s;
+;;     color: #666;
+;; }
+
+;; .toggle-btn:hover {
+;;     background-color: #f1f1f1;
+;;     color: #409eff;
+;; }
+
+;; /* 链接样式 */
+;; .markdown-body a {
+;;     color: #409eff;
+;;     text-decoration: none;
+;; }
+
+;; .markdown-body a:hover {
+;;     text-decoration: underline;
+;; }
+
+;; /* 响应式布局 */
+;; @media (max-width: 768px) {
+;;     .markdown-body {
+;;         padding: 15px;
+;;         margin-left: 0;
+;;     }
+;;     .sidebar {
+;;         width: 200px;
+;;     }
+;;     .markdown-body.sidebar-visible {
+;;         margin-left: 200px;
+;;     }
+;; }
+;; </style>
+;; </head>
+;; <body>
+;; <div id='mySidebar' class='sidebar'>
+;;     <div id='toc'></div>
+;; </div>
+
+;; <button class='toggle-btn' onclick='toggleSidebar()'>☰</button>
+
+;; <div class='markdown-body'>
+;;     <div id='content'></div>
+;; </div>
+
+;; <script>
+;; // Marked 配置
+;; marked.setOptions({
+;;     gfm: true,
+;;     breaks: true,
+;;     tables: true,
+;;     sanitize: false,
+;;     smartLists: true,
+;;     smartypants: true,
+;;     xhtml: false,
+;;     headerIds: true
+;; });
+
+;; // 渲染内容
+;; document.getElementById('content').innerHTML = marked.parse(`%s`);
+
+;; // 生成目录
+;; function generateTOC() {
+;;     const content = document.getElementById('content');
+;;     const toc = document.getElementById('toc');
+;;     const headings = content.querySelectorAll('h1, h2, h3');
+    
+;;     headings.forEach((heading, index) => {
+;;         const link = document.createElement('a');
+;;         const id = heading.id || 'heading-' + index;
+;;         heading.id = id;
+        
+;;         link.textContent = heading.textContent;
+;;         link.href = '#' + id;
+;;         link.className = 'toc-' + heading.tagName.toLowerCase();
+        
+;;         link.onclick = function(e) {
+;;             e.preventDefault();
+;;             heading.scrollIntoView({ behavior: 'smooth' });
+;;             if (window.innerWidth <= 768) {
+;;                 toggleSidebar();
+;;             }
+;;         };
+        
+;;         toc.appendChild(link);
+;;     });
+;; }
+
+;; // 侧边栏控制
+;; let sidebarVisible = true;
+;; function toggleSidebar() {
+;;     const sidebar = document.getElementById('mySidebar');
+;;     const content = document.querySelector('.markdown-body');
+    
+;;     if (sidebarVisible) {
+;;         sidebar.classList.add('sidebar-hidden');
+;;         content.style.marginLeft = '20px';
+;;     } else {
+;;         sidebar.classList.remove('sidebar-hidden');
+;;         content.style.marginLeft = window.innerWidth <= 768 ? '200px' : '250px';
+;;     }
+;;     sidebarVisible = !sidebarVisible;
+;; }
+
+;; // 页面加载完成后生成目录
+;; document.addEventListener('DOMContentLoaded', generateTOC);
+
+;; // 处理窗口大小变化
+;; window.addEventListener('resize', function() {
+;;     if (sidebarVisible) {
+;;         const content = document.querySelector('.markdown-body');
+;;         content.style.marginLeft = window.innerWidth <= 768 ? '200px' : '250px';
+;;     }
+;; });
+;; </script>
+;; </body></html>"
+;;              (buffer-substring-no-properties (point-min) (point-max))))
+;;    (current-buffer)))
+
+
+(defun my-markdown-filter (buffer)
+  (princ
+   (with-current-buffer buffer
+     (format "<!DOCTYPE html><html>
+<head>
+<meta charset='utf-8'>
+<title>Markdown Preview</title>
+<script src='https://cdn.jsdelivr.net/npm/marked/marked.min.js'></script>
+<style>
+/* 基础样式 */
+.markdown-body {
+    -ms-text-size-adjust: 100%%;
+    -webkit-text-size-adjust: 100%%;
+    margin: 0 auto;
+    padding: 45px;
+    color: #24292e;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    word-wrap: break-word;
+}
+
+/* 标题样式 */
+.markdown-body h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin: 1em 0 0.5em;
+    color: #2c3e50;
+}
+
+.markdown-body h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 1.8em 0 1em;
+    color: #2c3e50;
+}
+
+.markdown-body h3 { 
+    font-size: 18px;
+    font-weight: 500;
+    margin: 1.5em 0 0.8em;
+    color: #2c3e50;
+}
+
+/* 表格样式 */
+.markdown-body table {
+    width: 100%% !important;
+    margin: 1.5em 0 !important;
+    border-collapse: collapse !important;
+    background-color: transparent !important;
+}
+
+.markdown-body thead {
+    background-color: #f5f7fa !important;
+}
+
+.markdown-body th {
+    font-weight: 500 !important;
+    padding: 12px 8px !important;
+    text-align: left !important;
+    color: #333 !important;
+    background-color: #f5f7fa !important;
+}
+
+.markdown-body td {
+    padding: 12px 8px !important;
+    color: #333 !important;
+    background-color: transparent !important;
+}
+
+.markdown-body tr:nth-child(even) {
+    background-color: #fafafa !important;
+}
+
+.markdown-body tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+.markdown-body tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* 目录按钮样式 */
+#toc-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+#toc-btn:hover {
+    background: #e9ecef;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 目录容器样式 */
+#toc-container {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 260px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+}
+
+#toc-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#toc-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+#toc-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#toc-container a {
+    display: block;
+    padding: 5px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+}
+
+#toc-container a:hover {
+    color: #0366d6;
+    padding-left: 5px;
+}
+
+.toc-h1 { 
+    padding-left: 0;
+    font-weight: 500;
+}
+.toc-h2 { 
+    padding-left: 15px;
+    font-size: 13px !important;
+}
+.toc-h3 { 
+    padding-left: 30px;
+    font-size: 12px !important;
+    color: #666 !important;
+}
+
+/* 链接样式 */
+.markdown-body a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.markdown-body a:hover {
+    text-decoration: underline;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+    .markdown-body {
+        padding: 15px;
+    }
+    #toc-container {
+        width: 200px;
+    }
+    #toc-btn {
+        top: 10px;
+        right: 10px;
+    }
+}
+</style>
+</head>
+<body class='markdown-body'>
+<button id='toc-btn'>目录</button>
+<div id='toc-container'></div>
+<div id='content'></div>
+
+<script>
+// Marked 配置
+marked.setOptions({
+    gfm: true,
+    breaks: true,
+    tables: true,
+    sanitize: false,
+    smartLists: true,
+    smartypants: true,
+    xhtml: false,
+    headerIds: true
+});
+
+// 渲染内容
+document.getElementById('content').innerHTML = marked.parse(`%s`);
+
+// 生成目录
+function generateTOC() {
+    const content = document.getElementById('content');
+    const toc = document.getElementById('toc-container');
+    const headings = content.querySelectorAll('h1, h2, h3');
+    
+    headings.forEach((heading, index) => {
+        const link = document.createElement('a');
+        const id = heading.id || 'heading-' + index;
+        heading.id = id;
+        
+        link.textContent = heading.textContent;
+        link.href = '#' + id;
+        link.className = 'toc-' + heading.tagName.toLowerCase();
+        
+        link.onclick = function(e) {
+            e.preventDefault();
+            heading.scrollIntoView({ behavior: 'smooth' });
+            if (window.innerWidth <= 768) {
+                toc.style.display = 'none';
+            }
+        };
+        
+        toc.appendChild(link);
+    });
+}
+
+// 目录按钮点击事件
+document.getElementById('toc-btn').onclick = function(e) {
+    e.stopPropagation();
+    const toc = document.getElementById('toc-container');
+    if (toc.style.display === 'none' || !toc.style.display) {
+        toc.style.display = 'block';
+    } else {
+        toc.style.display = 'none';
+    }
+};
+
+// 点击目录内部不关闭
+document.getElementById('toc-container').onclick = function(e) {
+    e.stopPropagation();
+};
+
+// 点击页面其他地方关闭目录
+document.addEventListener('click', function() {
+    const toc = document.getElementById('toc-container');
+    toc.style.display = 'none';
+});
+
+// 页面加载完成后生成目录
+document.addEventListener('DOMContentLoaded', generateTOC);
+
+// 处理窗口大小变化
+window.addEventListener('resize', function() {
+    const toc = document.getElementById('toc-container');
+    if (window.innerWidth <= 768) {
+        toc.style.display = 'none';
+    }
+});
+</script>
+</body></html>"
+             (buffer-substring-no-properties (point-min) (point-max))))
+   (current-buffer)))
